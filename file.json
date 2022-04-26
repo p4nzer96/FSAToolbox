@@ -1,0 +1,36 @@
+{
+    "X": {
+        "x0": {
+            "isInit": "1"
+        },
+        "x1": {
+            "isInit": "0"
+        }
+    },
+    "E": {
+        "a": {
+            "isObs": "1"
+        },
+        "b": {
+            "isObs": "0"
+        }
+    },
+    "delta": {
+        "a": {
+            "start": "x0",
+            "name": "a",
+            "ends": "x1"
+        },
+        "b": {
+            "start": "x0",
+            "name": "a",
+            "ends": "x0"
+        },
+        "c": {
+            "start": "x1",
+            "name": "b",
+            "ends": "x0"
+        }
+    }
+    
+}
