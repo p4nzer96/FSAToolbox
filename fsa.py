@@ -33,8 +33,15 @@ class FSA:
 
         for key in jsonObject['X']:
             st_label = key  # State name
-            isInit = bool(jsonObject['X'][key]['isInit'])  # Is the state initial?
-            isFinal = bool(jsonObject['X'][key]['isFinal'])  # Is the state final?
+            
+            if('isInit' in jsonObject['X'][key]):
+                isInit = bool(jsonObject['X'][key]['isInit'])  # Is the state initial?
+            else:
+                isInit = None
+            if('isFinal' in jsonObject['X'][key]):
+                isFinal = bool(jsonObject['X'][key]['isFinal'])  # Is the state final?
+            else:
+                isFinal = None
 
             state = State(st_label, isInit, isFinal)
 
@@ -43,16 +50,25 @@ class FSA:
 
             if isFinal:  # If the state is final, add it to final states
                 Xm.append(state)
-
             X.append(state)
 
         # Reading events and properties
 
         for key in jsonObject['E']:
             ev_label = key  # Event name
-            observable = bool(jsonObject['E'][key]['isObservable'])  # Is observable?
-            controllable = bool(jsonObject['E'][key]['isControllable'])  # Is controllable?
-            fault = bool(jsonObject['E'][key]['isFault'])  # Is faulty?
+
+            if('isObservable' in jsonObject['E'][key]):
+                observable = bool(jsonObject['E'][key]['isObservable'])  # Is observable?
+            else:
+                observable = None
+            if('isControllable' in jsonObject['E'][key]):
+                controllable = bool(jsonObject['E'][key]['isControllable'])  # Is controllable?
+            else:
+                controllable = None
+            if('isFaulty' in jsonObject['E'][key]):
+                fault = bool(jsonObject['E'][key]['isFault'])  # Is faulty?
+            else:
+                fault = None
 
             E.append(Event(ev_label, observable, controllable, fault))
 

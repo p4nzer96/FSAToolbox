@@ -4,7 +4,8 @@
             "isInit": "1"
         },
         "x1": {
-            "isInit": "0"
+            
+            "isFinal": "0"
         }
     },
     "E": {
