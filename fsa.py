@@ -1,4 +1,5 @@
 import json
+import pandas as pd
 from event import Event
 from state import State
 
@@ -18,8 +19,10 @@ class FSA:
 
         # Load from file
 
-        X = []
-        E = []
+        X = []  # States
+        E = []  # Alphabet
+        x0 = []  # Initial states
+        Xm = []  # Final states
 
         # File opening
 
@@ -33,7 +36,15 @@ class FSA:
             isInit = bool(jsonObject['X'][key]['isInit'])  # Is the state initial?
             isFinal = bool(jsonObject['X'][key]['isFinal'])  # Is the state final?
 
-            X.append(State(st_label, isInit, isFinal))
+            state = State(st_label, isInit, isFinal)
+
+            if isInit:  # If the state is initial, add it to initial states
+                x0.append(state)
+
+            if isFinal:  # If the state is final, add it to final states
+                Xm.append(state)
+
+            X.append(state)
 
         # Reading events and properties
 
@@ -45,18 +56,29 @@ class FSA:
 
             E.append(Event(ev_label, observable, controllable, fault))
 
-        return cls(X, E)
+        data = []
 
+        # Reading delta
 
-'''
-X=['x0','x1']
-E=['a','b']
-delta=[['x0','a','x1'],['x1','b','x0']]
-x0='x0'
-Xm=['x0']
+        for key in jsonObject['delta']:
 
-fsa=FSA(X, E, delta, x0, Xm)
+            start_state = jsonObject['delta'][key]['start']  # Start state
 
-fsa.setObs(['a'])
-fsa.setFaulty(['b'])
-'''
+            if start_state not in [s.label for s in X]:  # Check if start state is in X
+                raise ValueError("Invalid start state")
+
+            transition = jsonObject['delta'][key]['name']  # Transition
+
+            if transition not in [e.label for e in E]:  # Check if transition is in E
+                raise ValueError("Invalid event")
+
+            end_state = jsonObject['delta'][key]['ends']
+
+            if end_state not in [s.label for s in X]:  # Check if end state is in X
+                raise ValueError("Invalid end state")
+
+            data.append([start_state, transition, end_state])
+
+        delta = pd.DataFrame(data, columns=list(jsonObject['delta'].keys()))
+
+        return cls(X, E, delta, x0, Xm)
