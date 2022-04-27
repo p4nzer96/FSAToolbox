@@ -1,45 +1,59 @@
 class State():
 
     def __init__(self, label=None, initial=False, final=False) -> None:
+        self.label = label
+        self.isInitial = initial
+        self.isFinal = final
 
-        self.label = self.setLabel(label)
-        self.isInitial = self.setInitial(initial)
-        self.isFinal = self.setFinal(final)
+    def __repr__(self):
+
+        return self.label
+
+    # TODO: Setter da riscrivere
 
     def getLabel(self):
 
         if not self.label:
 
-            print ("Label not yet set")
+            print("Label not yet set")
 
         else:
 
             return self.label
 
+    '''
     def setLabel(self, label):
 
-        if (isinstance(label, str)):
+        if isinstance(label, str):
 
             self.label = label
 
         else:
 
             print("Incorrect data type: the label must be a string")
+            
+    '''
 
     def getFinal(self):
 
         return self.isFinal
 
-    def setFinal(self, isFinal):
+    '''
+
+    def setFinal(self, state, isFinal):
 
         self.isFinal = isFinal
+        
+    '''
 
     def getInitial(self):
 
         return self.isInitial
 
-    def setInitial(self, initial):
+    '''
+
+    def setInitial(self, state, initial):
 
         self.isInitial = initial
 
-    
+    '''

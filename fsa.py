@@ -1,6 +1,9 @@
 import json
+from event import Event
+from state import State
 
-class FSA():
+
+class FSA:
 
     def __init__(self, X=None, E=None, delta=None, x0=None, Xm=None) -> None:
 
@@ -11,13 +14,39 @@ class FSA():
         self.Xm = Xm  # Final states
 
     @classmethod
-    def fromfile(self, filename):
+    def fromfile(cls, filename):
 
         # Load from file
 
-    def _loaddata(self, X, E, delta, x0, Xm):
+        X = []
+        E = []
 
-        # load data
+        # File opening
+
+        with open(filename) as jsonFile:
+            jsonObject = json.load(jsonFile)
+
+        # Reading states and properties
+
+        for key in jsonObject['X']:
+            st_label = key  # State name
+            isInit = bool(jsonObject['X'][key]['isInit'])  # Is the state initial?
+            isFinal = bool(jsonObject['X'][key]['isFinal'])  # Is the state final?
+
+            X.append(State(st_label, isInit, isFinal))
+
+        # Reading events and properties
+
+        for key in jsonObject['E']:
+            ev_label = key  # Event name
+            observable = bool(jsonObject['E'][key]['isObservable'])  # Is observable?
+            controllable = bool(jsonObject['E'][key]['isControllable'])  # Is controllable?
+            fault = bool(jsonObject['E'][key]['isFault'])  # Is faulty?
+
+            E.append(Event(ev_label, observable, controllable, fault))
+
+        return cls(X, E)
+
 
 '''
 X=['x0','x1']

@@ -1,11 +1,17 @@
-class Event():
+class Event:
 
-    def __init__(self, label = None, isObservable = True, isControllable = True, isFault = False ) -> None:
+    def __init__(self, label=None, isObservable=True, isControllable=True, isFault=False) -> None:
 
-        self.label = self.setLabel(label)
-        self.isObservable = self.setObservable(isObservable)
-        self.isControllable = self.setControllable(isControllable)
-        self.isFault = self.setFault(isFault)
+        self.label = label
+        self.isObservable = isObservable
+        self.isControllable = isControllable
+        self.isFault = isFault
+
+    def __repr__(self):
+
+        return self.label
+
+    # TODO: Setter da riscrivere
 
     def getLabel(self):
 
@@ -17,35 +23,32 @@ class Event():
 
             return self.label
 
-    def setLabel(self, label):
+    '''def setLabel(self, label):
 
         if isinstance(label, str): 
         
-            self.label = label
+            self.label = label'''
 
     def getObservable(self):
 
         return self.isObservable
 
-    def setObservable(self, observable):
+    '''def setObservable(self, observable):
 
-        self.isObservable = observable
+        self.isObservable = observable'''
 
     def getControllable(self):
 
         return self.isControllable
 
-    def setControllable(self, controllable):
+    '''def setControllable(self, controllable):
 
-        self.isControllable = controllable
+        self.isControllable = controllable'''
 
     def getFault(self):
 
         return self.isFault
 
-    def setFault(self, fault):
+    '''def setFault(self, fault):
 
-        self.isFault = fault
-
-        
-        
+        self.isFault = fault'''
