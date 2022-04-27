@@ -1,4 +1,4 @@
-class fsaState():
+class State():
 
     def __init__(self, label=None, initial=False, final=False) -> None:
 
@@ -8,7 +8,13 @@ class fsaState():
 
     def getLabel(self):
 
-        return self.label
+        if not self.label:
+
+            print ("Label not yet set")
+
+        else:
+
+            return self.label
 
     def setLabel(self, label):
 
