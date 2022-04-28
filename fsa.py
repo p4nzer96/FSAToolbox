@@ -209,3 +209,23 @@ class FSA:
         else:
 
             raise ValueError
+
+    def add_transition(self, initial_state, event, end_state):
+
+        if initial_state not in [x.label for x in self.X]:
+            print("Error: initial state not in X")
+            return
+
+        if event not in [e.label for e in self.E]:
+            print("Error: event not in E")
+            return
+
+        if end_state not in [x.label for x in self.X]:
+            print("Error: end state not in X")
+            return
+
+        if 
+        
+        temp_df = pd.DataFrame([[initial_state, event, end_state]], columns=["start", "transition", "end"])
+        
+        self.delta = pd.concat([self.delta, temp_df], axis=0, ignore_index=True)

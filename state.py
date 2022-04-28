@@ -5,10 +5,6 @@ class State():
         self.isInitial = initial
         self.isFinal = final
 
-    def __repr__(self):
-
-        return self.label
-
     # TODO: Setter da riscrivere
 
     def getLabel(self):
