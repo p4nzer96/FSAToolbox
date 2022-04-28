@@ -44,40 +44,42 @@ def cc(G0, G1):
     CC=fsa()
     CC.E=unique(G0.E+G1.E)
     X=[]
-    Xnew=[G0.getInital(), G1.getInital()]
+    Xnew=[G0.x0, G1.x0]
 
     while(len(Xnew)>0):
         st=Xnew[0]
         
-        newTransFound=0
         for event in CC.E:
             if(event in G0.E and event not in G1.E): #private to G0
-                trans=G0.getTransFrom(st[0])
-                if(len(trans)>0): #TODO check what happens if there are not distinguishable events
-                    newState=[trans[2],st[1]]
-                    newTransFound=1
+                trans=G0.delta[G0.delta['start'] == st[0]]
+                for el in trans:
+                    newState=[el['dest'],st[1]]
+                    CC.addTrans("".join(st),event,"".join(newState))
+                    if(newState not in X and newState not in Xnew):
+                        Xnew.append(newState)
                     
             elif(event not in G0.E and event in G1.E): #private to G1
-                trans=G1.getTransFrom(st[1])
-                if(len(trans)>0):
-                    newState=[st[0],trans[2]]
-                    newTransFound=1
+                trans=G1.delta[G1.delta['start'] == st[1]]
+                for el in trans:
+                    newState=[st[0],el['dest']]
+                    CC.addTrans("".join(st),event,"".join(newState))
+                    if(newState not in X and newState not in Xnew):
+                        Xnew.append(newState)
                     
             else: #synchronized
                 transG0=G0.getTransFrom(st[0])
                 transG1=G1.getTransFrom(st[1])
-                if(len(transG0)>0 and len(transG1)>0):
-                    newState=[transG0[2],transG0[2]]
-                    newTransFound=1
-                    
-            if(newTransFound):
-                CC.newTrans("".join(st),event,"".join(newState))
-                if(newState in X and newState in Xnew):
-                    Xnew.append(newState)
+                for el0 in transG0:
+                    for el1 in transG1:
+                        newState=[el0['dest'],el1['dest']]
+                        CC.addTrans("".join(st),event,"".join(newState))
+                        if(newState not in X and newState not in Xnew):
+                            Xnew.append(newState)
+                
         X.append(st)
         Xnew.remove(st)
             
-    #the algorithm stores the new state as a list, here i will convert the list to a string that will became the new state name (simple concatenation of the two names)
+    #the algorithm stores the new states as a list, here it will convert the list to a string that will became the new state name (simple concatenation of the two names)
     for st in X:
         CC.X.append("".join(st))
 
@@ -87,7 +89,7 @@ def cc(G0, G1):
             CC.Xm.append("".join(st))
         
 
-#def obs(G):
+#def observer(G):
 
 
-#def fm(G):
+#def faultMonitor(G):
