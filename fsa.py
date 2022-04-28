@@ -33,17 +33,17 @@ class FSA:
 
         for key in jsonObject['X']:
             st_label = key  # State name
-            
-            if('isInit' in jsonObject['X'][key]):
-                isInit = bool(jsonObject['X'][key]['isInit'])  # Is the state initial?
+
+            if 'isInit' in jsonObject['X'][key]:
+                isInit = eval(jsonObject['X'][key]['isInit'])  # Is the state initial?
             else:
                 isInit = None
-            if('isFinal' in jsonObject['X'][key]):
-                isFinal = bool(jsonObject['X'][key]['isFinal'])  # Is the state final?
+            if 'isFinal' in jsonObject['X'][key]:
+                isFinal = eval(jsonObject['X'][key]['isFinal'])  # Is the state final?
             else:
                 isFinal = None
 
-            state = State(st_label, isInit, isFinal)
+            state = State(st_label, bool(isInit), bool(isFinal))
 
             if isInit:  # If the state is initial, add it to initial states
                 x0.append(state)
@@ -57,20 +57,20 @@ class FSA:
         for key in jsonObject['E']:
             ev_label = key  # Event name
 
-            if('isObservable' in jsonObject['E'][key]):
-                observable = bool(jsonObject['E'][key]['isObservable'])  # Is observable?
+            if 'isObservable' in jsonObject['E'][key]:
+                observable = eval(jsonObject['E'][key]['isObservable'])  # Is observable?
             else:
                 observable = None
-            if('isControllable' in jsonObject['E'][key]):
-                controllable = bool(jsonObject['E'][key]['isControllable'])  # Is controllable?
+            if 'isControllable' in jsonObject['E'][key]:
+                controllable = eval(jsonObject['E'][key]['isControllable'])  # Is controllable?
             else:
                 controllable = None
-            if('isFaulty' in jsonObject['E'][key]):
-                fault = bool(jsonObject['E'][key]['isFault'])  # Is faulty?
+            if 'isFaulty' in jsonObject['E'][key]:
+                fault = eval(jsonObject['E'][key]['isFault'])  # Is faulty?
             else:
                 fault = None
 
-            E.append(Event(ev_label, observable, controllable, fault))
+            E.append(Event(ev_label, bool(observable), controllable, fault))
 
         data = []
 
@@ -95,6 +95,115 @@ class FSA:
 
             data.append([start_state, transition, end_state])
 
-        delta = pd.DataFrame(data, columns=list(jsonObject['delta'].keys()))
+        delta = pd.DataFrame(data, columns=["start", "transition", "end"])
 
         return cls(X, E, delta, x0, Xm)
+
+    def print_X(self):
+
+        states = [x.label for x in self.X]
+        print(states)
+
+    def print_E(self):
+
+        events = [x.label for x in self.E]
+        print(events)
+
+    def print_delta(self):
+
+        print(self.delta)
+
+    def filter_delta(self, start=None, transition=None, end=None):
+        
+        if start:
+            filt_delta = self.delta.loc(["start"] == start)
+
+        if start:
+            filt_delta = self.delta.loc(["transition"] == transition)
+
+        if end:
+            filt_delta = self.delta.loc(["end"] == end)
+
+        return filt_delta
+
+    def print_x0(self):
+
+        in_states = [x.label for x in self.x0]
+        print(in_states)
+
+    def print_Xm(self):
+
+        fin_states = [x.label for x in self.Xm]
+        print(fin_states)
+
+    def add_state(self, state, isInitial=None, isFinal=None):
+
+        if isinstance(state, State):
+
+            if state.label not in [x.label for x in self.X]:
+
+                self.X.append(state)
+
+                if state.isFinal:
+                    self.Xm.append(state)
+
+                if state.isInitial:
+                    self.x0.append(state)
+
+            else:
+
+                print("Error: We cannot have two states with the same label")
+                return
+
+        elif isinstance(state, str):
+
+            if state not in [x.label for x in self.X]:
+
+                new_state = State(state, isInitial, isFinal)
+
+                self.X.append(new_state)
+
+                if new_state.isFinal:
+                    self.Xm.append(new_state)
+
+                if new_state.isInitial:
+                    self.x0.append(new_state)
+
+            else:
+
+                print("Error: We cannot have two states with the same label")
+                return
+
+        else:
+
+            raise ValueError
+
+    def add_event(self, event, isObservable=None, isControllable=None, isFault=None):
+
+        if isinstance(event, Event):
+
+            if event not in [e.label for e in self.E]:
+
+                self.E.append(event)
+
+            else:
+
+                print("Error: We cannot have two states with the same label")
+                return
+
+        elif isinstance(event, str):
+
+            if event not in [x.label for x in self.E]:
+
+                new_event = Event(event, isObservable, isControllable, isFault)
+
+                self.E.append(new_event)
+
+            else:
+
+                print("Error: We cannot have two states with the same label")
+                return
+
+        else:
+
+            raise ValueError

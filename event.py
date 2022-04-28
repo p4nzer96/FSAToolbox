@@ -7,10 +7,6 @@ class Event:
         self.isControllable = isControllable
         self.isFault = isFault
 
-    def __repr__(self):
-
-        return self.label
-
     # TODO: Setter da riscrivere
 
     def getLabel(self):
