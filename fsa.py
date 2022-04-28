@@ -114,15 +114,17 @@ class FSA:
         print(self.delta)
 
     def filter_delta(self, start=None, transition=None, end=None):
-        
-        if start:
-            filt_delta = self.delta.loc[(self.delta["start"] == start)]
+
+        filt_delta = self.delta
 
         if start:
-            filt_delta = self.delta.loc[(self.delta["transition"] == transition)]
+            filt_delta = filt_delta.loc[(filt_delta["start"] == start)]
+
+        if transition:
+            filt_delta = filt_delta.loc[(filt_delta["transition"] == transition)]
 
         if end:
-            filt_delta = self.delta.loc[(self.delta["end"] == end)]
+            filt_delta = filt_delta.loc[(filt_delta["end"] == end)]
 
         return filt_delta
 
