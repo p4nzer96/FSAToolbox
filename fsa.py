@@ -181,7 +181,6 @@ class FSA:
 
         if end:
             condition = filt_delta["end"].apply(lambda x: x.label) == end
-            filt_delta = filt_delta.loc[(condition)]
 
         return filt_delta
 
