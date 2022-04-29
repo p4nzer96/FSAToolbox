@@ -5,8 +5,27 @@ from state import State
 
 
 class FSA:
+    """
+    Class used to represent a Finite State Automaton (FSA)
+
+    Parameters
+    ----------
+    X : list of State objects
+        the set of states of which the automaton is composed
+    E list of Event objects
+        the alphabet of the automaton
+    delta : DataFrame
+        the transition relation / function of the automaton
+    x0 : list of State objects
+        the initial states of the automaton (all elements of x0 must be contained in X)
+    Xm : list of State objects
+        the final states of the automaton (all elements of Xm must be contained in X)
+
+    """
 
     def __init__(self, X=None, E=None, delta=None, x0=None, Xm=None) -> None:
+
+
 
         self.X = X  # States
         self.E = E  # Alphabet
@@ -16,6 +35,15 @@ class FSA:
 
     @classmethod
     def fromfile(cls, filename):
+
+        """Generates a FSA from file
+
+        Parameters
+        ----------
+        filename: str
+            the path of the .json file containing the definition of the FSA
+
+        """
 
         # Load from file
 
@@ -97,19 +125,33 @@ class FSA:
 
         delta = pd.DataFrame(data, columns=["start", "transition", "end"])
 
+        jsonObject.close()
+
         return cls(X, E, delta, x0, Xm)
 
     def print_X(self):
+
+        """
+        Prints the list of states of which the automaton is composed
+        """
 
         states = [x.label for x in self.X]
         print(states)
 
     def print_E(self):
 
+        """
+        Prints the list of events (alphabet) of which the automaton is composed
+        """
+
         events = [x.label for x in self.E]
         print(events)
 
     def print_delta(self):
+
+        """
+        Prints the delta relation / function of the automaton
+        """
 
         print(self.delta)
 
