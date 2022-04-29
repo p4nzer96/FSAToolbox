@@ -25,8 +25,6 @@ class FSA:
 
     def __init__(self, X=None, E=None, delta=None, x0=None, Xm=None) -> None:
 
-
-
         self.X = X  # States
         self.E = E  # Alphabet
         self.delta = delta  # Delta relation
@@ -110,22 +108,36 @@ class FSA:
 
             if start_state not in [s.label for s in X]:  # Check if start state is in X
                 raise ValueError("Invalid start state")
+                
+            else:
+                
+                idx = [x.label for x in X].index(start_state)
+                i_state = X[idx]
 
             transition = jsonObject['delta'][key]['name']  # Transition
 
             if transition not in [e.label for e in E]:  # Check if transition is in E
                 raise ValueError("Invalid event")
+                
+            else:
+                
+                idx = [x.label for x in E].index(transition)
+                trans = E[idx]
 
             end_state = jsonObject['delta'][key]['ends']
 
             if end_state not in [s.label for s in X]:  # Check if end state is in X
                 raise ValueError("Invalid end state")
+                
+            else:
+                
+                idx = [x.label for x in X].index(end_state)
+                f_state = X[idx]
 
-            data.append([start_state, transition, end_state])
+
+            data.append([i_state, trans, f_state])
 
         delta = pd.DataFrame(data, columns=["start", "transition", "end"])
-
-        jsonObject.close()
 
         return cls(X, E, delta, x0, Xm)
 
@@ -253,19 +265,37 @@ class FSA:
             raise ValueError
 
     def add_transition(self, initial_state, event, end_state):
-
-        if initial_state not in [x.label for x in self.X]:
+        
+        try:
+            
+            idx = [x.label for x in self.X].index(initial_state)
+            i_state = self.X[idx]
+            
+        except ValueError:
+            
             print("Error: initial state not in X")
             return
-
-        if event not in [e.label for e in self.E]:
+        
+        try:
+            
+            idx = [e.label for e in self.E].index(event)
+            transition = self.E[idx]
+            
+        except ValueError:
+            
             print("Error: event not in E")
             return
-
-        if end_state not in [x.label for x in self.X]:
+        
+        try:
+            
+            idx = [x.label for x in self.X].index(end_state)
+            e_state = self.X[idx]
+            
+        except ValueError:
+            
             print("Error: end state not in X")
             return
-        
-        temp_df = pd.DataFrame([[initial_state, event, end_state]], columns=["start", "transition", "end"])
-        
+
+        temp_df = pd.DataFrame([[i_state, transition, e_state]], columns=["start", "transition", "end"])
+
         self.delta = pd.concat([self.delta, temp_df], axis=0, ignore_index=True)

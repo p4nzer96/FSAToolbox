@@ -6,7 +6,11 @@ class State():
         self.isFinal = final
 
     # TODO: Setter da riscrivere
-
+    
+    def __repr__(self):
+        
+        return self.label
+    
     def getLabel(self):
 
         if not self.label:

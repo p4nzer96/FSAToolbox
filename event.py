@@ -8,6 +8,10 @@ class Event:
         self.isFault = isFault
 
     # TODO: Setter da riscrivere
+    
+    def __repr__(self):
+        
+        return self.label
 
     def getLabel(self):
 
