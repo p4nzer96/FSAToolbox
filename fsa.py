@@ -172,13 +172,16 @@ class FSA:
         filt_delta = self.delta
 
         if start:
-            filt_delta = filt_delta.loc[(filt_delta["start"] == start)]
+            condition = filt_delta["start"].apply(lambda x: x.label) == start
+            filt_delta = filt_delta.loc[(condition)]
 
         if transition:
-            filt_delta = filt_delta.loc[(filt_delta["transition"] == transition)]
+            condition = filt_delta["transition"].apply(lambda x: x.label) == transition
+            filt_delta = filt_delta.loc[(condition)]
 
         if end:
-            filt_delta = filt_delta.loc[(filt_delta["end"] == end)]
+            condition = filt_delta["end"].apply(lambda x: x.label) == end
+            filt_delta = filt_delta.loc[(condition())]
 
         return filt_delta
 
