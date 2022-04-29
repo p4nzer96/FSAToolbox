@@ -52,3 +52,6 @@ class Event:
     '''def setFault(self, fault):
 
         self.isFault = fault'''
+        
+    def __eq__(self, other):
+        return self.label == other.label

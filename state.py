@@ -57,3 +57,6 @@ class State():
         self.isInitial = initial
 
     '''
+
+    def __eq__(self, other):
+        return self.label == other.label
