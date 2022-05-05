@@ -23,7 +23,7 @@ class FSA:
 
     """
 
-    def __init__(self, X=None, E=None, delta=None, x0=None, Xm=None) -> None:
+    def __init__(self, X=[], E=[], delta=None, x0=[], Xm=[]) -> None:
 
         self.X = X  # States
         self.E = E  # Alphabet
@@ -108,9 +108,9 @@ class FSA:
 
             if start_state not in [s.label for s in X]:  # Check if start state is in X
                 raise ValueError("Invalid start state")
-                
+
             else:
-                
+
                 idx = [x.label for x in X].index(start_state)
                 i_state = X[idx]
 
@@ -118,9 +118,9 @@ class FSA:
 
             if transition not in [e.label for e in E]:  # Check if transition is in E
                 raise ValueError("Invalid event")
-                
+
             else:
-                
+
                 idx = [x.label for x in E].index(transition)
                 trans = E[idx]
 
@@ -128,12 +128,11 @@ class FSA:
 
             if end_state not in [s.label for s in X]:  # Check if end state is in X
                 raise ValueError("Invalid end state")
-                
+
             else:
-                
+
                 idx = [x.label for x in X].index(end_state)
                 f_state = X[idx]
-
 
             data.append([i_state, trans, f_state])
 
@@ -145,6 +144,9 @@ class FSA:
 
         """
         Prints the list of states of which the automaton is composed
+
+        :return: None
+        :rtype: None
         """
 
         states = [x.label for x in self.X]
@@ -154,6 +156,9 @@ class FSA:
 
         """
         Prints the list of events (alphabet) of which the automaton is composed
+
+        :return: None
+        :rtype: None
         """
 
         events = [x.label for x in self.E]
@@ -163,6 +168,9 @@ class FSA:
 
         """
         Prints the delta relation / function of the automaton
+
+        :return: None
+        :rtype: None
         """
 
         print(self.delta)
@@ -183,15 +191,28 @@ class FSA:
             condition = filt_delta["end"].apply(lambda x: x.label) == end
             filt_delta = filt_delta.loc[(condition)]
 
-
         return filt_delta
 
     def print_x0(self):
+
+        """
+        Prints the list of initial states
+
+        :return: None
+        :rtype: None
+        """
 
         in_states = [x.label for x in self.x0]
         print(in_states)
 
     def print_Xm(self):
+
+        """
+        Prints the list of final states
+
+        :return: None
+        :rtype: None
+        """
 
         fin_states = [x.label for x in self.Xm]
         print(fin_states)
@@ -269,34 +290,49 @@ class FSA:
             raise ValueError
 
     def add_transition(self, initial_state, event, end_state):
-        
+
+        # Initial State
+
         try:
-            
+
+            if isinstance(initial_state, State):
+                initial_state = initial_state.label
+
             idx = [x.label for x in self.X].index(initial_state)
             i_state = self.X[idx]
-            
-        except ValueError:
-            
+
+        except (ValueError, TypeError):
+
             print("Error: initial state not in X")
             return
-        
+
+        # Transition
+
         try:
-            
+
+            if isinstance(event, Event):
+                event = event.label
+
             idx = [e.label for e in self.E].index(event)
             transition = self.E[idx]
-            
-        except ValueError:
-            
+
+        except (ValueError, TypeError):
+
             print("Error: event not in E")
             return
-        
+
+        # Final State
+
         try:
-            
+
+            if isinstance(end_state, State):
+                end_state = end_state.label
+
             idx = [x.label for x in self.X].index(end_state)
             e_state = self.X[idx]
-            
-        except ValueError:
-            
+
+        except (ValueError, TypeError):
+
             print("Error: end state not in X")
             return
 
