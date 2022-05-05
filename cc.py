@@ -2,7 +2,7 @@
 from fsa import FSA
 
 def cc(G0, G1, stepBystep=False):
-    
+
     CC=FSA()
     CC.E=[]
     for x in (G0.E+G1.E):
@@ -66,10 +66,10 @@ def cc(G0, G1, stepBystep=False):
     #the algorithm stores the new states as a list, here it will convert the list to a string that will became the new state name (simple concatenation of the two names)
     CC.X=[] #?
     for st in X:
-        CC.X.append(st[0].label+st[1].label) #todo transfrom in state and use add_state
+        CC.add_state(st[0].label+st[1].label)
 
-    #for el in delta:
-    #    CC.add_transition(el[0], el[1], el[2])
+    for el in delta:
+        CC.add_transition(el[0][0].label+el[0][1].label, el[1].label, el[2][0].label+el[2][1].label)
 
     #final states
     CC.Xm=[]
