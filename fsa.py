@@ -103,7 +103,7 @@ class FSA:
                 controllable = eval(jsonObject['E'][key]['isControllable'])  # Is controllable?
             else:
                 controllable = None
-            if 'isFault' in jsonObject['E'][key]:
+            if 'isFaulty' in jsonObject['E'][key]:
                 fault = eval(jsonObject['E'][key]['isFault'])  # Is faulty?
             else:
                 fault = None
@@ -152,20 +152,22 @@ class FSA:
 
         return cls(X, E, delta, x0, Xm)
 
-    #TODO: Add UI Mode
-
     def showfsa(self, ui_mode=False):
         """
+
         Args:
             mode (bool): If True, plot the FSA in UI
 
         Returns: str or None
 
         """
+        column_labels = ["X"] + [x.label for x in self.E]
 
-        data = np.empty((len(self.X), len(self.E) + 2), dtype='U100')
-        column_labels = ["X", "flag"] + [x.label for x in self.E]
+        data = np.empty((len(self.X), len(self.E) + 1), dtype='U100')
         data[:, 0] = [x.label for x in self.X]
+
+        event_table = np.empty((1, len(self.E)), dtype='U100')
+        state_table = np.empty((1, len(self.X)), dtype='U100')
 
         for i, state in enumerate(self.X):
             for j, event in enumerate(self.E):
@@ -175,7 +177,7 @@ class FSA:
                 string = ""
 
                 if not end_labels:
-                    data[i, j + 2] = "-"
+                    data[i, j + 1] = "-"
                     continue
 
                 for end in end_labels:
@@ -188,34 +190,71 @@ class FSA:
 
                         string += ", " + end
 
-                data[i, j + 2] = string
+                data[:, i + 1] = string
+
+        # Populating the column representing the properties of the states
 
         for i, state in enumerate(self.X):
 
             if state.isFinal and state.isInitial:
 
-                data[i, 1] = "I, F"
+                state_table[:, i] = "I, F"
 
             elif state.isFinal and not state.isInitial:
 
-                data[i, 1] = "F"
+                state_table[:, i] = "F"
 
             elif not state.isFinal and state.isInitial:
 
-                data[i, 1] = "I"
+                state_table[:, i] = "I"
 
             else:
 
-                data[i, 1] = "-"
+                state_table[:, i] = "-"
 
-        table = tabulate(data, headers=column_labels, stralign="center")
+        # Populating the table representing the properties of the events
 
-        return table
+        for i, event in enumerate(self.E):
+
+            string = ""
+
+            if event.isObservable:
+                string += "0"
+
+            if event.isControllable:
+
+                if string:
+                    string += ", "
+
+                string += "C"
+
+            if event.isFault:
+
+                if string:
+                    string += ", "
+
+                string += "F"
+
+            if not string:
+
+                event_table[:, i] = "-"
+
+            else:
+
+                event_table[:, i] = string
+
+        table = tabulate(data, headers=column_labels, stralign="center", tablefmt='grid')
+        event_properties = tabulate(event_table, headers=self.E, stralign="center", tablefmt='grid')
+        state_properties = tabulate(state_table, headers=self.X, stralign="center", tablefmt='grid')
+
+        text = "\nTable:\n" + table + "\n\n" + "Event Properties:\n" + event_properties + "\nLegend: O: Observable, C: Controllable, " \
+               "F: Fault\n\n" + "State Properties:\n" + state_properties + "\nLegend: I: Initial, F: Final" + "\n"
+
+        return text
 
     def __repr__(self):
 
         rep = self.name + "\n" + self.showfsa()
-
         return rep
 
     def filter_delta(self, start=None, transition=None, end=None):
@@ -253,26 +292,6 @@ class FSA:
             filt_delta = filt_delta.loc[condition]
 
         return filt_delta
-
-    # TODO: Remove all the print functions  
-
-    def print_x0(self):
-
-        """
-        Prints the list of initial states
-        """
-
-        in_states = [x.label for x in self.x0]
-        print(in_states)
-
-    def print_Xm(self):
-
-        """
-        Prints the list of final states
-        """
-
-        fin_states = [x.label for x in self.Xm]
-        print(fin_states)
 
     def add_state(self, state, isInitial=None, isFinal=None):
 
