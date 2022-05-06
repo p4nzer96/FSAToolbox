@@ -1,4 +1,4 @@
-class State():
+class State:
 
     def __init__(self, label=None, initial=False, final=False) -> None:
         self.label = label
@@ -6,11 +6,11 @@ class State():
         self.isFinal = final
 
     # TODO: Setter da riscrivere
-    
+
     def __repr__(self):
-        
+
         return self.label
-    
+
     def getLabel(self):
 
         if not self.label:
@@ -59,4 +59,5 @@ class State():
     '''
 
     def __eq__(self, other):
+
         return self.label == other.label

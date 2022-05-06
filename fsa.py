@@ -1,5 +1,9 @@
 import json
+
+import numpy as np
 import pandas as pd
+from tabulate import tabulate
+
 from event import Event
 from state import State
 
@@ -12,7 +16,7 @@ class FSA:
     ----------
     X : list of State objects
         the set of states of which the automaton is composed
-    E list of Event objects
+    E : list of Event objects
         the alphabet of the automaton
     delta : DataFrame
         the transition relation / function of the automaton
@@ -23,24 +27,29 @@ class FSA:
 
     """
 
-    def __init__(self, X=[], E=[], delta=None, x0=[], Xm=[]) -> None:
+    def __init__(self, X=None, E=None, delta=None, x0=None, Xm=None, **kwargs) -> None:
 
-        self.X = X  # States
-        self.E = E  # Alphabet
+        self.X = X if X else []  # States
+        self.E = E if E else []  # Alphabet
         self.delta = delta  # Delta relation
-        self.x0 = x0  # Initial states
-        self.Xm = Xm  # Final states
+        self.x0 = x0 if x0 else []  # Initial states
+        self.Xm = Xm if Xm else []  # Final states
+
+        # Optional: Name of the FSA
+        self.name = kwargs.get('name') if kwargs.get('name') else object.__repr__(self)
 
     @classmethod
     def fromfile(cls, filename):
+        """
+        Generates a FSA from file
 
-        """Generates a FSA from file
+        Args:
+            filename (str): the path of the .json file containing the definition of the FSA
 
-        Parameters
-        ----------
-        filename: str
-            the path of the .json file containing the definition of the FSA
 
+        Returns:
+            FSA: An instance of FSA
+            
         """
 
         # Load from file
@@ -69,6 +78,7 @@ class FSA:
             else:
                 isFinal = None
 
+            # Create the state
             state = State(st_label, bool(isInit), bool(isFinal))
 
             if isInit:  # If the state is initial, add it to initial states
@@ -76,6 +86,8 @@ class FSA:
 
             if isFinal:  # If the state is final, add it to final states
                 Xm.append(state)
+
+            # Add the state to X
             X.append(state)
 
         # Reading events and properties
@@ -140,66 +152,114 @@ class FSA:
 
         return cls(X, E, delta, x0, Xm)
 
-    def print_X(self):
+    #TODO: Add UI Mode
+
+    def showfsa(self, ui_mode=False):
+        """
+        Args:
+            mode (bool): If True, plot the FSA in UI
+
+        Returns: str or None
 
         """
-        Prints the list of states of which the automaton is composed
 
-        :return: None
-        :rtype: None
-        """
+        data = np.empty((len(self.X), len(self.E) + 2), dtype='U100')
+        column_labels = ["X", "flag"] + [x.label for x in self.E]
+        data[:, 0] = [x.label for x in self.X]
 
-        states = [x.label for x in self.X]
-        print(states)
+        for i, state in enumerate(self.X):
+            for j, event in enumerate(self.E):
 
-    def print_E(self):
+                filtered_events = self.filter_delta(state, event)['end'].values
+                end_labels = [x.label for x in filtered_events]
+                string = ""
 
-        """
-        Prints the list of events (alphabet) of which the automaton is composed
+                if not end_labels:
+                    data[i, j + 2] = "-"
+                    continue
 
-        :return: None
-        :rtype: None
-        """
+                for end in end_labels:
 
-        events = [x.label for x in self.E]
-        print(events)
+                    if not string:
 
-    def print_delta(self):
+                        string += end
 
-        """
-        Prints the delta relation / function of the automaton
+                    else:
 
-        :return: None
-        :rtype: None
-        """
+                        string += ", " + end
 
-        print(self.delta)
+                data[i, j + 2] = string
+
+        for i, state in enumerate(self.X):
+
+            if state.isFinal and state.isInitial:
+
+                data[i, 1] = "I, F"
+
+            elif state.isFinal and not state.isInitial:
+
+                data[i, 1] = "F"
+
+            elif not state.isFinal and state.isInitial:
+
+                data[i, 1] = "I"
+
+            else:
+
+                data[i, 1] = "-"
+
+        table = tabulate(data, headers=column_labels, stralign="center")
+
+        return table
+
+    def __repr__(self):
+
+        rep = self.name + "\n" + self.showfsa()
+
+        return rep
 
     def filter_delta(self, start=None, transition=None, end=None):
+        """
+        Filters the delta by starting state, transition or ending state
+
+        Args:
+            start (State, optional): starting state. Defaults to None.
+            transition (Event, optional): transition event. Defaults to None.
+            end (Event, optional): ending state. Defaults to None.
+
+        Returns:
+            DataFrame: Filtered delta according to filter passed as argument of the function
+        """
 
         filt_delta = self.delta
 
-        if start:
+        if start:  # Starting state
+
+            start = start.label if isinstance(start, State) else start  # If start is a State object, parse it
             condition = filt_delta["start"].apply(lambda x: x.label) == start
-            filt_delta = filt_delta.loc[(condition)]
+            filt_delta = filt_delta.loc[condition]
 
-        if transition:
+        if transition:  # Transition event
+
+            transition = transition.label if isinstance(transition, Event) else transition  # If transition is an Event
+            # object, parse it
             condition = filt_delta["transition"].apply(lambda x: x.label) == transition
-            filt_delta = filt_delta.loc[(condition)]
+            filt_delta = filt_delta.loc[condition]
 
-        if end:
+        if end:  # Ending state
+
+            end = end.label if isinstance(end, State) else end  # If event is a State object, parse it
             condition = filt_delta["end"].apply(lambda x: x.label) == end
-            filt_delta = filt_delta.loc[(condition)]
+            filt_delta = filt_delta.loc[condition]
 
         return filt_delta
+
+    # TODO: Remove all the print functions  
 
     def print_x0(self):
 
         """
         Prints the list of initial states
-
-        :return: None
-        :rtype: None
         """
 
         in_states = [x.label for x in self.x0]
@@ -209,9 +269,6 @@ class FSA:
 
         """
         Prints the list of final states
-
-        :return: None
-        :rtype: None
         """
 
         fin_states = [x.label for x in self.Xm]
@@ -219,9 +276,9 @@ class FSA:
 
     def add_state(self, state, isInitial=None, isFinal=None):
 
-        if isinstance(state, State):
+        if isinstance(state, State):  # if state is an instance of State
 
-            if state.label not in [x.label for x in self.X]:
+            if state not in self.X:
 
                 self.X.append(state)
 
@@ -236,12 +293,11 @@ class FSA:
                 print("Error: We cannot have two states with the same label")
                 return
 
-        elif isinstance(state, str):
+        elif isinstance(state, str):  # if state is a string
 
             if state not in [x.label for x in self.X]:
 
                 new_state = State(state, isInitial, isFinal)
-
                 self.X.append(new_state)
 
                 if new_state.isFinal:
@@ -260,11 +316,17 @@ class FSA:
             raise ValueError
 
     def add_event(self, event, isObservable=None, isControllable=None, isFault=None):
+        """
+        Args:
+            event (Event): Event to be added to the FSA
+            isObservable (bool, optional): Specifies if the event is observable. Defaults to None
+            isControllable (bool, optional): Specifies if the event is controllable. Defaults to None
+            isFault (bool, optional): Specifies if the event is aa fault event. Defaults to None
+        """
 
-        if isinstance(event, Event):
+        if isinstance(event, Event):  # if event is an instance of Event
 
-            if event not in [e.label for e in self.E]:
-
+            if event not in self.E:
                 self.E.append(event)
 
             else:
@@ -272,12 +334,11 @@ class FSA:
                 print("Error: We cannot have two states with the same label")
                 return
 
-        elif isinstance(event, str):
+        elif isinstance(event, str):  # if event is a string
 
             if event not in [x.label for x in self.E]:
 
                 new_event = Event(event, isObservable, isControllable, isFault)
-
                 self.E.append(new_event)
 
             else:
@@ -337,5 +398,4 @@ class FSA:
             return
 
         temp_df = pd.DataFrame([[i_state, transition, e_state]], columns=["start", "transition", "end"])
-
         self.delta = pd.concat([self.delta, temp_df], axis=0, ignore_index=True)
