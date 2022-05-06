@@ -103,7 +103,7 @@ class FSA:
                 controllable = eval(jsonObject['E'][key]['isControllable'])  # Is controllable?
             else:
                 controllable = None
-            if 'isFaulty' in jsonObject['E'][key]:
+            if 'isFault' in jsonObject['E'][key]:
                 fault = eval(jsonObject['E'][key]['isFault'])  # Is faulty?
             else:
                 fault = None
