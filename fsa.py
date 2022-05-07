@@ -190,7 +190,7 @@ class FSA:
 
                         string += ", " + end
 
-                data[:, i + 1] = string
+                data[:, j + 1] = string
 
         # Populating the column representing the properties of the states
 
