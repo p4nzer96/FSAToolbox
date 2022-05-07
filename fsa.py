@@ -152,7 +152,7 @@ class FSA:
 
         return cls(X, E, delta, x0, Xm)
 
-    def showfsa(self, ui_mode=False):
+    def showfsa(self, ui_mode=False, **kwargs):
         """
 
         Args:
@@ -161,6 +161,9 @@ class FSA:
         Returns: str or None
 
         """
+
+        # if not self.X or not self.E:
+
         column_labels = ["X"] + [x.label for x in self.E]
 
         data = np.empty((len(self.X), len(self.E) + 1), dtype='U100')
@@ -190,7 +193,7 @@ class FSA:
 
                         string += ", " + end
 
-                data[:, j + 1] = string
+                data[i, j + 1] = string
 
         # Populating the column representing the properties of the states
 
@@ -248,7 +251,7 @@ class FSA:
         state_properties = tabulate(state_table, headers=self.X, stralign="center", tablefmt='grid')
 
         text = "\nTable:\n" + table + "\n\n" + "Event Properties:\n" + event_properties + "\nLegend: O: Observable, C: Controllable, " \
-               "F: Fault\n\n" + "State Properties:\n" + state_properties + "\nLegend: I: Initial, F: Final" + "\n"
+                                                                                          "F: Fault\n\n" + "State Properties:\n" + state_properties + "\nLegend: I: Initial, F: Final" + "\n"
 
         return text
 
@@ -350,7 +353,7 @@ class FSA:
 
             else:
 
-                print("Error: We cannot have two states with the same label")
+                print("Error: We cannot have two events with the same label")
                 return
 
         elif isinstance(event, str):  # if event is a string
@@ -362,7 +365,7 @@ class FSA:
 
             else:
 
-                print("Error: We cannot have two states with the same label")
+                print("Error: We cannot have two events with the same label")
                 return
 
         else:
