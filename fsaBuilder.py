@@ -20,6 +20,8 @@ def fsabuilder():
 
     E=input("Insert the events, separated by a space: ").split(' ')
 
+    #TODO add option to set (if wanted) the proprieties of the events (faulty, observable, ecc..)
+
     for e in E:
         G.add_event(e)
 

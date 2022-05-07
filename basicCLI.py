@@ -1,6 +1,7 @@
 import os.path
 
 from fsa import FSA
+from fsaBuilder import fsabuilder 
 from cc import cc #concurrent composition
 from fm import fm
 from nfa2dfa import nfa2dfa #fault monitor
@@ -27,6 +28,21 @@ def loadfsa(args):
             print("Not enough arguments provided, type \"load help\" to help")
     else:
         print("Not enough arguments provided, type \"load help\" to help")
+
+def buildfsa(args):
+    if(len(args)>1):
+        if(args[1]=='help'):
+                print("This functions loads a fsa from a file")
+                print("Usage:\n     build name")
+        else:
+            if(args[1] in fsa):
+                print("Name already in use")
+                return
+            else:
+                fsa[args[1]]=fsabuilder()
+
+    else:
+        print("Not enough arguments provided, type \"buildfsa help\" to help")
 
 def showfsa(args):
     if(len(args)>1):
@@ -96,6 +112,7 @@ def observer(args):
 
 commands={
     'load': loadfsa,
+    'build': buildfsa,
     'show': showfsa,
     'list': listfsa,
     'cc': concComp,
