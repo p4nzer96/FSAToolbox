@@ -3,7 +3,7 @@ from fsa import FSA
 
 #edge cases not manged: multiple initial states, unobservable loop
 
-def nfa2dfa(G, iterationsLimit=100, stepBystep=False, newStateNameType="concatenation"):
+def nfa2dfa(G, iterationsLimit=100, stepBystep=False, newStateNameType="conc"):
     DFA=FSA()
     
     D=pd.DataFrame({'x':G.X})
@@ -53,7 +53,7 @@ def nfa2dfa(G, iterationsLimit=100, stepBystep=False, newStateNameType="concaten
     if(stepBystep): print(D)
     
     X=[]
-    Xnew=[D['Deps'][0]] #initial state
+    Xnew=[D['Deps'][0]] #initial state TODO check for multiple initial states
     AB=pd.DataFrame()
 
     while(len(Xnew)>0):
@@ -99,7 +99,7 @@ def nfa2dfa(G, iterationsLimit=100, stepBystep=False, newStateNameType="concaten
         final=0
         initial=0
         name=""
-        if(newStateNameType=="concatenation"):
+        if(newStateNameType=="conc"):
             for el in x:
                 name=name+el.label
                 if el.isFinal: final=1
@@ -110,12 +110,12 @@ def nfa2dfa(G, iterationsLimit=100, stepBystep=False, newStateNameType="concaten
     for i in range(AB.shape[0]):
         
         initial_st=""
-        if(newStateNameType=="concatenation"):
+        if(newStateNameType=="conc"):
             for el in (AB['x'].tolist())[i]:
                 initial_st=initial_st+el.label
         for ev in Eo:
             end_st=""
-            if(newStateNameType=="concatenation"):
+            if(newStateNameType=="conc"):
                 for el in (AB['beta:'+ev.label].tolist())[i]:
                     end_st=end_st+el.label
             if(not end_st==""):
