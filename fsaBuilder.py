@@ -1,4 +1,4 @@
-import fsa
+from fsa import FSA
 
 def unique(list1):
     # initialize a null list
@@ -12,15 +12,25 @@ def unique(list1):
     return unique_list
 
 def fsabuilder():
-    X=unique(input("Insert the states, separated by a space: ").split(' ')) #or comma?
+    G=FSA()
+    X=input("Insert the states, separated by a space: ").split(' ') #or comma?
 
-    E=unique(input("Insert the events, separated by a space: ").split(' '))
+    for x in X:
+        G.add_state(x)
+
+    E=input("Insert the events, separated by a space: ").split(' ')
+
+    for e in E:
+        G.add_event(e)
+
     delta=[]
     while(1):
         inp=input("Insert a transition (in the format x0 a x1) [!q to exit]: ").split(' ')
         if(inp[0]=='!q'):
             break
         if(len(inp)==3):
+            G.add_transition(inp[0],inp[1],inp[2])
+            '''
             if(inp[0] not in X):
                 print("The state " + inp[0] + " is not in X")
                 continue
@@ -31,10 +41,13 @@ def fsabuilder():
                 print("The state " + inp[2] + " is not in X")
                 continue
             delta.append(inp)
+            '''
         else:
-            print("incorrect, try again")
+            print("not enough arguments provided, try again")
 
+
+    #TODO insert objects instead of strings
     x0=input("Insert the initial states, separated by a space: ")
     Xm=input("Insert the final states, separated by a space: ")
 
-    return fsa(X, E, delta, x0, Xm)
+    return G
