@@ -1,4 +1,4 @@
-class State:
+class state:
 
     def __init__(self, label=None, initial=False, final=False) -> None:
         self.label = label

@@ -1,4 +1,4 @@
-class Event:
+class event:
 
     def __init__(self, label=None, isObservable=True, isControllable=True, isFault=False) -> None:
 

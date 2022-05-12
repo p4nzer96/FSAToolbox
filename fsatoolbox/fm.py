@@ -1,16 +1,15 @@
-from fsa import FSA
-from state import State
+from fsatoolbox import fsa, state
 
 def fm(G):
-    FM=FSA()
+    FM=fsa()
 
     #the alphabet is the same
     FM.E=G.E
 
     #states generation
-    N=State(label="N", initial=True, final=False)
+    N=state(label="N", initial=True, final=False)
     FM.add_state(N)
-    F=State(label="F", initial=False, final=False)
+    F=state(label="F", initial=False, final=False)
     FM.add_state(F)
     
     for el in FM.E:

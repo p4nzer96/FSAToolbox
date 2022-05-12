@@ -1,13 +1,32 @@
 
-from fsa import FSA
+from fsatoolbox import fsa
 
-def cc(G0, G1, stepBystep=False):
+def cc(G0, G1, stepBystep=False, newStateNameType="conc"):
+    """
+    Function to compute the concurrent composition between two FSAs
 
-    CC=FSA()
+    Parameters
+    ----------
+    G0 : input NFA
+
+    G1 : input NFA
+
+    stepByStep : Default=False, if true shows the steps followed by the algorithm
+
+    newStateNameType : Default="conc", available values: "conc"
+        this describes how the names of two or more states are used to build the new state name
+        
+    """
+
+    CC=fsa()
+
+    #The alphabet of the output NFA is the union of the two alphabets
     CC.E=[]
     for x in (G0.E+G1.E):
         if x not in CC.E:
             CC.E.append(x)
+
+    
     X=[]
     Xnew=[[G0.x0[0], G1.x0[0]]] #TODO multiple starting states?
     delta=[]

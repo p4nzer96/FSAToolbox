@@ -1,0 +1,63 @@
+{
+    "X": {
+        "x0": {
+            "isInit": "1"
+        },
+        "x1": {
+            "isInit": "0"
+        },
+        "x2": {
+            "isInit": "0"
+        }
+    },
+    "E": {
+        "a": {
+            "isFault": "0",
+            "isObservable": "1"
+        },
+        "b": {
+            "isFault": "0",
+            "isObservable": "1"
+        },
+        "c": {
+            "isFault": "0",
+            "isObservable": "1"
+        },
+        "eps_1": {
+            "isFault": "0",
+            "isObservable": "0"
+        },
+        "eps_f": {
+            "isFault": "1",
+            "isObservable": "0"
+        }
+    },
+    "delta": {
+        "0": {
+            "start": "x0",
+            "name": "a",
+            "ends": "x2"
+        },
+        "1": {
+            "start": "x0",
+            "name": "b",
+            "ends": "x1"
+        },
+        "2": {
+            "start": "x1",
+            "name": "eps_1",
+            "ends": "x0"
+        },
+        "3": {
+            "start": "x2",
+            "name": "eps_f",
+            "ends": "x0"
+        },
+        "4": {
+            "start": "x2",
+            "name": "c",
+            "ends": "x1"
+        }
+    }
+    
+}

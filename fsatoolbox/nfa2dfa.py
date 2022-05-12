@@ -1,11 +1,27 @@
 import pandas as pd
-from fsa import FSA
-
-#edge cases not manged: multiple initial states, unobservable loop
+from fsatoolbox import fsa
 
 def nfa2dfa(G, iterationsLimit=100, stepBystep=False, newStateNameType="conc"):
-    DFA=FSA()
+    """
+    Function to compute the equivalent DFA of a NFA
+
+    Parameters
+    ----------
+    G : input NFA
+
+    iterationsLimit : Default=100, this avoids a infinite loop when there are unobservable loops
+
+    stepByStep : Default=False, if true shows the steps followed by the algorithm
+
+    newStateNameType : Default="conc", available values: "conc"
+        this describes how the names of two or more states are used to build the new state name
+        
+    """
+    DFA=fsa()
     
+    #This dataframe contains D_eps and D_e for every state of the NFA
+    #D_eps is the set of reachable states with zero or more unobservable transitions
+    #D_e for every event e is the set of states reachable with a single event e
     D=pd.DataFrame({'x':G.X})
 
     Euo=[] #unobservable events
@@ -16,14 +32,14 @@ def nfa2dfa(G, iterationsLimit=100, stepBystep=False, newStateNameType="conc"):
         else:
             Euo.append(e)
     
+    #The alphabet of the output DFA is the set of observable events of the NFA
     DFA.E=Eo
 
     #build Deps
     Deps=[]
-    #this breaks if there is a unobservable loop
     for inx, currentst in enumerate(G.X):
         if(inx>iterationsLimit):
-            raise Exception("Iterations limit reached, there is a unobservable loop in the automaton?")
+            raise Exception("Iterations limit reached, there is a unobservable loop in the automaton?") #TODO check
         t=[]
         tnew=[currentst]
         while(len(tnew)>0):
@@ -35,7 +51,6 @@ def nfa2dfa(G, iterationsLimit=100, stepBystep=False, newStateNameType="conc"):
             if(st not in t):
                 t.append(st)
         Deps.append(t)
-    
     D['Deps']=Deps
 
     #Build De for every event e
@@ -52,6 +67,7 @@ def nfa2dfa(G, iterationsLimit=100, stepBystep=False, newStateNameType="conc"):
 
     if(stepBystep): print(D)
     
+    #build the "alpha-beta" table
     X=[]
     Xnew=[D['Deps'][0]] #initial state TODO check for multiple initial states
     AB=pd.DataFrame()
@@ -95,6 +111,8 @@ def nfa2dfa(G, iterationsLimit=100, stepBystep=False, newStateNameType="conc"):
 
     if(stepBystep): print(AB)
 
+    #Add the found states to the DFA
+    #The states are a list of states, this converts them to a single state
     for x in X:
         final=0
         initial=0
@@ -106,9 +124,8 @@ def nfa2dfa(G, iterationsLimit=100, stepBystep=False, newStateNameType="conc"):
                 if el.isInitial: initial=1
         DFA.add_state(name, isFinal=final, isInitial=initial)
     
-    
+    #Add transitions to the DFA
     for i in range(AB.shape[0]):
-        
         initial_st=""
         if(newStateNameType=="conc"):
             for el in (AB['x'].tolist())[i]:

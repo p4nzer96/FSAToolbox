@@ -1,0 +1,47 @@
+{
+    "X": {
+        "y0": {
+            "isInit": "1",
+            "isFinal": "1"
+        },
+        "y1": {
+            "isInit": "0",
+            "isFinal": "0"
+        },
+        "y2": {
+            "isInit": "0",
+            "isFinal": "0"
+        }
+    },
+    "E": {
+        "b": {
+            "isObs": "1"
+        },
+        "c": {
+            "isObs": "1"
+        }
+    },
+    "delta": {
+        "0": {
+            "start": "y0",
+            "name": "b",
+            "ends": "y1"
+        },
+        "1": {
+            "start": "y1",
+            "name": "b",
+            "ends": "y2"
+        },
+        "2": {
+            "start": "y1",
+            "name": "c",
+            "ends": "y0"
+        },
+        "3": {
+            "start": "y2",
+            "name": "c",
+            "ends": "y1"
+        }
+    }
+    
+}
