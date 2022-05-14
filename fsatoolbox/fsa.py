@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from tabulate import tabulate
 
-from fsatoolbox import event,state
+from fsatoolbox import event, state
 
 
 class fsa:
@@ -152,7 +152,9 @@ class fsa:
         return cls(X, E, delta, x0, Xm)
 
     def showfsa(self, ui_mode=False, **kwargs):
+
         """
+        Shows a graphical representation of the FSA
 
         Args:
             mode (bool): If True, plot the FSA in UI
@@ -160,8 +162,6 @@ class fsa:
         Returns: str or None
 
         """
-
-        # if not self.X or not self.E:
 
         column_labels = ["X"] + [x.label for x in self.E]
 
@@ -249,8 +249,14 @@ class fsa:
         event_properties = tabulate(event_table, headers=self.E, stralign="center", tablefmt='grid')
         state_properties = tabulate(state_table, headers=self.X, stralign="center", tablefmt='grid')
 
-        text = "\nTable:\n" + table + "\n\n" + "Event Properties:\n" + event_properties + "\nLegend: O: Observable, C: Controllable, " \
-                                                                                          "F: Fault\n\n" + "State Properties:\n" + state_properties + "\nLegend: I: Initial, F: Final" + "\n"
+        text = "\nTable:\n" +\
+               table +\
+               "\n\nEvent Properties:\n" +\
+               event_properties +\
+               "\nLegend: O: Observable, C: Controllable, F: Fault\n\n" +\
+               "State Properties:\n" +\
+               state_properties +\
+               "\nLegend: I: Initial, F: Final\n "
 
         return text
 
@@ -295,30 +301,39 @@ class fsa:
 
         return filt_delta
 
-    def add_state(self, State, isInitial=None, isFinal=None):
+    def add_state(self, new_state, isInitial=None, isFinal=None):
 
-        if isinstance(State, state):  # if state is an instance of state
+        """
+        Adds a state to the FSA
 
-            if State not in self.X:
+        Args:
+            new_state (state): The new state to be added
+            isInitial (bool, optional): determines if the state is initial
+            isFinal (bool, optional): determines if the state is final
+        """
 
-                self.X.append(State)
+        if isinstance(new_state, state):  # if state is an instance of state
 
-                if State.isFinal:
-                    self.Xm.append(State)
+            if new_state not in self.X:
 
-                if State.isInitial:
-                    self.x0.append(State)
+                self.X.append(new_state)
+
+                if new_state.isFinal:
+                    self.Xm.append(new_state)
+
+                if new_state.isInitial:
+                    self.x0.append(new_state)
 
             else:
 
                 print("Error: We cannot have two states with the same label")
                 return
 
-        elif isinstance(State, str):  # if state is a string
+        elif isinstance(new_state, str):  # if state is a string
 
-            if State not in [x.label for x in self.X]:
+            if new_state not in [x.label for x in self.X]:
 
-                new_state = state(State, isInitial, isFinal)
+                new_state = state(new_state, isInitial, isFinal)
                 self.X.append(new_state)
 
                 if new_state.isFinal:
@@ -336,30 +351,32 @@ class fsa:
 
             raise ValueError
 
-    def add_event(self, Event, isObservable=None, isControllable=None, isFault=None):
+    def add_event(self, new_event, isObservable=None, isControllable=None, isFault=None):
         """
+        Adds an event to the FSA
+
         Args:
-            event (event): Event to be added to the FSA
+            new_event (event): Event to be added to the FSA
             isObservable (bool, optional): Specifies if the event is observable. Defaults to None
             isControllable (bool, optional): Specifies if the event is controllable. Defaults to None
             isFault (bool, optional): Specifies if the event is aa fault event. Defaults to None
         """
 
-        if isinstance(Event, event):  # if event is an instance of Event
+        if isinstance(new_event, event):  # if event is an instance of Event
 
-            if Event not in self.E:
-                self.E.append(Event)
+            if new_event not in self.E:
+                self.E.append(new_event)
 
             else:
 
                 print("Error: We cannot have two events with the same label")
                 return
 
-        elif isinstance(Event, str):  # if event is a string
+        elif isinstance(new_event, str):  # if event is a string
 
-            if Event not in [x.label for x in self.E]:
+            if new_event not in [x.label for x in self.E]:
 
-                new_event = event(Event, isObservable, isControllable, isFault)
+                new_event = event(new_event, isObservable, isControllable, isFault)
                 self.E.append(new_event)
 
             else:
@@ -371,7 +388,19 @@ class fsa:
 
             raise ValueError
 
-    def add_transition(self, initial_state, Event, end_state):
+    def add_transition(self, initial_state, tr_event, end_state):
+
+        """
+        Adds a transition to the delta relation/function
+
+        Args:
+            initial_state (state, optional): initial state
+            tr_event (event, optional): transition
+            end_state (state, optional): ending state
+
+        Returns: DataFrame that contains the filtered data according to parameters
+
+        """
 
         # Initial State
 
@@ -392,10 +421,10 @@ class fsa:
 
         try:
 
-            if isinstance(Event, event):
-                Event = Event.label
+            if isinstance(tr_event, event):
+                tr_event = tr_event.label
 
-            idx = [e.label for e in self.E].index(Event)
+            idx = [e.label for e in self.E].index(tr_event)
             transition = self.E[idx]
 
         except (ValueError, TypeError):
