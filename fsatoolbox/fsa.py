@@ -38,7 +38,7 @@ class fsa:
         self.name = kwargs.get('name') if kwargs.get('name') else object.__repr__(self)
 
     @classmethod
-    def fromfile(cls, filename):
+    def fromfile(cls, filename, **kwargs):
         """
         Generates a FSA from file
 
@@ -148,6 +148,10 @@ class fsa:
             data.append([i_state, trans, f_state])
 
         delta = pd.DataFrame(data, columns=["start", "transition", "end"])
+
+        if kwargs.get("name"):
+            fsa_name = kwargs.get("name")
+            return cls(X, E, delta, x0, Xm, name=fsa_name)
 
         return cls(X, E, delta, x0, Xm)
 
