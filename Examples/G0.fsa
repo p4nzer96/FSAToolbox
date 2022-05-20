@@ -1,32 +1,32 @@
 {
     "X": {
         "x0": {
-            "isInit": "1",
+            "isInitial": "1",
             "isFinal": "1"
         },
         "x1": {
-            "isInit": "0",
+            "isInitial": "0",
             "isFinal": "0"
         }
     },
     "E": {
         "a": {
-            "isObs": "1"
+            "isObservable": "1"
         },
         "b": {
-            "isObs": "1"
+            "isObservable": "1"
         }
     },
     "delta": {
         "0": {
             "start": "x0",
-            "name": "a",
-            "ends": "x1"
+            "event": "a",
+            "end": "x1"
         },
         "1": {
             "start": "x1",
-            "name": "b",
-            "ends": "x0"
+            "event": "b",
+            "end": "x0"
         }
     }
     

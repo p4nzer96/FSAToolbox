@@ -19,9 +19,9 @@ def loadfsa(args):
                 return
             else:
                 if(os.path.isfile(args[2])):
-                    fsalst[args[1]]=fsa.fromfile(args[2])
+                    fsalst[args[1]]=fsa.from_file(args[2])
                 elif(os.path.isfile(args[2]+'.fsa')):
-                    fsalst[args[1]]=fsa.fromfile(args[2]+'.fsa')
+                    fsalst[args[1]]=fsa.from_file(args[2]+'.fsa')
                 else:
                     print("Error: file does not exists")
                     return

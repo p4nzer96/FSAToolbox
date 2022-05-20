@@ -1,27 +1,27 @@
 {
     "X": {
         "x0": {
-            "isInit": "1",
+            "isInitial": "1",
             "isFinal": "0"
         },
         "x1": {
-            "isInit": "0",
+            "isInitial": "0",
             "isFinal": "0"
         },
         "x2": {
-            "isInit": "0",
+            "isInitial": "0",
             "isFinal": "1"
         },
         "x3": {
-            "isInit": "0",
+            "isInitial": "0",
             "isFinal": "0"
         },
         "x4": {
-            "isInit": "0",
+            "isInitial": "0",
             "isFinal": "0"
         },
         "x5": {
-            "isInit": "0",
+            "isInitial": "0",
             "isFinal": "0"
         }
     },
@@ -39,58 +39,58 @@
     "delta": {
         "0": {
             "start": "x0",
-            "name": "eps",
-            "ends": "x2"
+            "event": "eps",
+            "end": "x2"
         },
         "1": {
             "start": "x1",
-            "name": "a",
-            "ends": "x1"
+            "event": "a",
+            "end": "x1"
         },
         "2": {
             "start": "x1",
-            "name": "b",
-            "ends": "x0"
+            "event": "b",
+            "end": "x0"
         },
         "3": {
             "start": "x1",
-            "name": "b",
-            "ends": "x3"
+            "event": "b",
+            "end": "x3"
         },
         "4": {
             "start": "x2",
-            "name": "eps",
-            "ends": "x3"
+            "event": "eps",
+            "end": "x3"
         },
         "5": {
             "start": "x3",
-            "name": "a",
-            "ends": "x5"
+            "event": "a",
+            "end": "x5"
         },
         "6": {
             "start": "x3",
-            "name": "a",
-            "ends": "x4"
+            "event": "a",
+            "end": "x4"
         },
         "7": {
             "start": "x4",
-            "name": "a",
-            "ends": "x1"
+            "event": "a",
+            "end": "x1"
         },
         "8": {
             "start": "x4",
-            "name": "a",
-            "ends": "x4"
+            "event": "a",
+            "end": "x4"
         },
         "9": {
             "start": "x5",
-            "name": "b",
-            "ends": "x4"
+            "event": "b",
+            "end": "x4"
         },
         "10": {
             "start": "x5",
-            "name": "b",
-            "ends": "x5"
+            "event": "b",
+            "end": "x5"
         }
     }
     

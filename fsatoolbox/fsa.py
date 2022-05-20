@@ -38,7 +38,7 @@ class fsa:
         self.name = kwargs.get('name') if kwargs.get('name') else object.__repr__(self)
 
     @classmethod
-    def fromfile(cls, filename, **kwargs):
+    def from_file(cls, filename, **kwargs):
         """
         Generates a FSA from file
 
@@ -68,8 +68,8 @@ class fsa:
         for key in jsonObject['X']:
             st_label = key  # State name
 
-            if 'isInit' in jsonObject['X'][key]:
-                isInit = eval(jsonObject['X'][key]['isInit'])  # Is the state initial?
+            if 'isInitial' in jsonObject['X'][key]:
+                isInit = eval(jsonObject['X'][key]['isInitial'])  # Is the state initial?
             else:
                 isInit = None
             if 'isFinal' in jsonObject['X'][key]:
@@ -125,7 +125,7 @@ class fsa:
                 idx = [x.label for x in X].index(start_state)
                 i_state = X[idx]
 
-            transition = jsonObject['delta'][key]['name']  # Transition
+            transition = jsonObject['delta'][key]['event']  # Transition
 
             if transition not in [e.label for e in E]:  # Check if transition is in E
                 raise ValueError("Invalid event")
@@ -135,7 +135,7 @@ class fsa:
                 idx = [x.label for x in E].index(transition)
                 trans = E[idx]
 
-            end_state = jsonObject['delta'][key]['ends']
+            end_state = jsonObject['delta'][key]['end']
 
             if end_state not in [s.label for s in X]:  # Check if end state is in X
                 raise ValueError("Invalid end state")
@@ -154,6 +154,58 @@ class fsa:
             return cls(X, E, delta, x0, Xm, name=fsa_name)
 
         return cls(X, E, delta, x0, Xm)
+
+    def to_file(self, filename):
+
+        fsa_dict = {}
+        fsa_dict.fromkeys(["X", "E", "delta"])
+
+        # States
+
+        fsa_dict["X"] = dict.fromkeys([x.label for x in self.X])
+
+        for x in self.X:
+
+            dict_x = {}
+
+            if x.isInitial is not None:
+                dict_x["isInitial"] = "1" if x.isInitial else "0"
+
+            if x.isFinal is not None:
+                dict_x["isFinal"] = "1" if x.isFinal else "0"
+
+            fsa_dict["X"][x.label] = dict_x
+
+        fsa_dict["E"] = dict.fromkeys([e.label for e in self.E])
+
+        # Events
+        for e in self.E:
+
+            dict_e = {}
+
+            if e.isObservable is not None:
+                dict_e["isObservable"] = "1" if e.isObservable else "0"
+
+            if e.isControllable is not None:
+                dict_e["isControllable"] = "1" if e.isControllable else "0"
+
+            if e.isFault is not None:
+                dict_e["isFault"] = "1" if e.isFault else "0"
+
+            fsa_dict["E"][e.label] = dict_e
+
+        # Delta
+        fsa_dict["delta"] = dict.fromkeys(list(self.delta.index + 1))
+
+        for index, row in self.delta.iterrows():
+            fsa_dict["delta"][index + 1] = dict.fromkeys(["start", "event", "end"])
+
+            fsa_dict["delta"][index + 1]["start"] = row[0].label
+            fsa_dict["delta"][index + 1]["event"] = row[1].label
+            fsa_dict["delta"][index + 1]["end"] = row[2].label
+
+        with open(filename, "w") as outfile:
+            json.dump(fsa_dict, outfile, indent=4)
 
     def showfsa(self, ui_mode=False, **kwargs):
 
@@ -253,13 +305,13 @@ class fsa:
         event_properties = tabulate(event_table, headers=self.E, stralign="center", tablefmt='grid')
         state_properties = tabulate(state_table, headers=self.X, stralign="center", tablefmt='grid')
 
-        text = "\nTable:\n" +\
-               table +\
-               "\n\nEvent Properties:\n" +\
-               event_properties +\
-               "\nLegend: O: Observable, C: Controllable, F: Fault\n\n" +\
-               "State Properties:\n" +\
-               state_properties +\
+        text = "\nTable:\n" + \
+               table + \
+               "\n\nEvent Properties:\n" + \
+               event_properties + \
+               "\nLegend: O: Observable, C: Controllable, F: Fault\n\n" + \
+               "State Properties:\n" + \
+               state_properties + \
                "\nLegend: I: Initial, F: Final\n "
 
         return text
