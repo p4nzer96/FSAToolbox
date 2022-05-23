@@ -65,49 +65,45 @@ class fsa:
 
         # Reading states and properties
 
-        for key in jsonObject['X']:
-            st_label = key  # State name
+        state_properties = {"isInitial": None, "isFinal": None, "isForbidden": None}
 
-            if 'isInitial' in jsonObject['X'][key]:
-                isInit = eval(jsonObject['X'][key]['isInitial'])  # Is the state initial?
-            else:
-                isInit = None
-            if 'isFinal' in jsonObject['X'][key]:
-                isFinal = eval(jsonObject['X'][key]['isFinal'])  # Is the state final?
-            else:
-                isFinal = None
+        for state_name in jsonObject['X']:
+            for prop in state_properties.keys():
 
-            # Create the state
-            State = state(st_label, bool(isInit), bool(isFinal))
+                if prop in jsonObject['X'][state_name]:
+                    state_properties[prop] = jsonObject['X'][state_name][prop]
 
-            if isInit:  # If the state is initial, add it to initial states
+            # Creating the state
+            State = state(state_name,
+                          state_properties["isInitial"],
+                          state_properties["isFinal"],
+                          state_properties["isForbidden"])
+
+            if state_properties["isInitial"]:  # If the state is initial, add it to initial states
                 x0.append(State)
 
-            if isFinal:  # If the state is final, add it to final states
+            if state_properties["isFinal"]:  # If the state is final, add it to final states
                 Xm.append(State)
 
             # Add the state to X
             X.append(State)
 
+        event_properties = {"isObservable": None, "isControllable": None, "isFault": None}
+
         # Reading events and properties
 
-        for key in jsonObject['E']:
-            ev_label = key  # Event name
+        for event_name in jsonObject['E']:
+            for prop in event_properties.keys():
+                if prop in jsonObject['E'][event_name]:
+                    event_properties[prop] = jsonObject['E'][event_name][prop]  # Is observable?
 
-            if 'isObservable' in jsonObject['E'][key]:
-                observable = eval(jsonObject['E'][key]['isObservable'])  # Is observable?
-            else:
-                observable = None
-            if 'isControllable' in jsonObject['E'][key]:
-                controllable = eval(jsonObject['E'][key]['isControllable'])  # Is controllable?
-            else:
-                controllable = None
-            if 'isFault' in jsonObject['E'][key]:
-                fault = eval(jsonObject['E'][key]['isFault'])  # Is faulty?
-            else:
-                fault = None
+            # Creating the event
+            Event = event(event_name,
+                          event_properties["isObservable"],
+                          event_properties["isControllable"],
+                          event_properties["isFault"])
 
-            E.append(event(ev_label, bool(observable), controllable, fault))
+            E.append(Event)
 
         data = []
 
@@ -157,22 +153,21 @@ class fsa:
 
     def to_file(self, filename):
 
-        fsa_dict = {}
-        fsa_dict.fromkeys(["X", "E", "delta"])
+        # Base dict structure
+        fsa_dict = dict.fromkeys(["X", "E", "delta"])
 
-        # States
-
+        # Populating the states
         fsa_dict["X"] = dict.fromkeys([x.label for x in self.X])
 
         for x in self.X:
 
+            state_properties = vars(x)
             dict_x = {}
 
-            if x.isInitial is not None:
-                dict_x["isInitial"] = "1" if x.isInitial else "0"
+            for prop in state_properties.keys():
 
-            if x.isFinal is not None:
-                dict_x["isFinal"] = "1" if x.isFinal else "0"
+                if state_properties[prop] is not None:
+                    dict_x[str(prop)] = state_properties[prop]
 
             fsa_dict["X"][x.label] = dict_x
 
@@ -181,28 +176,25 @@ class fsa:
         # Events
         for e in self.E:
 
+            event_properties = vars(e)
             dict_e = {}
 
-            if e.isObservable is not None:
-                dict_e["isObservable"] = "1" if e.isObservable else "0"
+            for prop in event_properties.keys():
 
-            if e.isControllable is not None:
-                dict_e["isControllable"] = "1" if e.isControllable else "0"
-
-            if e.isFault is not None:
-                dict_e["isFault"] = "1" if e.isFault else "0"
+                if event_properties[prop] is not None:
+                    dict_e[str(prop)] = event_properties[prop]
 
             fsa_dict["E"][e.label] = dict_e
 
         # Delta
-        fsa_dict["delta"] = dict.fromkeys(list(self.delta.index + 1))
+        fsa_dict["delta"] = dict.fromkeys(list(self.delta.index))
 
         for index, row in self.delta.iterrows():
-            fsa_dict["delta"][index + 1] = dict.fromkeys(["start", "event", "end"])
+            fsa_dict["delta"][index] = dict.fromkeys(["start", "event", "end"])
 
-            fsa_dict["delta"][index + 1]["start"] = row[0].label
-            fsa_dict["delta"][index + 1]["event"] = row[1].label
-            fsa_dict["delta"][index + 1]["end"] = row[2].label
+            fsa_dict["delta"][index]["start"] = row[0].label
+            fsa_dict["delta"][index]["event"] = row[1].label
+            fsa_dict["delta"][index]["end"] = row[2].label
 
         with open(filename, "w") as outfile:
             json.dump(fsa_dict, outfile, indent=4)
@@ -255,19 +247,15 @@ class fsa:
         for i, state in enumerate(self.X):
 
             if state.isFinal and state.isInitial:
-
                 state_table[:, i] = "I, F"
 
             elif state.isFinal and not state.isInitial:
-
                 state_table[:, i] = "F"
 
             elif not state.isFinal and state.isInitial:
-
                 state_table[:, i] = "I"
 
             else:
-
                 state_table[:, i] = "-"
 
         # Populating the table representing the properties of the events
@@ -357,7 +345,7 @@ class fsa:
 
         return filt_delta
 
-    def add_state(self, new_state, isInitial=None, isFinal=None):
+    def add_state(self, new_state, isInitial=None, isFinal=None, isForbidden=None):
 
         """
         Adds a state to the FSA
@@ -366,6 +354,7 @@ class fsa:
             new_state (state): The new state to be added
             isInitial (bool, optional): determines if the state is initial
             isFinal (bool, optional): determines if the state is final
+            isForbidden(bool, optional): determines if the state is forbidden
         """
 
         if isinstance(new_state, state):  # if state is an instance of state

@@ -1,39 +1,39 @@
 {
     "X": {
         "x0": {
-            "isInitial": "1",
-            "isFinal": "0"
+            "isInitial": true,
+            "isFinal": false
         },
         "x1": {
-            "isInitial": "0",
-            "isFinal": "0"
+            "isInitial": false,
+            "isFinal": false
         },
         "x2": {
-            "isInitial": "0",
-            "isFinal": "1"
+            "isInitial": false,
+            "isFinal": true
         },
         "x3": {
-            "isInitial": "0",
-            "isFinal": "0"
+            "isInitial": false,
+            "isFinal": false
         },
         "x4": {
-            "isInitial": "0",
-            "isFinal": "0"
+            "isInitial": false,
+            "isFinal": false
         },
         "x5": {
-            "isInitial": "0",
-            "isFinal": "0"
+            "isInitial": false,
+            "isFinal": false
         }
     },
     "E": {
         "a": {
-            "isObservable": "1"
+            "isObservable": true
         },
         "b": {
-            "isObservable": "1"
+            "isObservable": true
         },
         "eps": {
-            "isObservable": "0"
+            "isObservable": false
         }
     },
     "delta": {

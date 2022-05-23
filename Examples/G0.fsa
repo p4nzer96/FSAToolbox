@@ -1,20 +1,20 @@
 {
     "X": {
         "x0": {
-            "isInitial": "1",
-            "isFinal": "1"
+            "isInitial": true,
+            "isFinal": true
         },
         "x1": {
-            "isInitial": "0",
-            "isFinal": "0"
+            "isInitial": false,
+            "isFinal": false
         }
     },
     "E": {
         "a": {
-            "isObservable": "1"
+            "isObservable": true
         },
         "b": {
-            "isObservable": "1"
+            "isObservable": true
         }
     },
     "delta": {

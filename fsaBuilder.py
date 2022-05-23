@@ -123,7 +123,12 @@ def fsabuilder():
 
     if answer == "y":
 
-        for x in event_dict.keys():
+        print("Write the properties that you want to set as True, separated by a space")
+        print("Legend ---> C: Controllable; O Observable; F: Faulty; FR: Forbidden")
+
+        print("")
+
+        '''for x in event_dict.keys():
 
             # is Controllable?
 
@@ -180,6 +185,6 @@ def fsabuilder():
                 else:
 
                     print("Enter a valid input")
-                    continue
+                    continue'''
 
     return G

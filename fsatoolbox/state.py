@@ -4,8 +4,9 @@ from dataclasses import dataclass
 @dataclass
 class state:
     label: str = None
-    isInitial: bool = False
-    isFinal: bool = False
+    isInitial: bool = None
+    isFinal: bool = None
+    isForbidden: bool = None
 
     def __repr__(self):
         return self.label

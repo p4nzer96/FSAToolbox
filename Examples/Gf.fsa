@@ -1,35 +1,35 @@
 {
     "X": {
         "x0": {
-            "isInitial": "1"
+            "isInitial": true
         },
         "x1": {
-            "isInitial": "0"
+            "isInitial": false
         },
         "x2": {
-            "isInitial": "0"
+            "isInitial": false
         }
     },
     "E": {
         "a": {
-            "isFault": "0",
-            "isObservable": "1"
+            "isFault": false,
+            "isObservable": true
         },
         "b": {
-            "isFault": "0",
-            "isObservable": "1"
+            "isFault": false,
+            "isObservable": true
         },
         "c": {
-            "isFault": "0",
-            "isObservable": "1"
+            "isFault": false,
+            "isObservable": true
         },
         "eps_1": {
-            "isFault": "0",
-            "isObservable": "0"
+            "isFault": false,
+            "isObservable": false
         },
         "eps_f": {
-            "isFault": "1",
-            "isObservable": "0"
+            "isFault": true,
+            "isObservable": false
         }
     },
     "delta": {

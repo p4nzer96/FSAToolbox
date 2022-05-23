@@ -1,24 +1,24 @@
 {
     "X": {
         "y0": {
-            "isInitial": "1",
-            "isFinal": "1"
+            "isInitial": true,
+            "isFinal": true
         },
         "y1": {
-            "isInitial": "0",
-            "isFinal": "0"
+            "isInitial": false,
+            "isFinal": false
         },
         "y2": {
-            "isInitial": "0",
-            "isFinal": "0"
+            "isInitial": false,
+            "isFinal": false
         }
     },
     "E": {
         "b": {
-            "isObservable": "1"
+            "isObservable": true
         },
         "c": {
-            "isObservable": "1"
+            "isObservable": true
         }
     },
     "delta": {
