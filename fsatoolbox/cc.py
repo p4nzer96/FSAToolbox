@@ -124,7 +124,7 @@ def cc(G0, G1, verbose=False, name_style=0):
         elif name_style == 1:
             label = "({}, {})".format(x[0], x[1])
 
-        new_state = state(label)
+        new_state = state(label, False, False, False)
 
         # Final States
 

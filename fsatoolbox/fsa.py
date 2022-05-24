@@ -243,18 +243,26 @@ class fsa:
 
         # Populating the column representing the properties of the states
 
+        # TODO: Trovare una soluzione più elegante
+
         for i, state in enumerate(self.X):
 
-            if state.isFinal and state.isInitial:
-                state_table[:, i] = "I, F"
+            props = ["isInitial", "isFinal", "isForbidden"]
+            props_label = ["I", "F", "FR"]
+            true_props_label = []
 
-            elif state.isFinal and not state.isInitial:
-                state_table[:, i] = "F"
+            state_attr = vars(state)
 
-            elif not state.isFinal and state.isInitial:
-                state_table[:, i] = "I"
+            for idx, prop in enumerate(props):
+                if state_attr[prop]:
+                    true_props_label.append(props_label[idx])
+
+            if len(true_props_label) != 0:
+
+                state_table[:, i] = ", ".join(true_props_label)
 
             else:
+
                 state_table[:, i] = "-"
 
         # Populating the table representing the properties of the events
@@ -299,7 +307,7 @@ class fsa:
                "\nLegend: O: Observable, C: Controllable, F: Fault\n\n" + \
                "State Properties:\n" + \
                state_properties + \
-               "\nLegend: I: Initial, F: Final\n "
+               "\nLegend: I: Initial, F: Final, FR: Forbidden\n "
 
         return text
 
