@@ -1,9 +1,7 @@
 import json
-
 import numpy as np
 import pandas as pd
 from tabulate import tabulate
-
 from fsatoolbox import event, state
 
 
@@ -47,7 +45,7 @@ class fsa:
 
 
         Returns:
-            FSA: An instance of FSA
+            fsa: An instance of FSA
             
         """
 
@@ -205,9 +203,10 @@ class fsa:
         Shows a graphical representation of the FSA
 
         Args:
-            mode (bool): If True, plot the FSA in UI
+            ui_mode (bool): If True, plot the FSA in UI
 
-        Returns: str or None
+        Returns:
+            str: String that show the fsa structure
 
         """
 
@@ -459,7 +458,7 @@ class fsa:
 
         except (ValueError, TypeError):
 
-            print("Error: initial state not in X")
+            print("Error: starting state not in X")
             return
 
         # Transition
