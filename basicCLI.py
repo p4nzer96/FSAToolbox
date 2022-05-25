@@ -1,4 +1,4 @@
-import os.path
+import os
 
 from fsatoolbox import *
 
@@ -7,6 +7,20 @@ def help(args=None):
     for key,val in commands.items():
         print("->"+key)
     print("[CTRL+C to exit]")
+
+def changepath(args):
+    if(len(args)>1):
+        if(args[1]=='help'):
+            print("This functions changes the default path")
+            print("Usage:\n     changepath newpath")
+        else:
+            if(os.path.isdir(args[1])):
+                path=args[1]
+            else:
+                print("Invalid path")
+
+    else:
+        print("Not enough arguments provided, type \"changepath help\" to help")
 
 def loadfsa(args):
     if(len(args)>1):
@@ -22,6 +36,10 @@ def loadfsa(args):
                     fsalst[args[1]]=fsa.from_file(args[2])
                 elif(os.path.isfile(args[2]+'.fsa')):
                     fsalst[args[1]]=fsa.from_file(args[2]+'.fsa')
+                elif(os.path.isfile(path+args[2])):
+                    fsalst[args[1]]=fsa.from_file(path+args[2])
+                elif(os.path.isfile(path+args[2]+'.fsa')):
+                    fsalst[args[1]]=fsa.from_file(path+args[2]+'.fsa')
                 else:
                     print("Error: file does not exists")
                     return
@@ -29,6 +47,21 @@ def loadfsa(args):
             print("Not enough arguments provided, type \"load help\" to help")
     else:
         print("Not enough arguments provided, type \"load help\" to help")
+
+def savefsa(args):
+    if(len(args)>1):
+        if(args[1]=='help'):
+            print("This functions saves a fsa to file")
+            print("Usage:\n     save name")
+        elif(len(args)>2):
+            if(args[1] in fsalst):
+                fsalst[args[1]].to_file(path+args[2])
+            else:
+                print("Error, fsa doesn't exists")
+        else:
+            print("Not enough arguments provided, type \"save help\" to help")
+    else:
+        print("Not enough arguments provided, type \"save help\" to help")
 
 def buildfsa(args):
     if(len(args)>1):
@@ -46,6 +79,8 @@ def buildfsa(args):
         print("Not enough arguments provided, type \"buildfsa help\" to help")
 
 def showfsa(args):
+    #TODO
+    #add .fsa if not specified
     if(len(args)>1):
         if(args[1]=='help'):
             print("This functions show a fsa")
@@ -112,7 +147,9 @@ def observer(args):
         print("Not enough arguments provided, type \"fm help\" to help")
 
 commands={
+    'changepath' : changepath,
     'load': loadfsa,
+    'save': savefsa,
     'build': buildfsa,
     'show': showfsa,
     'list': listfsa,
@@ -124,7 +161,16 @@ commands={
 }
 
 
+home=os.path.expanduser("~")
+path=home+'\\Documents\\FsaToolbox\\'
+
+if not os.path.exists(path):
+    os.makedirs(path)
+
 help()
+print("\n\nNote: the default path is:")
+print(path)
+print("")
 fsalst=dict()
 
 while(1):
