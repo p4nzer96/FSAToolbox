@@ -1,0 +1,98 @@
+{
+    "X": {
+        "x0": {
+            "isInitial": 1,
+            "isFinal": 0,
+            "isForbidden": 0
+        },
+        "x1": {
+            "isInitial": 0,
+            "isFinal": 0,
+            "isForbidden": 0
+        },
+        "x2": {
+            "isInitial": 0,
+            "isFinal": 0,
+            "isForbidden": 0
+        },
+        "x3": {
+            "isInitial": 0,
+            "isFinal": 1,
+            "isForbidden": 1
+        },
+        "x4": {
+            "isInitial": 0,
+            "isFinal": 0,
+            "isForbidden": 0
+        },
+        "x5": {
+            "isInitial": 0,
+            "isFinal": 1,
+            "isForbidden": 0
+        }
+    },
+    "E": {
+        "a": {
+            "isObservable": "1",
+            "isControllable": "1",
+            "isFault": "0"
+        },
+        "b": {
+            "isObservable": "0",
+            "isControllable": "1",
+            "isFault": "0"
+        },
+        "d": {
+            "isObservable": "1",
+            "isControllable": "1",
+            "isFault": "0"
+        },
+        "c": {
+            "isObservable": "0",
+            "isControllable": "0",
+            "isFault": "1"
+        }
+    },
+    "delta": {
+        "A": {
+            "start": "x0",
+            "name": "a",
+            "ends": "x1"
+        },
+        "B": {
+            "start": "x1",
+            "name": "b",
+            "ends": "x3"
+        },
+        "C": {
+            "start": "x1",
+            "name": "b",
+            "ends": "x4"
+        },
+        "D": {
+            "start": "x2",
+            "name": "b",
+            "ends": "x1"
+        },
+        "E": {
+            "start": "x2",
+            "name": "d",
+            "ends": "x4"
+        },
+        "F": {
+            "start": "x3",
+            "name": "a",
+            "ends": "x3"
+        },
+        "G": {
+            "start": "x3",
+            "name": "c",
+            "ends": "x4"
+        },
+        "H": {
+            "start": "x4",
+            "name": "d",
+            "ends": "x5"
+        }
+    }
+}
