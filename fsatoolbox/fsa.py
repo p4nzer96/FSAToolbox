@@ -5,8 +5,8 @@ from tabulate import tabulate
 from fsatoolbox import event, state
 
 import os   # **********************************************************************************************************
-from loadfsa import *   # **********************************************************************************************************
-
+from loadfsa import * # **********************************************************************************************************
+from loadfsa_GUI import * # **********************************************************************************************************
 class fsa:
     """
     Class used to represent a Finite State Automaton (FSA)
@@ -26,9 +26,8 @@ class fsa:
 
     """
 
-    # def __init__(self, X=None, E=None, delta=None, x0=None, Xm=None, **kwargs) -> None:
-    def __init__(self, X=None, E=None, delta=None, x0=None, Xm=None, is_Reachable=None, is_co_Reachable=None,
-                     is_Blocking=None, is_Trim=None, is_Reversible=None, **kwargs) -> None:
+    def __init__(self, X=None, E=None, delta=None, x0=None, Xm=None, **kwargs) -> None:
+    #def __init__(self, X=None, E=None, delta=None, x0=None, Xm=None, is_Reachable=None, is_co_Reachable=None, is_Blocking=None, is_Trim=None, is_Reversible=None, **kwargs) -> None:
 
         self.X = X if X else []  # States
         self.E = E if E else []  # Alphabet
@@ -40,11 +39,11 @@ class fsa:
         self.name = kwargs.get('name') if kwargs.get('name') else object.__repr__(self)
 
         # added by me **************************************************************************************************
-        self.is_Reachable = is_Reachable
-        self.is_co_Reachable = is_co_Reachable
-        self.is_Blocking = is_Blocking
-        self.is_Trim = is_Trim
-        self.is_Reversible = is_Reversible
+        self.is_Reachable = None
+        self.is_co_Reachable = None
+        self.is_Blocking = None
+        self.is_Trim = None
+        self.is_Reversible = None
 
 
 
@@ -81,9 +80,11 @@ class fsa:
             extension = os.path.splitext(filename)
             # print("extension: ", extension)
             if ".txt" in extension or ".fsa" in extension:
-                jsonObject = load_txt_or_fsa(filename)
+                #jsonObject = load_txt_or_fsa(filename)
+                jsonObject = load_txt_or_fsa_GUI(filename) # ***********************************************************
             elif ".csv" in extension:
-                jsonObject = load_csv(filename)
+                #jsonObject = load_csv(filename)
+                jsonObject = load_csv_GUI(filename) # ******************************************************************
             elif ".json" in extension:
                 with open(filename) as file:
                     jsonObject = json.load(file)

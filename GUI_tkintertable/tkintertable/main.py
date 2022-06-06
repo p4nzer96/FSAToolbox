@@ -1,10 +1,12 @@
-#!/usr/bin/env python
+
 from __future__ import absolute_import, division, print_function
 
 
 
 
 # from tkintertable import TableCanvas, TableModel
+
+
 
 
 #import Pmw
@@ -36,10 +38,11 @@ from tkinter import ttk
 
 # from PIL import Image, ImageTk
 # import PIL.Image, PIL.ImageTk
+# import PIL.Image, PIL.ImageTk
 
 import json
 import my_globals
-from loadfsa import *
+
 # **********************************************************************************************************************
 
 
@@ -73,7 +76,7 @@ class TablesApp(Frame):
 
     def __init__(self, parent=None, data=None, datafile=None):
         "Initialize the application."
-        print("TablesApp__init__")
+        #print("TablesApp__init__")
         super().__init__()
         self.parent = parent
 
@@ -142,17 +145,16 @@ class TablesApp(Frame):
 
     def createMenuBar(self):
         """Create the menu bar for the application. """
-        print("createMenuBar")
+        #print("createMenuBar")
         self.menu=Menu(self.tablesapp_win)
         self.proj_menu={'01New':{'cmd':self.new_project},
                         '02Open':{'cmd':self.open_project},
-                        '03Import file on table(.txt,.fsa,.csv,.json)': {'cmd':self.import_file},
-                        '04Analyze file(.txt,.fsa,.csv,.json)': {'cmd': self.just_analyze_file},
-                        '05Close':{'cmd':self.close_project},
-                        '06Save':{'cmd':self.save_project},
-                        '07Save As':{'cmd':self.save_as_project},
-                        '08Preferences..':{'cmd':self.showPrefsDialog},
-                        '09Quit':{'cmd':self.quit}}
+                        '03Import file(txt,csv,json)': {'cmd':self.import_file},
+                        '04Close':{'cmd':self.close_project},
+                        '05Save':{'cmd':self.save_project},
+                        '06Save As':{'cmd':self.save_as_project},
+                        '07Preferences..':{'cmd':self.showPrefsDialog},
+                        '08Quit':{'cmd':self.quit}}
         if self.parent:
             self.proj_menu['08Return to Database']={'cmd':self.return_data}
         self.proj_menu=self.create_pulldown(self.menu,self.proj_menu)
@@ -198,7 +200,7 @@ class TablesApp(Frame):
 
     def create_pulldown(self,menu,dict):
         """ Create a pulldown in var from the info in dict  """
-        print("create_pulldown")
+        #print("create_pulldown")
         var = Menu(menu,tearoff=0)
         items = dict.keys()
         #items.sort()
@@ -221,7 +223,7 @@ class TablesApp(Frame):
 
     def createSearchBar(self, event=None):
         """Add a find entry box"""
-        print("createSearchBar")
+        #print("createSearchBar")
         frame = Frame(self.tablesapp_win)
         row=0
         def close():
@@ -240,7 +242,7 @@ class TablesApp(Frame):
 
     def loadprefs(self):
         """Setup default prefs file if any of the keys are not present"""
-        print("loadprefs")
+        #print("loadprefs")
         defaultprefs = {'textsize':14,
                          'windowwidth': 800 ,'windowheight':600}
         for prop in defaultprefs.keys():
@@ -252,13 +254,13 @@ class TablesApp(Frame):
         return
 
     def showPrefsDialog(self):
-        print("showPrefsDialog")
+        #print("showPrefsDialog")
         self.prefswindow = self.currenttable.showtablePrefs()
         return
 
     def new_project(self, data=None):
         """Create a new table, with model and add the frame"""
-        print("new_project")
+        #print("new_project")
         if hasattr(self,'currenttable'):
             self.notebook.destroy()
             self.currenttable.destroy()
@@ -281,7 +283,7 @@ class TablesApp(Frame):
         return
 
     def open_project(self, filename=None):
-        print("open_project")
+        #print("open_project")
         if filename == None:
             filename=filedialog.askopenfilename(defaultextension='.tblprj"',
                                                       initialdir=os.getcwd(),
@@ -297,7 +299,7 @@ class TablesApp(Frame):
         return
 
     def save_project(self):
-        print("save_project")
+        #print("save_project")
         if not hasattr(self, 'filename'):
             self.save_as_project()
         elif self.filename == None:
@@ -309,7 +311,7 @@ class TablesApp(Frame):
 
     def save_as_project(self):
         """Save as a new filename"""
-        print("save_as_project")
+        #print("save_as_project")
         filename=filedialog.asksaveasfilename(parent=self.tablesapp_win,
                                                 defaultextension='.tblprj',
                                                 initialdir=self.defaultsavedir,
@@ -324,8 +326,8 @@ class TablesApp(Frame):
 
     def do_save_project(self, filename):
         """Get model dicts and write all to pickle file"""
-        print("do_save_project")
-        data = {}
+        #print("do_save_project")
+        data={}
         for s in self.sheets.keys():
             currtable = self.sheets[s]
             model = currtable.getModel()
@@ -337,308 +339,18 @@ class TablesApp(Frame):
         return
 
 
-
-
     # added by me ******************************************************************************************************
-    def just_analyze_file(self, filename=None):
-        """Just analyze the imported file description of the fsa (txt, .fsa, .json or .csv)"""
-        if filename == None:
-            filename = filedialog.askopenfilename(defaultextension='.txt',
-                                                  initialdir=os.getcwd(),
-                                                  filetypes=[("Text files","*.txt"),
-                                                             ("fsa files", "*.fsa"),
-                                                             ("csv files","*.csv"),
-                                                             ("json files","*.json"),
-                                                             ("All files","*.*")],
-                                                  parent=self.tablesapp_win)
-
-        '''
-        from fsatoolbox.fsa import fsa
-        import analysis
-
-        f = fsa.from_file(filename)
-
-        X = f.X
-        E = f.E
-        x0 = f.x0
-        Xm = f.Xm
-        delta = f.delta
-
-        # filtered_delta = f.filter_delta(start='x2', transition=None, end=None)
-
-        if x0:
-            print("TEST AREA:")
-            print("Stati: ", X)
-            print("Stati iniziali: ", x0)
-            print("Stati finali: ", Xm)
-            print("Eventi/alfabeto: ", E)
-            print("Transizioni delta dataFrame view:\n", delta)
-
-            print("\n REACHABILITY TEST:")
-            is_reachable = analysis.get_reachability_info(f)
-
-            for iter in range(len(X)):
-                print(str(X[iter].label) + ".is_Reachable: " + str(X[iter].is_Reachable))
-            print("The FSA is Reachable? :" + str(is_reachable))
-
-            print("\n CO-REACHABILITY TEST:")
-            is_co_reachable = analysis.get_co_reachability_info(f)
-
-            for iter in range(len(X)):
-                print(str(X[iter].label) + ".is_co_Reachable: " + str(X[iter].is_co_Reachable))
-            print("The FSA is Co-Reachable? :" + str(is_co_reachable))
-
-            print("\n BLOCKINGNESS TEST:")
-            is_blocking = analysis.get_blockingness_info(f)
-
-            for iter in range(len(X)):
-                print(str(X[iter].label) + ".is_Blocking: " + str(X[iter].is_Blocking))
-            print("The FSA is blocking? :" + str(is_blocking))
-
-            print("\n TRIM TEST:")
-            is_trim = f.get_trim_info()
-            print("The FSA is trim? :" + str(is_trim))
-
-            print("\n DEADNESS TEST:")
-            analysis.get_deadness_info(f)
-
-            for iter in range(len(X)):
-                print(str(X[iter].label) + ".is_Dead: " + str(X[iter].is_Dead))
-
-            print("\n REVERSIBILITY TEST:")
-            is_reversible = analysis.get_reversibility_info(f)
-            print("The FSA is reversible? :" + str(is_reversible))
-        else:
-            print("Error: At least the initial state must be specified.")
-
-        '''
 
 
-
-        from fsatoolbox.fsa import fsa
-        import analysis
-        from tkinter import Button, Text, BOTH, StringVar
-        from tkinter.ttk import Frame
-        
-        from my_globals import TablesApp
-
-        #f = fsa()
-
-        # f.from_file('file_co-reach-for-Xm.json')
-
-        # f = fsa.from_file('sample.json')
-        # f = fsa.from_file('fsa.csv')
-        f = fsa.from_file(filename)
-
-        # print(getattr(f, "X"))
-
-        # X = []  # States
-        # E = []  # Alphabet
-        # x0 = []  # Initial states
-        # Xm = []  # Final states
-        # delta = pd.DataFrame()
-        # filtered_delta = []
-
-        X = f.X
-        E = f.E
-        x0 = f.x0
-        Xm = f.Xm
-        delta = f.delta
-
-        num_chars_per_line = 50
-        text_content = ""
-        if x0:
-            text_content += "FSA 5-TUPLA:\n"
-            # states
-            text_states = ""
-            text_states += "States: ["
-            chars_count = len(text_states)
-            for i in range(len(X) - 1):
-                current_text = str(X[i]) + ", "
-                text_states += current_text
-                chars_count += len(current_text)
-                if chars_count >= num_chars_per_line:
-                    text_states += "\n           "
-                    chars_count = 0
-            text_states += str(X[len(X) - 1]) + "]\n"
-            text_content += text_states
-
-            # initial states
-            text_initial_states = ""
-            text_initial_states += "Initial states: ["
-            chars_count = len(text_initial_states)
-            for i in range(len(x0) - 1):
-                current_text = str(x0[i]) + ", "
-                text_initial_states += current_text
-                chars_count += len(current_text)
-                if chars_count >= num_chars_per_line:
-                    text_initial_states += "\n                    "
-                    chars_count = 0
-            text_initial_states += str(x0[len(x0) - 1]) + "]\n"
-            text_content += text_initial_states
-
-            # final states
-            if Xm:
-                text_final_states = ""
-                text_final_states += "Final states: ["
-                chars_count = len(text_final_states)
-                for i in range(len(Xm) - 1):
-                    current_text = str(Xm[i]) + ", "
-                    text_final_states += current_text
-                    chars_count += len(current_text)
-                    if chars_count >= num_chars_per_line:
-                        text_final_states += "\n                   "
-                        chars_count = 0
-                text_final_states += str(Xm[len(Xm) - 1]) + "]\n"
-                text_content += text_final_states
-            else:
-                text_content += "Final states: []\n"
-
-            # alphabet
-            if E:
-                text_alphabet = ""
-                text_alphabet += "Alphabet: ["
-                chars_count = len(text_alphabet)
-                for i in range(len(E) - 1):
-                    current_text = str(E[i]) + ", "
-                    text_alphabet += current_text
-                    chars_count += len(current_text)
-                    if chars_count >= num_chars_per_line:
-                        text_alphabet += "\n                "
-                        chars_count = 0
-                text_alphabet += str(E[len(E) - 1]) + "]\n"
-                text_content += text_alphabet
-            else:
-                text_content += "Alphabet: []\n"
-
-
-            # delta transitions
-            if len(delta):
-                text_delta = "\n"
-                text_delta += "Delta transitions:\n"
-                text_delta += str(delta)
-                text_content += text_delta + "\n"
-            else:
-                text_content += "Delta transitions: []\n"
-
-
-            # Reachability
-            is_reachable = analysis.get_reachability_info(f)
-            text_content += "\nREACHABILITY:\n"
-            text_reachability = ""
-            for i in range(len(X)):
-                text_reachability += str(X[i].label) + " is reachable?: " + str(X[i].is_Reachable) + "\n"
-            text_content += text_reachability
-
-            text_content += "The FSA is reachable? :" + str(is_reachable) + "\n"
-
-            # Co-Reachability
-            is_co_reachable = analysis.get_co_reachability_info(f)
-            text_content += "\nCO-REACHABILITY:\n"
-            text_co_reachability = ""
-            for i in range(len(X)):
-                text_co_reachability += str(X[i].label) + " is co-reachable?: " + str(X[i].is_co_Reachable) + "\n"
-            text_content += text_co_reachability
-
-            text_content += "The FSA is co-reachable? :" + str(is_co_reachable) + "\n"
-
-            # Blockingness
-            is_blocking = analysis.get_blockingness_info(f)
-            text_content += "\nBLOCKINGNESS:\n"
-            text_blockingness = ""
-            for i in range(len(X)):
-                text_blockingness += str(X[i].label) + " is blocking?: " + str(X[i].is_Blocking) + "\n"
-            text_content += text_blockingness
-
-            text_content += "The FSA is blocking? :" + str(is_blocking) + "\n"
-
-            # Deadness
-            analysis.get_deadness_info(f)
-            text_content += "\nDEADNESS:\n"
-            text_deadness = ""
-            for i in range(len(X)):
-                text_deadness += str(X[i].label) + " is dead?: " + str(X[i].is_Dead) + "\n"
-            text_content += text_deadness
-
-            # Trim
-            is_trim = f.get_trim_info()
-            text_content += "\nTRIM:\n"
-            text_content += "The FSA is trim? :" + str(is_trim) + "\n"
-
-            # Reversibility
-            is_reversible = analysis.get_reversibility_info(f)
-            text_content += "\nREVERSIBILITY:\n"
-            text_content += "The FSA is reversible? :" + str(is_reversible)
-
-        else:
-            text_content = "Error: At least the initial state must be specified."
-
-        import tkinter as tk
-        import tkinter.scrolledtext as st
-
-        # Creating tkinter window
-        win = tk.Tk()
-        win.title("Results window")
-
-        # Title Label
-        tk.Label(win,
-                 text="FSA analysis results",
-                 font=("Times New Roman", 17)).grid(column=0, row=0)
-
-        # download button
-        from tkinter.messagebox import showinfo
-        def save_fsa_analysis_results():
-            # showinfo(title='Information', message='Download button clicked!')
-            """Save as a new filename"""
-            ta = TablesApp(Frame)
-            filename = filedialog.asksaveasfilename(parent=ta.tablesapp_win,
-                                                defaultextension='.txt',
-                                                initialdir=ta.defaultsavedir,
-                                                filetypes=[("Text file","*.txt"),
-                                                           ("All files","*.*")])
-            if not filename:
-                print ('Returning')
-                return
-
-            with open(filename, 'w') as f:
-                f.write(text_content)
-            return
-
-        importButton = Button(win, text='Save on file', command=save_fsa_analysis_results, background="green", foreground="white")
-        importButton.grid(row=20, column=0, sticky='news', padx=2, pady=2)
-
-        # Creating scrolled text area
-        # widget with Read only by
-        # disabling the state
-        text_area = st.ScrolledText(win, width=50, height=30, font=("Times New Roman", 12))
-
-        text_area.grid(column=0, pady=10, padx=10)
-
-        # Inserting Text which is read only
-        text_area.insert(tk.INSERT, text_content)
-
-        # Making the text read only
-        text_area.configure(state='disabled')
-        win.mainloop()
-
-
-
-    # ******************************************************************************************************************
-
-
-
-
-    # added by me ******************************************************************************************************
     def import_file(self, filename=None):
         """Import and place on the current table the content of a file of extension .txt, .csv or .json"""
-        print("import_file")
+        #print("import_file")
         if filename == None:
             filename = filedialog.askopenfilename(defaultextension='.txt',
                                                   initialdir=os.getcwd(),
                                                   filetypes=[("Text files","*.txt"),
-                                                             ("fsa files", "*.fsa"),
                                                              ("csv files","*.csv"),
-                                                             ("json files","*.json"),
+                                                             ("csv files","*.json"),
                                                              ("All files","*.*")],
                                                   parent=self.tablesapp_win)
         if os.path.isfile(filename):
@@ -660,19 +372,20 @@ class TablesApp(Frame):
     # added by me ******************************************************************************************************
     def parse_txt_file_and_obtain_the_json(self, filename=None):
         """Parse the .txt file describing the fsa and convert it to a json file"""
-        print("****************************************************************************************************************************")
-        print("**                                                                                                                        **")
-        print("**                                                                                                                        **")
-        print("**                                                                                                                        **")
-        print("**                                          parse_txt_file_and_obtain_the_json                                            **")
-        print("**                                                                                                                        **")
-        print("**                                                                                                                        **")
-        print("****************************************************************************************************************************")
+        #print("****************************************************************************************************************************")
+        #print("**                                                                                                                        **")
+        #print("**                                                                                                                        **")
+        #print("**                                                                                                                        **")
+        #print("**                                          parse_txt_file_and_obtain_the_json                                            **")
+        #print("**                                                                                                                        **")
+        #print("**                                                                                                                        **")
+        #print("****************************************************************************************************************************")
 
         fd = open(filename, mode='rt')
         # bytes_file_content = fd.read()
 
         lines = fd.readlines()
+
 
         clean_lines = []
 
@@ -688,6 +401,7 @@ class TablesApp(Frame):
 
             #print("clean_lines[" + str(iter_list) + "]: " + str(clean_lines[iter_list]))
             clean_lines[iter_list] = clean_lines[iter_list].split(" ")
+
 
 
         dict_start_states = {}  # to populate column 0 with keys (states), and for every key a dictionary of info on isInitial, isFinal, isFault
@@ -793,7 +507,7 @@ class TablesApp(Frame):
             # Set the geometry of Tkinter frame
             win.geometry("400x200")
             # win.aspect(70,70,70,70)
-            Label(win, text="There are some sintax error in the .txt file you tried to import.\r\n"
+            Label(win, text="There is a sintax error in the .txt file you tried to import.\r\n"
                             "Click here if you want to see an example on how to\r\ncorrectly populate the file.",
                   font=('Helvetica 10 bold')).pack(pady=20)
             # Create a button in the main Window to open the popup
@@ -801,14 +515,12 @@ class TablesApp(Frame):
             win.mainloop()
 
         #print("dict_deltas: ", dict_deltas)
-        print("-----------------------------------------------------------------------------------------------------")
-        print("CHECK VALUES:\n")
-        print("dict_start_states: ", dict_start_states)
-        print("list_start_states: ", list_start_states)
-        print("dict_events: ", dict_events)
-        print("list_events: ", list_events)
-        print("dict_deltas: ", dict_deltas)
-        print("-----------------------------------------------------------------------------------------------------")
+
+        #print("dict_start_states: ", dict_start_states)
+        #print("list_start_states: ", list_start_states)
+        #print("dict_events: ", dict_events)
+        #print("list_events: ", list_events)
+        #print("dict_deltas: ", dict_deltas)
 
         #print("before fitting the table")
         #print("self.currenttable.model.columnlabels: ", self.currenttable.model.columnlabels)
@@ -977,8 +689,6 @@ class TablesApp(Frame):
 
         print(self.currenttable.model.columnlabels)
 
-
-
         flag_parsed_dict_deltas = 0
         key_dict_deltas = 0
         counter_macro_deltas = 0
@@ -1029,8 +739,10 @@ class TablesApp(Frame):
                 pass
 
 
-        # in order to make the update of the table visible without the need to be touched before by the user
 
+
+
+        # in order to make the update of the table visible without the need to be touched before by the user
         self.currenttable.resizeColumn(0, 101)  # dummy resize
         self.currenttable.resizeColumn(0, 100)  # reset the width of col 0 to the default value
 
@@ -1388,14 +1100,14 @@ class TablesApp(Frame):
     def parse_csv_file_and_populate_the_table(self, filename=None):
         """Parse the .csv file describing the fsa and populate the current table"""
 
-        print("****************************************************************************************************************************")
-        print("**                                                                                                                        **")
-        print("**                                                                                                                        **")
-        print("**                                                                                                                        **")
-        print("**                                          parse_csv_file_and_populate_the_table                                         **")
-        print("**                                                                                                                        **")
-        print("**                                                                                                                        **")
-        print("****************************************************************************************************************************")
+        #print("****************************************************************************************************************************")
+        #print("**                                                                                                                        **")
+        #print("**                                                                                                                        **")
+        #print("**                                                                                                                        **")
+        #print("**                                          parse_csv_file_and_populate_the_table                                         **")
+        #print("**                                                                                                                        **")
+        #print("**                                                                                                                        **")
+        #print("****************************************************************************************************************************")
 
         with open(filename, encoding='utf-8') as csvf:
             fd = open(filename, mode='rt')
@@ -1422,15 +1134,13 @@ class TablesApp(Frame):
 
         # list_states = clean_lines[0][1:len(clean_lines[0])]
 
-        fd.close()
 
-        ## print clean_lines
-        #for row in range(1, len(clean_lines)):
-            #for col in range(0, len(clean_lines[0])):
+        # print clean_lines
+        for row in range(1, len(clean_lines)):
+            for col in range(0, len(clean_lines[0])):
                 #print("(row, col): ("+str(row)+","+str(col)+")"+": "+str(clean_lines[row][col]))
-                #pass
+                pass
 
-        flag_more_than_one_same_event = 0  # when has been specified the same event more times
 
         # fit the table
 
@@ -1451,195 +1161,130 @@ class TablesApp(Frame):
         dict_event_properties = {}
         # events properties, row 0
 
-        try:
-            i = 1
-            for i in range(1,len(clean_lines[0])):
-                current_event = clean_lines[0][i]
-                if clean_lines[0][i] and clean_lines[0][i] != '_':
-                    if current_event.endswith("_uc_f_uo") or current_event.endswith("_uc_uo_f") or current_event.endswith(
-                            "_f_uc_uo") or current_event.endswith("_f_uo_uc") or current_event.endswith(
-                            "_uo_f_uc") or current_event.endswith("_uo_uc_f"):
-                        string_lenght = len(current_event)
-                        substring_to_remove = current_event[-6:]
-                        current_event = current_event.replace(str(substring_to_remove), "")
-                        current_event.replace(" ", "")
-                        if current_event in dict_event_properties:
-                            flag_more_than_one_same_event = 1
-                        dict_event_properties.update({current_event: {"isObservable": 0, "isControllable": 0, "isFault": 1}})
-                    elif current_event.endswith("_uc_f"):
-                        current_event = current_event.replace("_uc_f", "")
-                        current_event.replace(" ", "")
-                        if current_event in dict_event_properties:
-                            flag_more_than_one_same_event = 1
-                        dict_event_properties.update({current_event: {"isObservable": 1, "isControllable": 0, "isFault": 1}})
-                    elif current_event.endswith("_f_uc"):
-                        current_event = current_event.replace("_f_uc", "")
-                        current_event.replace(" ", "")
-                        if current_event in dict_event_properties:
-                            flag_more_than_one_same_event = 1
-                        dict_event_properties.update({current_event: {"isObservable": 1, "isControllable": 0, "isFault": 1}})
-                    elif current_event.endswith("_uc_uo"):
-                        current_event = current_event.replace("_uc_uo", "")
-                        current_event.replace(" ", "")
-                        if current_event in dict_event_properties:
-                            flag_more_than_one_same_event = 1
-                        dict_event_properties.update({current_event: {"isObservable": 0, "isControllable": 0, "isFault": 0}})
-                    elif current_event.endswith("_uo_uc"):
-                        current_event = current_event.replace("_uo_uc", "")
-                        current_event.replace(" ", "")
-                        if current_event in dict_event_properties:
-                            flag_more_than_one_same_event = 1
-                        dict_event_properties.update({current_event: {"isObservable": 0, "isControllable": 0, "isFault": 0}})
-                    elif current_event.endswith("_uo_f"):
-                        current_event = current_event.replace("_uo_f", "")
-                        current_event.replace(" ", "")
-                        if current_event in dict_event_properties:
-                            flag_more_than_one_same_event = 1
-                        dict_event_properties.update({current_event: {"isObservable": 0, "isControllable": 1, "isFault": 1}})
-                    elif current_event.endswith("_f_uo"):
-                        current_event = current_event.replace("_f_uo", "")
-                        current_event.replace(" ", "")
-                        if current_event in dict_event_properties:
-                            flag_more_than_one_same_event = 1
-                        dict_event_properties.update({current_event: {"isObservable": 0, "isControllable": 1, "isFault": 1}})
-                    elif current_event.endswith("_uc"):
-                        current_event = current_event.replace("_uc", "")
-                        current_event.replace(" ", "")
-                        if current_event in dict_event_properties:
-                            flag_more_than_one_same_event = 1
-                        dict_event_properties.update({current_event: {"isObservable": 1, "isControllable": 0, "isFault": 0}})
-                    elif current_event.endswith("_f"):
-                        current_event = current_event.replace("_f", "")
-                        current_event.replace(" ", "")
-                        if current_event in dict_event_properties:
-                            flag_more_than_one_same_event = 1
-                        dict_event_properties.update({current_event: {"isObservable": 1, "isControllable": 1, "isFault": 1}})
-                    elif current_event.endswith("_uo"):
-                        current_event = current_event.replace("_uo", "")
-                        current_event.replace(" ", "")
-                        if current_event in dict_event_properties:
-                            flag_more_than_one_same_event = 1
-                        dict_event_properties.update({current_event: {"isObservable": 0, "isControllable": 1, "isFault": 0}})
-                    else:
-                        current_event.replace(" ", "")
-                        if current_event in dict_event_properties:
-                            flag_more_than_one_same_event = 1
-                        dict_event_properties.update({current_event: {"isObservable": 1, "isControllable": 1, "isFault": 0}})
-                    #print("current_event: ", current_event)
-
-                #print("dict_event_properties: ", dict_event_properties)
-                clean_lines[0][i] = current_event
-                self.currenttable.model.addColumn(current_event)
-
-                if "isObservable" in dict_event_properties[current_event]:
-                    if dict_event_properties[current_event]["isObservable"] == 1:
-                        #print("o")
-                        my_globals.setEventAsObservable(self.currenttable, current_event)
-                    elif dict_event_properties[current_event]["isObservable"] == 0:
-                        # print("uo")
-                        my_globals.setEventAsUnobservable(self.currenttable, current_event)
+        i = 1
+        for i in range(1,len(clean_lines[0])):
+            current_event = clean_lines[0][i]
+            if clean_lines[0][i] and clean_lines[0][i] != '_':
+                if current_event.endswith("_uc_f_uo") or current_event.endswith("_uc_uo_f") or current_event.endswith(
+                        "_f_uc_uo") or current_event.endswith("_f_uo_uc") or current_event.endswith(
+                        "_uo_f_uc") or current_event.endswith("_uo_uc_f"):
+                    string_lenght = len(current_event)
+                    substring_to_remove = current_event[-6:]
+                    current_event = current_event.replace(str(substring_to_remove), "")
+                    current_event.replace(" ", "")
+                    dict_event_properties.update({current_event: {"isObservable": 0, "isControllable": 0, "isFault": 1}})
+                elif current_event.endswith("_uc_f"):
+                    current_event = current_event.replace("_uc_f", "")
+                    current_event.replace(" ", "")
+                    dict_event_properties.update({current_event: {"isObservable": 1, "isControllable": 0, "isFault": 1}})
+                elif current_event.endswith("_f_uc"):
+                    current_event = current_event.replace("_f_uc", "")
+                    current_event.replace(" ", "")
+                    dict_event_properties.update({current_event: {"isObservable": 1, "isControllable": 0, "isFault": 1}})
+                elif current_event.endswith("_uc_uo"):
+                    current_event = current_event.replace("_uc_uo", "")
+                    current_event.replace(" ", "")
+                    dict_event_properties.update({current_event: {"isObservable": 0, "isControllable": 0, "isFault": 0}})
+                elif current_event.endswith("_uo_uc"):
+                    current_event = current_event.replace("_uo_uc", "")
+                    current_event.replace(" ", "")
+                    dict_event_properties.update({current_event: {"isObservable": 0, "isControllable": 0, "isFault": 0}})
+                elif current_event.endswith("_uo_f"):
+                    current_event = current_event.replace("_uo_f", "")
+                    current_event.replace(" ", "")
+                    dict_event_properties.update({current_event: {"isObservable": 0, "isControllable": 1, "isFault": 1}})
+                elif current_event.endswith("_f_uo"):
+                    current_event = current_event.replace("_f_uo", "")
+                    current_event.replace(" ", "")
+                    dict_event_properties.update({current_event: {"isObservable": 0, "isControllable": 1, "isFault": 1}})
+                elif current_event.endswith("_uc"):
+                    current_event = current_event.replace("_uc", "")
+                    current_event.replace(" ", "")
+                    dict_event_properties.update({current_event: {"isObservable": 1, "isControllable": 0, "isFault": 0}})
+                elif current_event.endswith("_f"):
+                    current_event = current_event.replace("_f", "")
+                    current_event.replace(" ", "")
+                    dict_event_properties.update({current_event: {"isObservable": 1, "isControllable": 1, "isFault": 1}})
+                elif current_event.endswith("_uo"):
+                    current_event = current_event.replace("_uo", "")
+                    current_event.replace(" ", "")
+                    dict_event_properties.update({current_event: {"isObservable": 0, "isControllable": 1, "isFault": 0}})
                 else:
-                    #print("uo")
-                    my_globals.setEventAsUnobservable(self.currenttable, current_event)
-
-                if "isControllable" in dict_event_properties[current_event]:
-                    if dict_event_properties[current_event]["isControllable"] == 1:
-                        #print("c")
-                        my_globals.setEventAsControllable(self.currenttable, current_event)
-                    elif dict_event_properties[current_event]["isControllable"] == 0:
-                        # print("uc")
-                        my_globals.setEventAsUncontrollable(self.currenttable, current_event)
-                else:
-                    #print("uc")
-                    my_globals.setEventAsUncontrollable(self.currenttable, current_event)
-
-                if "isFault" in dict_event_properties[current_event]:
-                    if dict_event_properties[current_event]["isFault"] == 1:
-                        #print("c")
-                        my_globals.setEventAsFaulty(self.currenttable, current_event)
-                    elif dict_event_properties[current_event]["isFault"] == 0:
-                        # print("uc")
-                        my_globals.setEventAsUnfaulty(self.currenttable, current_event)
-                else:
-                    #print("uc")
-                    my_globals.setEventAsUnfaulty(self.currenttable, current_event)
-
-
+                    current_event.replace(" ", "")
+                    dict_event_properties.update({current_event: {"isObservable": 1, "isControllable": 1, "isFault": 0}})
+                #print("current_event: ", current_event)
 
             #print("dict_event_properties: ", dict_event_properties)
+            clean_lines[0][i] = current_event
+            self.currenttable.model.addColumn(current_event)
+
+            if "isObservable" in dict_event_properties[current_event]:
+                if dict_event_properties[current_event]["isObservable"] == 1:
+                    #print("o")
+                    my_globals.setEventAsObservable(self.currenttable, current_event)
+                elif dict_event_properties[current_event]["isObservable"] == 0:
+                    # print("uo")
+                    my_globals.setEventAsUnobservable(self.currenttable, current_event)
+            else:
+                #print("uo")
+                my_globals.setEventAsUnobservable(self.currenttable, current_event)
+
+            if "isControllable" in dict_event_properties[current_event]:
+                if dict_event_properties[current_event]["isControllable"] == 1:
+                    #print("c")
+                    my_globals.setEventAsControllable(self.currenttable, current_event)
+                elif dict_event_properties[current_event]["isControllable"] == 0:
+                    # print("uc")
+                    my_globals.setEventAsUncontrollable(self.currenttable, current_event)
+            else:
+                #print("uc")
+                my_globals.setEventAsUncontrollable(self.currenttable, current_event)
+
+            if "isFault" in dict_event_properties[current_event]:
+                if dict_event_properties[current_event]["isFault"] == 1:
+                    #print("c")
+                    my_globals.setEventAsFaulty(self.currenttable, current_event)
+                elif dict_event_properties[current_event]["isFault"] == 0:
+                    # print("uc")
+                    my_globals.setEventAsUnfaulty(self.currenttable, current_event)
+            else:
+                #print("uc")
+                my_globals.setEventAsUnfaulty(self.currenttable, current_event)
 
 
 
-            # adding or deleting rows
-            while self.currenttable.model.getRowCount() < len(clean_lines)-1:
-                self.currenttable.model.addRow()
-
-            while self.currenttable.model.getRowCount() > len(clean_lines)-1:
-                self.currenttable.model.deleteRow(self.currenttable.model.getRowCount() - 1)
+        #print("dict_event_properties: ", dict_event_properties)
 
 
-            # print clean_lines
-            # for row in range(0, len(clean_lines)):
-                # for col in range(0, len(clean_lines[0])):
-                    #print("(row, col): ("+str(row)+","+str(col)+")"+": "+str(clean_lines[row][col]))
-                    # pass
+
+        # adding or deleting rows
+        while self.currenttable.model.getRowCount() < len(clean_lines)-1:
+            self.currenttable.model.addRow()
+
+        while self.currenttable.model.getRowCount() > len(clean_lines)-1:
+            self.currenttable.model.deleteRow(self.currenttable.model.getRowCount() - 1)
 
 
-            '''
-            text_content = "\t\t\tSome problems occurred:\r\n"
-            if flag_more_than_one_same_event == 1:
-                text_content += "ERROR: an 'event' can be defined only once (only one column per 'event').\n"
-                # auto-adapative height of the popup
-                win = Tk()
-                # Set the geometry of Tkinter frame
-                win.geometry("500x100")
-                # win.aspect(70,70,70,70)
-                win.title("Analysis problems")
-                Label(win, text=text_content, font=('Helvetica 10 bold')).pack(pady=20)
-                # Create a button in the main Window to open the popup
-                # ttk.Button(win, text="Example", command=self.open_popup_errors_on_txt_file).pack()
-                win.mainloop()
-                return
-            '''
+        # print clean_lines
+        for row in range(0, len(clean_lines)):
+            for col in range(0, len(clean_lines[0])):
+                #print("(row, col): ("+str(row)+","+str(col)+")"+": "+str(clean_lines[row][col]))
+                pass
 
-
-            # populating the table
-            for row in range(1, len(clean_lines)):
-                for col in range(0, len(clean_lines[0])):
-                    #print("row, col): ("+str(row)+","+str(col)+")"+": "+str(clean_lines[row][col]))
-                    self.currenttable.model.setValueAt(clean_lines[row][col], row-1, col)
-                    if len(clean_lines[row][col]) >= 10:
-                        width_col = 100 + (len(clean_lines[row][col]) - 10) * 7
-                        self.currenttable.resizeColumn(col, width_col)
-
-
-        except:
-            # Create an instance of Tkinter frame
-            win = Tk()
-            # Set the geometry of Tkinter frame
-            win.geometry("400x200")
-            # win.aspect(70,70,70,70)
-            Label(win, text="There are some sintax error in the .csv file you tried to import.\r\n"
-                            "Click here if you want to see an example on how to\r\ncorrectly populate the file.",
-                  font=('Helvetica 10 bold')).pack(pady=20)
-            # Create a button in the main Window to open the popup
-            ttk.Button(win, text="Example", command=self.open_popup_errors_on_csv_file).pack()
-            win.mainloop()
-
-
+        # populating the table
+        for row in range(1, len(clean_lines)):
+            for col in range(0, len(clean_lines[0])):
+                #print("row, col): ("+str(row)+","+str(col)+")"+": "+str(clean_lines[row][col]))
+                self.currenttable.model.setValueAt(clean_lines[row][col], row-1, col)
+                if len(clean_lines[row][col]) >= 10:
+                    width_col = 100 + (len(clean_lines[row][col]) - 10) * 7
+                    self.currenttable.resizeColumn(col, width_col)
 
         # in order to make the update of the table visible without the need to be touched before by the user
         self.currenttable.resizeColumn(0, 101)  # dummy resize
         self.currenttable.resizeColumn(0, 100)  # reset the width of col 0 to the default value
 
-
-
-
-        print("---------------------------------------------------------------------------------------------------------")
-        print("dict_event_properties: ", dict_event_properties)
-        print("---------------------------------------------------------------------------------------------------------")
-
-
+        fd.close()
         return
 
     # ******************************************************************************************************************
@@ -1652,9 +1297,7 @@ class TablesApp(Frame):
 
     def open_popup_errors_on_txt_file(self, win=None):
         """Open popup if some errors are present on the .txt file describing the fsa"""
-        from tkintertable import Table_images
-        #import PIL.Image, PIL.ImageTk
-        from PIL import Image, ImageTk
+
         #self.error_win=Toplevel(win)
         #self.error_win.geometry('+100+350')
         #self.error_win.title('About TablesApp')
@@ -1675,14 +1318,11 @@ class TablesApp(Frame):
         canvas = Canvas(self.example_win, width=1200, height=670)
         canvas.pack()
         # Load an image in the script
-        #img = (PIL.Image.open("./popup_example_how_to_populate_the_txt_file.png"))
-        img = (Image.open("./popup_example_how_to_populate_the_txt_file.png"))
+        img = (PIL.Image.open("./popup_example_how_to_populate_the_txt_file.png"))
 
         # Resize the Image using resize method
-        #resized_image = img.resize((1200, 670), PIL.Image.LANCZOS)
-        resized_image = img.resize((1200, 670), Image.LANCZOS)
-        #new_image = PIL.ImageTk.PhotoImage(resized_image)
-        new_image = ImageTk.PhotoImage(resized_image)
+        resized_image = img.resize((1200, 670), PIL.Image.LANCZOS)
+        new_image = PIL.ImageTk.PhotoImage(resized_image)
 
         # Add image to the Canvas Items
         canvas.create_image(10, 10, anchor=NW, image=new_image)
@@ -1709,131 +1349,6 @@ class TablesApp(Frame):
 
 
 
-    # added by me ******************************************************************************************************
-
-    def open_popup_errors_on_txt_file(self, win=None):
-        """Open popup if some errors are present on the .txt file describing the fsa"""
-        #from tkintertable import Table_images
-        #from PIL import Image, ImageTk
-
-
-        #from tkintertable import Table_images
-
-        # img = PhotoImage(format='png', file='./popup_example_how_to_populate_the_txt_file.png')
-
-        # Create an instance of tkinter frame
-        #self.example_win = Tk()
-        self.example_win = Toplevel(win)
-
-        # Set the geometry of tkinter frame
-        self.example_win.geometry("1000x670")
-        self.example_win.title("Example: how to populate a .txt description file of the FSA")
-        # Create a canvas
-        canvas = Canvas(self.example_win, width=1000, height=670)
-        canvas.pack()
-        # Load an image in the script
-        #img = (PIL.Image.open("./popup_example_how_to_populate_the_txt_file.png"))
-
-        #img = (Image.open("./popup_example_how_to_populate_the_txt_file.png"))
-        img = PhotoImage(format='png', file='./popup_example_how_to_populate_the_txt_file.png')
-
-        # Resize the Image using resize method
-        #resized_image = img.resize((1200, 670), PIL.Image.LANCZOS)
-        # resized_image = img.resize((1200, 670), Image.LANCZOS)
-        #resized_image = PhotoImage.zoom(img, 7, 7)
-        #resized_image = PhotoImage.subsample(resized_image, 8 ,8)
-
-        #new_image = PIL.ImageTk.PhotoImage(resized_image)
-        # new_image = ImageTk.PhotoImage(resized_image)
-
-        # Add image to the Canvas Items
-        canvas.create_image(10, 10, anchor=NW, image=img)
-
-        self.example_win.mainloop()
-
-
-        # create the text widget
-        #text = Text(self.ab_win, height=900, width=2800)
-        #text.grid(row=0, column=0, sticky='ew')
-
-        # create a scrollbar widget and set its command to the text widget
-        #scrollbar = ttk.Scrollbar(self.ab_win, orient='vertical', command=text.yview)
-        #scrollbar.grid(row=0, column=2700, sticky='ns')
-
-        #  communicate back to the scrollbar
-        #text['yscrollcommand'] = scrollbar.set
-
-        return
-
-    # ******************************************************************************************************************
-
-
-
-
-
-    # added by me ******************************************************************************************************
-
-    def open_popup_errors_on_csv_file(self, win=None):
-        """Open popup if some errors are present on the .csv file describing the fsa"""
-        #from tkintertable import Table_images
-        #from PIL import Image, ImageTk
-
-
-        #from tkintertable import Table_images
-
-        # img = PhotoImage(format='png', file='./popup_example_how_to_populate_the_txt_file.png')
-
-        # Create an instance of tkinter frame
-        #self.example_win = Tk()
-        self.example_win = Toplevel(win)
-
-        # Set the geometry of tkinter frame
-        self.example_win.geometry("740x720")
-        self.example_win.title("Example: how to populate a .csv description file of the FSA")
-        # Create a canvas
-        canvas = Canvas(self.example_win, width=730, height=710)
-        canvas.pack()
-        # Load an image in the script
-        #img = (PIL.Image.open("./popup_example_how_to_populate_the_txt_file.png"))
-
-        #img = (Image.open("./popup_example_how_to_populate_the_txt_file.png"))
-        img = PhotoImage(format='png', file='./popup_example_how_to_populate_the_csv_file.png')
-
-        # Resize the Image using resize method
-        #resized_image = img.resize((1200, 670), PIL.Image.LANCZOS)
-        # resized_image = img.resize((1200, 670), Image.LANCZOS)
-        #resized_image = PhotoImage.zoom(img, 7, 7)
-        #resized_image = PhotoImage.subsample(resized_image, 8 ,8)
-
-        #new_image = PIL.ImageTk.PhotoImage(resized_image)
-        # new_image = ImageTk.PhotoImage(resized_image)
-
-        # Add image to the Canvas Items
-        canvas.create_image(10, 10, anchor=NW, image=img)
-
-        self.example_win.mainloop()
-
-
-        # create the text widget
-        #text = Text(self.ab_win, height=900, width=2800)
-        #text.grid(row=0, column=0, sticky='ew')
-
-        # create a scrollbar widget and set its command to the text widget
-        #scrollbar = ttk.Scrollbar(self.ab_win, orient='vertical', command=text.yview)
-        #scrollbar.grid(row=0, column=2700, sticky='ns')
-
-        #  communicate back to the scrollbar
-        #text['yscrollcommand'] = scrollbar.set
-
-        return
-
-    # ******************************************************************************************************************
-
-
-
-
-
-
 
     # added by me ******************************************************************************************************
 
@@ -1854,7 +1369,7 @@ class TablesApp(Frame):
         return
 
     def import_csv(self):
-        print("import_csv")
+        #print("import_csv")
         importer = TableImporter()
         #just use the dialog to load and import the file
         importdialog = importer.import_Dialog(self.tablesapp_win)
@@ -1867,7 +1382,7 @@ class TablesApp(Frame):
         return
 
     def export_csv(self):
-        print("export_csv")
+        #print("export_csv")
         from tkintertable.Tables_IO import TableExporter
         exporter = TableExporter()
         exporter.ExportTableData(self.currenttable)
@@ -1875,7 +1390,7 @@ class TablesApp(Frame):
 
     def add_Sheet(self, sheetname=None, sheetdata=None):
         """Add a new sheet - handles all the table creation stuff"""
-        print("add_Sheet")
+        #print("add_Sheet")
         def checksheet_name(name):
             if name == '':
                 messagebox.showwarning("Whoops", "Name should not be blank.")
@@ -1909,7 +1424,7 @@ class TablesApp(Frame):
 
     def delete_Sheet(self):
         """Delete a sheet"""
-        print("delete_Sheet")
+        #print("delete_Sheet")
         s = self.notebook.index(self.notebook.select())
         name = self.notebook.tab(s, 'text')
         #self.notebook.delete(s)
@@ -1919,7 +1434,7 @@ class TablesApp(Frame):
 
     def copy_Sheet(self, newname=None):
         """Copy a sheet"""
-        print("copy_Sheet")
+        #print("copy_Sheet")
         newdata = self.currenttable.getModel().getData().copy()
         if newname==None:
             self.add_Sheet(None, newdata)
@@ -1929,7 +1444,7 @@ class TablesApp(Frame):
 
     def rename_Sheet(self):
         """Rename a sheet"""
-        print("rename_Sheet")
+        #print("rename_Sheet")
         #s = self.notebook.getcurselection()
         s = self.notebook.index(self.notebook.select())
         newname = simpledialog.askstring("New sheet name?", "Enter new sheet name:",
@@ -1942,7 +1457,7 @@ class TablesApp(Frame):
 
     def setcurrenttable(self, event):
         """Set the currenttable so that menu items work with visible sheet"""
-        print("setcurrenttable")
+        #print("setcurrenttable")
         try:
             #s = self.notebook.getcurselection()
             s = self.notebook.index(self.notebook.select())
@@ -1953,28 +1468,28 @@ class TablesApp(Frame):
 
     def add_Row(self):
         """Add a new row"""
-        print("add_Row")
+        #print("add_Row")
         self.currenttable.addRow()
         self.saved = 0
         return
 
     def delete_Row(self):
         """Delete currently selected row"""
-        print("delete_Row")
+        #print("delete_Row")
         self.currenttable.deleteRow()
         self.saved = 0
         return
 
     def add_Column(self):
         """Add a new column"""
-        print("add_Column")
+        #print("add_Column")
         self.currenttable.addColumn()
         self.saved = 0
         return
 
     def delete_Column(self):
         """Delete currently selected column in table"""
-        print("delete_Column")
+        #print("delete_Column")
         self.currenttable.deleteColumn()
         self.saved = 0
         return
@@ -1982,7 +1497,7 @@ class TablesApp(Frame):
     # added by me ******************************************************************************************************
     def from_Table_To_Json(self):
         """Convert the current table content into a Json file"""
-        self.print_some_table_value_test()
+        #self.print_some_table_value_test()
         my_globals.fromTableToJson(self.currenttable)
 
         self.saved = 0
@@ -2002,26 +1517,26 @@ class TablesApp(Frame):
 
     def autoAdd_Rows(self):
         """Auto add x rows"""
-        print("autoAdd_Rows")
+        #print("autoAdd_Rows")
         self.currenttable.autoAddRows()
         self.saved = 0
         return
 
     def autoAdd_Columns(self):
         """Auto add x rows"""
-        print("autoAdd_Columns")
+        #print("autoAdd_Columns")
         self.currenttable.autoAddColumns()
         self.saved = 0
         return
 
     def findValue(self):
-        print("findValue")
+        #print("findValue")
         self.currenttable.findValue()
         return
 
     def do_find_text(self, event=None):
         """Find the text in the table"""
-        print("do_find_text")
+        #print("do_find_text")
         if not hasattr(self,'currenttable'):
             return
         import string
@@ -2034,7 +1549,7 @@ class TablesApp(Frame):
 
     def do_find_again(self, event=None):
         """Find again"""
-        print("do_find_again")
+        #print("do_find_again")
         if not hasattr(self,'currenttable'):
             return
         searchstring=self.findtext.get()
@@ -2043,17 +1558,17 @@ class TablesApp(Frame):
         return
 
     def plot(self, event=None):
-        print("plot")
+        #print("plot")
         self.currenttable.plotSelected()
         return
 
     def plotSetup(self, event=None):
-        print("plotSetup")
+        #print("plotSetup")
         self.currenttable.plotSetup()
         return
 
     def about_Tables(self):
-        print("about_Tables")
+        #print("about_Tables")
         self.ab_win=Toplevel()
         self.ab_win.geometry('+100+350')
         self.ab_win.title('About TablesApp')
@@ -2078,14 +1593,14 @@ class TablesApp(Frame):
 
     def online_documentation(self,event=None):
         """Open the online documentation"""
-        print("online_documentation")
+        #print("online_documentation")
         import webbrowser
         link='http://sourceforge.net/projects/tkintertable/'
         webbrowser.open(link,autoraise=bool(1))
         return
 
     def quit(self):
-        print("quit")
+        #print("quit")
         self.tablesapp_win.destroy()
 
         return
@@ -2094,7 +1609,7 @@ class ToolBar(Frame):
     """Uses the parent instance to provide the functions"""
 
     def __init__(self, parent=None, parentapp=None):
-        print("ToolBar__init__")
+        #print("ToolBar__init__")
         Frame.__init__(self, parent, width=600, height=40)
         from tkintertable import Table_images
         self.parentframe = parent
@@ -2135,7 +1650,7 @@ class ToolBar(Frame):
         return
 
     def add_button(self, name, callback, img=None):
-        print("add_button")
+        #print("add_button")
         if img==None:
             b = Button(self, text=name, command=callback)
         else:
