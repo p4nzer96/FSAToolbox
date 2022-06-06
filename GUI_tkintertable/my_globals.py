@@ -350,11 +350,11 @@ def fromTableToJson(MyTable):
                                 current_key_event = current_key_event.replace("_uo", "")
                             '''
 
-                            dict_E.update({current_key_event: {"isObservable": str(dictcolObservableEvents[current_key_event]),
-                                                               "isControllable": str(
-                                                                   dictcolControllableEvents[current_key_event]),
-                                                               "isFault": str(
-                                                                   dictcolFaultyEvents[current_key_event])}})
+                            dict_E.update({current_key_event: {"isObservable": dictcolObservableEvents[current_key_event],
+                                                               "isControllable":
+                                                                   dictcolControllableEvents[current_key_event],
+                                                               "isFault":
+                                                                   dictcolFaultyEvents[current_key_event]}})
                             iter_delta_key += 1
 
                         print(current_delta_ends)
