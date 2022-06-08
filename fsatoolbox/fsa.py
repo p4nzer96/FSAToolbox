@@ -27,15 +27,15 @@ class fsa:
 
     def __init__(self, X=None, E=None, delta=None, x0=None, Xm=None, **kwargs) -> None:
 
-        self.X = X if X else []  # States
-        self.E = E if E else []  # Alphabet
-        self.delta = delta  # Delta relation
-        self.x0 = x0 if x0 else []  # Initial states
-        self.Xm = Xm if Xm else []  # Final states
+        self._X = X if X else []  # States
+        self._E = E if E else []  # Alphabet
+        self._delta = delta  # Delta relation
+        self._x0 = x0 if x0 else []  # Initial states
+        self._Xm = Xm if Xm else []  # Final states
 
         # Optional: Name of the FSA
 
-        self.name = kwargs.get('name') if kwargs.get('name') else object.__repr__(self)
+        self._name = kwargs.get('name') if kwargs.get('name') else object.__repr__(self)
 
         # FSA properties
 
@@ -44,6 +44,51 @@ class fsa:
         self.is_Blocking = None
         self.is_Trim = None
         self.is_Reversible = None
+
+    def __repr__(self):
+
+        rep = self._name + "\n" + self.showfsa()
+        return rep
+
+    @property
+    def X(self):
+        return self._X
+
+    @X.setter
+    def X(self, value):
+        for x in value:
+            if x in self._X:
+                self.add_state(x)
+            else:
+                self.remove_state(x)
+
+    @property
+    def E(self):
+        return self._E
+
+    @E.setter
+    def E(self, value):
+        for e in value:
+            if e in self._E:
+                self.add_event(e)
+            else:
+                self.remove_event(e)
+
+    @property
+    def delta(self):
+        return self._delta
+
+    @delta.setter
+    def delta(self, value):
+        self._delta = value
+
+    @property
+    def x0(self):
+        return self._x0
+
+    @property
+    def Xm(self):
+        return self._Xm
 
     @classmethod
     def from_file(cls, filename, **kwargs):
@@ -71,7 +116,7 @@ class fsa:
 
         jsonObject = load_module.loadfile(filename)
 
-        if jsonObject == None:
+        if jsonObject is None:
             raise TypeError
 
         # Reading states and properties
@@ -210,13 +255,10 @@ class fsa:
         with open(filename, "w") as outfile:
             json.dump(fsa_dict, outfile, indent=4)
 
-    def showfsa(self, ui_mode=False, **kwargs):
+    def showfsa(self):
 
         """
         Shows a graphical representation of the FSA
-
-        Args:
-            ui_mode (bool): If True, plot the FSA in UI
 
         Returns:
             str: String that show the fsa structure
@@ -322,11 +364,6 @@ class fsa:
 
         return text
 
-    def __repr__(self):
-
-        rep = self.name + "\n" + self.showfsa()
-        return rep
-
     def filter_delta(self, start=None, transition=None, end=None):
         """
         Filters the delta by starting state, transition or ending state
@@ -372,6 +409,8 @@ class fsa:
             isForbidden(bool, optional): determines if the state is forbidden
         """
 
+        self._refresh_fsa()
+
         if isinstance(new_state, state):  # if state is an instance of state
 
             if new_state not in self.X:
@@ -411,6 +450,17 @@ class fsa:
 
             raise ValueError
 
+    def remove_state(self, state):
+        self._refresh_fsa()
+        state = self._state_parser(state)
+
+        for x in self._X:
+            if x == state:
+                self._X.remove(x)
+
+        self._delta.drop(self.delta[((self._delta.start == state) |
+                                     (self._delta.end == state))].index, inplace=True)
+
     def add_event(self, new_event, isObservable=None, isControllable=None, isFault=None):
         """
         Adds an event to the FSA
@@ -447,6 +497,24 @@ class fsa:
         else:
 
             raise ValueError
+
+    def remove_event(self, event):
+        """
+        Removes an event or a list of events from the FSA
+        Args:
+            event (state):
+        """
+
+        self._refresh_fsa()
+
+        self._refresh_fsa()
+        event = self._state_parser(event)
+
+        for e in self._E:
+            if e == event:
+                self._E.remove(e)
+
+        self._delta.drop(self.delta[(self._delta.transition == event)], inplace=True)
 
     def add_transition(self, initial_state, tr_event, end_state):
 
@@ -509,3 +577,85 @@ class fsa:
 
         temp_df = pd.DataFrame([[i_state, transition, e_state]], columns=["start", "transition", "end"])
         self.delta = pd.concat([self.delta, temp_df], axis=0, ignore_index=True)
+
+        self._refresh_fsa()
+
+    def remove_transition(self, start, event, end):
+
+        start = self._state_parser(start)
+        event = self._event_parser(event)
+        end = self._state_parser(end)
+
+        self._delta.drop(self.delta[((self._delta.start == start) &
+                                     (self._delta.transition == event) &
+                                     (self._delta.end == end))].index, inplace=True)
+
+        self._refresh_fsa()
+
+    # Internal Methods -------------------------------------------------------------
+
+    def _state_parser(self, states):
+
+        if isinstance(states, list):
+            parsed_states = []
+            for x in states:
+                if isinstance(x, state):
+                    parsed_states.append(x)
+                elif isinstance(x, str):
+                    for fsa_x in self.X:
+                        if x == fsa_x.label:
+                            parsed_states.append(fsa_x)
+                else:
+                    raise TypeError
+            return parsed_states
+        elif isinstance(states, str):
+            for fsa_x in self.X:
+                if states == fsa_x.label:
+                    return fsa_x
+        elif isinstance(states, state):
+            return states
+        else:
+            raise TypeError
+
+    def _event_parser(self, events):
+
+        if isinstance(events, list):
+            parsed_events = []
+            for e in events:
+                if isinstance(e, event):
+                    parsed_events.append(e)
+                elif isinstance(e, str):
+                    for fsa_x in self.X:
+                        if e == fsa_x.label:
+                            parsed_events.append(fsa_x)
+                else:
+                    raise TypeError
+            return parsed_events
+        elif isinstance(events, str):
+            for fsa_e in self.E:
+                if events == fsa_e.label:
+                    return fsa_e
+        elif isinstance(events, event):
+            return event
+        else:
+            raise TypeError
+
+    def _refresh_fsa(self):
+
+        for x in self._X:
+            if x.isInitial is True and x not in self._x0:
+                self._x0.append(x)
+            elif x.isInitial is False and x in self._x0:
+                self._x0.remove(x)
+
+        for x in self._X:
+            if x.isFinal is True and x not in self._Xm:
+                self._Xm.append(x)
+            elif x.isFinal is False and x in self._Xm:
+                self._Xm.remove(x)
+
+        self.is_Reachable = None
+        self.is_co_Reachable = None
+        self.is_Trim = None
+        self.is_Blocking = None
+        self.is_Reversible = None

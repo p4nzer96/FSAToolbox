@@ -114,9 +114,6 @@ def cc(G0, G1, verbose=False, name_style=0):
 
     # Adding states in the CC FSA
 
-    CC.x0 = []
-    CC.Xm = []
-
     for x in X:
 
         if name_style == 0:

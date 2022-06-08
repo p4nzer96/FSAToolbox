@@ -31,8 +31,8 @@ def load_txt(filename):
         # Parsing state attributes
 
         fsa_dict['X'][state_attrs[0]] = {'isInitial': bool(eval(state_attrs[1])),
-                                         'IsFinal': bool(eval(state_attrs[2])),
-                                         'IsForbidden': bool(eval(state_attrs[3]))}
+                                         'isFinal': bool(eval(state_attrs[2])),
+                                         'isForbidden': bool(eval(state_attrs[3]))}
 
     def parse_transitions(current_state, line, fsa_dict):
         ev_trans = line.split()

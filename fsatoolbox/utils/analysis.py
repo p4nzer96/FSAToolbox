@@ -25,15 +25,20 @@ def get_reachability_info(fsa_obj):
                 num_failed_filtering += 1
 
             else:
-                for idx, start_state in current_start_filtered_deltas.iterrows():
+
+                count = 0
+
+                for _, start_state in current_start_filtered_deltas.iterrows():
+
+                    count += 1
 
                     end_state = start_state.end
 
                     if end_state not in reachable_states:
                         reachable_states.append(end_state)
-                        current_start_states.insert(idx, end_state)
+                        current_start_states.insert(count, end_state)
 
-                    if n_start_states == idx + 1:
+                    if n_start_states == count + 1:
                         break
 
             if num_failed_filtering == len(current_start_filtered_deltas) or len(current_start_states) == len(
@@ -56,6 +61,9 @@ def get_reachability_info(fsa_obj):
         print("The FSA is not reachable")
         print("Reachable states: {}\n".format(reachable_states))
         fsa_obj.is_Reachable = False
+
+    print(fsa_obj.is_Reachable)
+    print("HAI ROTTO IL CAZZO")
 
     return fsa_obj.is_Reachable
 
@@ -93,15 +101,20 @@ def get_co_reachability_info(fsa_obj):
                 num_failed_filtering += 1
 
             else:
-                for idx, end_state in current_end_filtered_deltas.iterrows():
+
+                count = 0
+
+                for _, end_state in current_end_filtered_deltas.iterrows():
+
+                    count += 1
 
                     start_state = end_state.start
 
                     if start_state not in co_reachable_states:
                         co_reachable_states.append(start_state)
-                        current_end_states.insert(idx, start_state)
+                        current_end_states.insert(count, start_state)
 
-                    if n_end_states == idx + 1:
+                    if n_end_states == count + 1:
                         break
 
             if num_failed_filtering == len(current_end_filtered_deltas) or len(current_end_states) == len(fsa_obj.X):
@@ -128,17 +141,17 @@ def get_co_reachability_info(fsa_obj):
         print("Co-reachable states: {}\n".format(co_reachable_states))
         fsa_obj.is_co_Reachable = False
 
-    return fsa_obj.is_co_Reachable
+    # return fsa_obj.is_co_Reachable
 
 
 def get_blockingness_info(fsa_obj):
     # Check if Reachable and Co-Reachable properties are set
 
     if fsa_obj.is_Reachable is None:
-        fsa_obj.get_reachability_info()
+        get_reachability_info(fsa_obj)
 
     if fsa_obj.is_co_Reachable is None:
-        fsa_obj.get_co_reachability_info()
+        get_co_reachability_info(fsa_obj)
 
     fsa_obj.is_Blocking = False
 
@@ -166,6 +179,9 @@ def get_trim_info(fsa_obj):
         get_reachability_info(fsa_obj)
     if fsa_obj.is_co_Reachable is None:
         get_co_reachability_info(fsa_obj)
+
+    print(fsa_obj.is_Reachable)
+    print(fsa_obj.is_co_Reachable)
 
     if fsa_obj.is_Reachable is True and fsa_obj.is_co_Reachable is True:
         fsa_obj.is_Trim = True
@@ -225,15 +241,19 @@ def get_co_reachability_to_x0_info(fsa_obj):
 
             else:
 
-                for idx, end_state in current_end_filtered_deltas.iterrows():
+                count = 0
+
+                for _, end_state in current_end_filtered_deltas.iterrows():
+
+                    count += 1
 
                     start_state = end_state.start
 
                     if start_state not in co_reachable_to_x0_states:
                         co_reachable_to_x0_states.append(start_state)
-                        current_end_states.insert(idx, start_state)
+                        current_end_states.insert(count, start_state)
 
-                    if n_end_states == idx + 1:
+                    if n_end_states == count + 1:
                         break
 
             if num_failed_filtering == len(current_end_filtered_deltas) or start_state == fsa_obj.x0[0] or len(
