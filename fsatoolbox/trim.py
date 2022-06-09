@@ -7,8 +7,6 @@ def trim(G: fsa):
     if G.is_Trim is None:
         analysis.get_trim_info(G)
 
-    print(G.is_Trim)
-
     if G.is_Trim:
         print("The fsa is already trim")
         return G
@@ -20,5 +18,3 @@ def trim(G: fsa):
             G.remove_state(x)
 
     analysis.get_trim_info(G)
-    print(G.is_Trim)
-

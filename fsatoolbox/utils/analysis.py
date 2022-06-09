@@ -1,4 +1,4 @@
-def get_reachability_info(fsa_obj):
+def get_reachability_info(fsa_obj, set_fsa=True):
     reachable_states = []  # List of reachable states
     current_start_states = [fsa_obj.x0[0]]  # take the first initial state
 
@@ -45,30 +45,23 @@ def get_reachability_info(fsa_obj):
                     fsa_obj.X):
                 end_algorithm_flag = 1
 
-    for x_states in fsa_obj.X:
+        for x_states in fsa_obj.X:
 
-        if x_states in reachable_states:
-            x_states.is_Reachable = True
+            if x_states in reachable_states:
+                x_states.is_Reachable = True
 
-        else:
-            x_states.is_Reachable = False
+            else:
+                x_states.is_Reachable = False
 
-    if len(reachable_states) == len(fsa_obj.X):
-        print("The FSA is reachable")
-        print("Reachable states: {}\n".format(reachable_states))
-        fsa_obj.is_Reachable = True
-    else:
-        print("The FSA is not reachable")
-        print("Reachable states: {}\n".format(reachable_states))
-        fsa_obj.is_Reachable = False
+    is_reachable = all([x.is_Reachable for x in fsa_obj.X])
 
-    print(fsa_obj.is_Reachable)
-    print("HAI ROTTO IL CAZZO")
+    if set_fsa is True:
+        fsa_obj.is_Reachable = is_reachable
 
-    return fsa_obj.is_Reachable
+    return is_reachable, reachable_states
 
 
-def get_co_reachability_info(fsa_obj):
+def get_co_reachability_info(fsa_obj, set_fsa=True):
     co_reachable_states = []
     current_end_states = []
     for x in fsa_obj.Xm:
@@ -130,21 +123,15 @@ def get_co_reachability_info(fsa_obj):
         else:
             x_state.is_co_Reachable = False
 
-    # Set the co-reachability property for the FSA
+    is_co_reachable = all([x.is_Reachable for x in fsa_obj.X])
 
-    if len(co_reachable_states) == len(fsa_obj.X):
-        print("The FSA is co-reachable")
-        print("Co-reachable states: {}\n".format(co_reachable_states))
-        fsa_obj.is_co_Reachable = True
-    else:
-        print("The FSA is not co-reachable")
-        print("Co-reachable states: {}\n".format(co_reachable_states))
-        fsa_obj.is_co_Reachable = False
+    if set_fsa is True:
+        fsa_obj.is_co_Reachable = is_co_reachable
 
-    # return fsa_obj.is_co_Reachable
+    return is_co_reachable, co_reachable_states
 
 
-def get_blockingness_info(fsa_obj):
+def get_blockingness_info(fsa_obj, set_fsa=True):
     # Check if Reachable and Co-Reachable properties are set
 
     if fsa_obj.is_Reachable is None:
@@ -159,20 +146,18 @@ def get_blockingness_info(fsa_obj):
 
         if x_state.is_Reachable is True and x_state.is_co_Reachable is False:
             x_state.is_Blocking = True
-            fsa_obj.is_Blocking = True
         else:
             x_state.is_Blocking = False
 
-    if fsa_obj.is_Blocking:
-        print("The FSA is blocking")
-        print("List of blocking states {}\n".format([x for x in fsa_obj.X if x.is_Blocking is True]))
-    else:
-        print("The FSA is not blocking\n")
+    is_blocking = any([x.is_Blocking for x in fsa_obj.X]) is True
 
-    return fsa_obj.is_Blocking
+    if set_fsa is True:
+        fsa_obj.is_Blocking = is_blocking
+
+    return is_blocking, [x for x in fsa_obj.X if x.is_Blocking]
 
 
-def get_trim_info(fsa_obj):
+def get_trim_info(fsa_obj, set_fsa=True):
     # Check if Reachable and Co-Reachable properties are set
 
     if fsa_obj.is_Reachable is None:
@@ -180,17 +165,15 @@ def get_trim_info(fsa_obj):
     if fsa_obj.is_co_Reachable is None:
         get_co_reachability_info(fsa_obj)
 
-    print(fsa_obj.is_Reachable)
-    print(fsa_obj.is_co_Reachable)
-
     if fsa_obj.is_Reachable is True and fsa_obj.is_co_Reachable is True:
-        fsa_obj.is_Trim = True
-        print("The FSA is Trim\n")
+        is_trim = True
     else:
-        fsa_obj.is_Trim = False
-        print("The FSA is not Trim\n")
+        is_trim = False
 
-    return fsa_obj.is_Trim
+    if set_fsa is True:
+        fsa_obj.is_Trim = is_trim
+
+    return is_trim
 
 
 def get_deadness_info(fsa_obj):
@@ -268,10 +251,9 @@ def get_co_reachability_to_x0_info(fsa_obj):
         else:
             x_state.is_co_Reachable_to_x0 = False
 
-    print("Co-reachable to x0 states: {}\n".format(co_reachable_to_x0_states))
 
+def get_reversibility_info(fsa_obj, set_fsa=True):
 
-def get_reversibility_info(fsa_obj):
     if fsa_obj.is_Reachable is None:
         get_reachability_info(fsa_obj)
 
@@ -281,14 +263,13 @@ def get_reversibility_info(fsa_obj):
     for x_state in fsa_obj.X:
         if x_state.is_Reachable:
             if not x_state.is_co_Reachable_to_x0:
-                fsa_obj.is_Reversible = False
+                is_reversible = False
                 break
             else:
-                fsa_obj.is_Reversible = True
+                is_reversible = True
 
-    if fsa_obj.is_Reversible is True:
-        print("The FSA is reversible\n")
-    else:
-        print("The FSA is not reversible\n")
+    if set_fsa is True:
 
-    return fsa_obj.is_Reversible
+        fsa_obj.is_Reversible = is_reversible
+
+    return is_reversible

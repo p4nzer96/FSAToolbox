@@ -8,10 +8,10 @@ def loadfile(filename):
 
         if ".txt" in extension:
             data = load_txt(filename)
-        elif ".json" or ".fsa" in extension in extension:
+        elif ".json" in extension or ".fsa" in extension:
             data = load_json(filename)
         else:
-            raise ValueError("File format not reconized")
+            raise ValueError("File format not recognized")
 
         return data
 
@@ -107,7 +107,7 @@ def load_txt(filename):
             parse_transitions(current_state, line, fsa_dict)
 
     assert n_states == len(fsa_dict['X'])
-    #json_object = json.dumps(fsa_dict, indent=4)
+    # json_object = json.dumps(fsa_dict, indent=4)
 
     fd.close()
 

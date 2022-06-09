@@ -1,6 +1,7 @@
 from fsatoolbox.fsa import fsa
 from fsatoolbox.state import state
-from fsatoolbox import cc
+from fsatoolbox.cc import cc
+from fsatoolbox.trim import trim
 import copy
 
 
@@ -15,7 +16,7 @@ def hhat(H):
     Returns:
         fsa
     """
-    yf = state("yf", isForbidden=True)
+    yf = state("yf", isInitial=False, isFinal=False, isForbidden=True)
 
     Hh = copy.deepcopy(H)
     Hh.add_state(yf)
@@ -27,10 +28,6 @@ def hhat(H):
                 Hh.add_transition(x, e, yf)
 
     return Hh
-
-
-def comp_automaton(G, Hh):
-    return cc(G, Hh)
 
 
 def get_forbidden(A):
@@ -73,3 +70,37 @@ def get_weakly_forbidden(A: fsa, forbidden: list):
             X_new.remove(x)  # Remove the current state from X_new
 
     return list(wb_states)
+
+
+def compute_supervisor(G, H):
+    # Computing the extended specification automaton
+    h_hat = hhat(H)
+
+    # Computing the composition automaton
+    A = cc(G, h_hat)
+
+    # Getting the set of forbidden states
+    forbidden = get_forbidden(A)
+
+    if len(forbidden) == 0:
+        return H, A
+
+    weakly_forbidden = get_weakly_forbidden(A, forbidden)
+
+    for x in A.x0:
+
+        if x in weakly_forbidden:
+
+            return None
+
+    wf_f_states = forbidden + weakly_forbidden
+
+    for x in wf_f_states:
+
+        if x in A.X:
+
+            A.remove_state(x)
+
+    trim(A)
+
+    return A
