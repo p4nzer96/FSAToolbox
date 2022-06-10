@@ -1,15 +1,15 @@
 import fsatoolbox
 from fsatoolbox import *
 
-def savefsa(args, fsalst, path):
-    if(len(args)<2):
-        print("Not enough arguments provided, type \"save -h\" to help")
-        return
-
+def savefsa(args,eventslst,fsalst,path):
     if('-h' in args):
         print("This functions saves a fsa to a file")
-        print("Usage:\n     load name pathtofile")
+        print("Usage:\n     load name nameOfTheFile (without the extension)")
         print("Optional arguments:\n -a Use absolute path")
+        return
+
+    if(len(args)<2):
+        print("Not enough arguments provided, type \"save -h\" to help")
         return
     
     if(args[0] in fsalst):

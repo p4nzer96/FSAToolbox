@@ -14,6 +14,8 @@ from basic_CLI.observer import observer
 from basic_CLI.super import supervisor
 from basic_CLI.exth import exth
 
+from basic_CLI.analysis import reachability, coreachability, blocking, trim, dead, reverse
+
 #commands
 
 def help(args=None):
@@ -25,11 +27,12 @@ def help(args=None):
 def changepath(args, path):
     if('-h' in args):
         print("This functions changes the default path")
-        print("Usage:\n     changepath newpath (Ex: changepath C:\\Automi")
+        print("Usage:\n     changepath newpath (Ex: changepath C:\\\\Automi)")
+        print("Note: In windows use \\\\ instead of \\ (C:\\\\Automi) or put the path in brakets: \"C:\Automi\"")
         return path
     
     if(len(args)<1):
-        print("Not enough arguments provided, type \"changepath help\" to help")
+        print("Not enough arguments provided, type \"changepath -h\" to help")
         return path
 
     if(os.path.isdir(args[0])):
@@ -38,7 +41,7 @@ def changepath(args, path):
         print("Invalid path")
         return path
 
-def removefsa(args, fsalst, path):
+def removefsa(args,eventslst,fsalst,path):
     if('-h' in args):
         print("Removes a fsa from the list")
         print("Usage:\n->rm fsa_name (Ex:rm G0)")
@@ -54,16 +57,16 @@ def removefsa(args, fsalst, path):
 
     del fsalst[args[0]]
 
-def currpath(args, fsalst, path):
+def currpath(args,eventslst,fsalst,path):
     if('-h' in args):
         print("Print the current path")
 
     print(path)
 
-def showfsa(args, fsalst, path):
+def showfsa(args,eventslst,fsalst,path):
     #TODO
     if(len(args)<1):
-        print("Not enough arguments provided, type \"showfsa -h\" to help")
+        print("Not enough arguments provided")
         return
 
     if(args[0] not in fsalst):
@@ -72,7 +75,14 @@ def showfsa(args, fsalst, path):
     
     print(fsalst[args[0]])
 
-def listfsa(args, fsalst, path): #TODO add some stats?
+def lst(args,eventslst,fsalst,path):
+    print("Elements in: " + path)
+    l = os.listdir(path)  # files only
+    l = [ f for f in os.listdir( os.curdir ) if os.path.isfile(f) ]
+    for el in l:
+        print(el)
+
+def listfsa(args,eventslst,fsalst,path): #TODO add some stats?
     for key,value in fsalst.items():
         print(key)
 
@@ -98,6 +108,13 @@ commands={
     'addtrans' : addtrans,
     'rmtrans' : rmtrans,
     'show': showfsa,
+    'reach' : reachability,
+    'coreach' : coreachability,
+    'blocking' : blocking,
+    'trim' : trim,
+    'dead' : dead,
+    'reverse' : reverse,
+    'lst' : lst,
     'xlist': listfsa,
     'elist': listevents,
     'cc': conccomp,
