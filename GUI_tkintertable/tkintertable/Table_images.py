@@ -161,13 +161,6 @@ def from_table_to_json():
 '''
 
 
-
-def popup_error_example_txt_fsa():
-    img = PhotoImage(format='png', file='./venv/Lib/site-packages/tkintertable/heart.png', height=16, width=16)
-    return img
-
-
-
 def del_row():
      '''
      img = PhotoImage(format='png', file='./venv/Lib/site-packages/tkintertable/heart.png', height=16, width=16)
