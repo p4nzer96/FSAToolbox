@@ -1,9 +1,10 @@
 import os
 import ntpath
+from basic_CLI.checkevents import checkevents
 import fsatoolbox
 from fsatoolbox import *
 
-def loadfsa(args, fsalst, path):
+def loadfsa(args,eventslst, fsalst, path):
     if('-h' in args):
         print("This functions loads a fsa from a file")
         print("Usage:\n->load name pathtofile")
@@ -29,13 +30,17 @@ def loadfsa(args, fsalst, path):
             return
 
     if(os.path.isfile(filepath)):
-        fsalst[name]=fsa.from_file(filepath)
+        G=fsa.from_file(filepath)
     elif(os.path.isfile(filepath+'.fsa')):
-        fsalst[name]=fsa.from_file(filepath+'.fsa')
+        G=fsa.from_file(filepath+'.fsa')
     elif(os.path.isfile(path+'\\'+filepath)):
-        fsalst[name]=fsa.from_file(path+'\\'+filepath)
+        G=fsa.from_file(path+'\\'+filepath)
     elif(os.path.isfile(path+'\\'+filepath+'.fsa')):
-        fsalst[name]=fsa.from_file(path+'\\'+filepath+'.fsa')
+        G=fsa.from_file(path+'\\'+filepath+'.fsa')
     else:
         print("Error: file does not exists")
         return
+    
+    checkevents(G,eventslst, fsalst)
+
+    fsalst[name]=G
