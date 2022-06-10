@@ -1,0 +1,65 @@
+{
+    "X": {
+        "y0": {
+            "isInitial": true,
+            "isFinal": true,
+            "isForbidden": false
+        },
+        "y1": {
+            "isInitial": true,
+            "isFinal": true,
+            "isForbidden": false
+        }
+    },
+    "E": {
+        "a": {
+            "isControllable": true
+        },
+        "b": {
+            "isControllable": false
+        },
+        "c": {
+            "isControllable": false
+        },
+        "d": {
+            "isControllable": true
+        }
+    },
+    "delta": {
+        "0": {
+            "start" : "y0",
+            "event" : "a",
+            "end" : "y0"
+        },
+        "1": {
+            "start" : "y0",
+            "event" : "b",
+            "end" : "y0"
+        },
+        "2": {
+            "start" : "y0",
+            "event" : "d",
+            "end" : "y1"
+        },
+        "3": {
+            "start" : "y1",
+            "event" : "c",
+            "end" : "y0"
+        },
+        "4": {
+            "start" : "y1",
+            "event" : "a",
+            "end" : "y1"
+        },
+        "5": {
+            "start" : "y1",
+            "event" : "b",
+            "end" : "y1"
+        },
+        "6": {
+            "start" : "y1",
+            "event" : "d",
+            "end" : "y1"
+        }
+    }
+}

@@ -1,187 +1,142 @@
+import shlex
 import os
-
 from fsatoolbox import *
+
+from basic_CLI.checkevents import checkevents, updateevents
+from basic_CLI.loadfsa import loadfsa
+from basic_CLI.savefsa import savefsa
+from basic_CLI.fsabuilder import fsabuilder
+from basic_CLI.editfsa import addstate, rmstate, addevent, rmevent, addtrans, rmtrans
+from basic_CLI.conccomp import conccomp
+from basic_CLI.faultmon import faultmon
+from basic_CLI.diagnoser import diagnoser
+from basic_CLI.observer import observer
+from basic_CLI.super import supervisor
+from basic_CLI.exth import exth
+
+#commands
 
 def help(args=None):
     print("This is only a test version: available commands:")
     for key,val in commands.items():
-        print("->"+key)
+        print("-> "+key)
     print("[CTRL+C to exit]")
 
-def changepath(args):
-    if(len(args)>1):
-        if(args[1]=='help'):
-            print("This functions changes the default path")
-            print("Usage:\n     changepath newpath")
-        else:
-            if(os.path.isdir(args[1])):
-                path=args[1]
-            else:
-                print("Invalid path")
-
-    else:
+def changepath(args, path):
+    if('-h' in args):
+        print("This functions changes the default path")
+        print("Usage:\n     changepath newpath (Ex: changepath C:\\Automi")
+        return path
+    
+    if(len(args)<1):
         print("Not enough arguments provided, type \"changepath help\" to help")
+        return path
 
-def loadfsa(args):
-    if(len(args)>1):
-        if(args[1]=='help'):
-                print("This functions loads a fsa from a file")
-                print("Usage:\n     load name pathtofile")
-        elif(len(args)>2):
-            if(args[1] in fsalst):
-                print("Name already in use")
-                return
-            else:
-                if(os.path.isfile(args[2])):
-                    fsalst[args[1]]=fsa.from_file(args[2])
-                elif(os.path.isfile(args[2]+'.fsa')):
-                    fsalst[args[1]]=fsa.from_file(args[2]+'.fsa')
-                elif(os.path.isfile(path+args[2])):
-                    fsalst[args[1]]=fsa.from_file(path+args[2])
-                elif(os.path.isfile(path+args[2]+'.fsa')):
-                    fsalst[args[1]]=fsa.from_file(path+args[2]+'.fsa')
-                else:
-                    print("Error: file does not exists")
-                    return
-        else:
-            print("Not enough arguments provided, type \"load help\" to help")
+    if(os.path.isdir(args[0])):
+        return args[0]
     else:
-        print("Not enough arguments provided, type \"load help\" to help")
+        print("Invalid path")
+        return path
 
-def savefsa(args):
-    if(len(args)>1):
-        if(args[1]=='help'):
-            print("This functions saves a fsa to file")
-            print("Usage:\n     save name")
-        elif(len(args)>2):
-            if(args[1] in fsalst):
-                fsalst[args[1]].to_file(path+args[2])
-            else:
-                print("Error, fsa doesn't exists")
-        else:
-            print("Not enough arguments provided, type \"save help\" to help")
-    else:
-        print("Not enough arguments provided, type \"save help\" to help")
+def removefsa(args, fsalst, path):
+    if('-h' in args):
+        print("Removes a fsa from the list")
+        print("Usage:\n->rm fsa_name (Ex:rm G0)")
+        return
 
-def buildfsa(args):
-    if(len(args)>1):
-        if(args[1]=='help'):
-                print("This functions loads a fsa from a file")
-                print("Usage:\n     build name")
-        else:
-            if(args[1] in fsalst):
-                print("Name already in use")
-                return
-            else:
-                fsalst[args[1]]=fsabuilder()
+    if(len(args)<1):
+        print("Not enough arguments provided, type \"rm -h\" to help")
+        return
 
-    else:
-        print("Not enough arguments provided, type \"buildfsa help\" to help")
+    if(args[0] not in fsalst):
+        print("fsa not found")
+        return
 
-def showfsa(args):
+    del fsalst[args[0]]
+
+def currpath(args, fsalst, path):
+    if('-h' in args):
+        print("Print the current path")
+
+    print(path)
+
+def showfsa(args, fsalst, path):
     #TODO
-    #add .fsa if not specified
-    if(len(args)>1):
-        if(args[1]=='help'):
-            print("This functions show a fsa")
-            print("Usage:\n     show name")
-        else:
-            if(args[1] in fsalst):
-                print(fsalst[args[1]])
-            else:
-                print("Error, fsa doesn't exists")
-    else:
-        print("Not enough arguments provided, type \"show help\" to help")
+    if(len(args)<1):
+        print("Not enough arguments provided, type \"showfsa -h\" to help")
+        return
 
-def listfsa(args): #TODO add some stats?
+    if(args[0] not in fsalst):
+        print("Error, fsa doesn't exists")
+        return
+    
+    print(fsalst[args[0]])
+
+def listfsa(args, fsalst, path): #TODO add some stats?
     for key,value in fsalst.items():
         print(key)
 
-def concComp(args):
-    if(len(args)>1):
-        if(args[1]=='help'):
-            print("This functions computes the concurrent composition between two fsa")
-            print("Usage:\n     cc outputname input1 input2")
-        elif(len(args)>3):
-            if(not args[1] in fsalst):
-                if(args[2] in fsalst and args[3] in fsalst):
-                    fsalst[args[1]]=cc(fsalst[args[2]],fsalst[args[3]])
-                else:
-                    print("Error, fsa doesn't exists")
-            else:
-                print("Error, output name already exists") #TODO ask to overwrite?
-        else:
-            print("Not enough arguments provided, type \"cc help\" to help")
-    else:
-        print("Not enough arguments provided, type \"cc help\" to help")
+def listevents(args, eventslst, fsalst, path):
+    for e in eventslst:
+        print("- "+e.label+":  Observable: "+str(e.isObservable)+", Controllable: "+str(e.isControllable)+", Fault: "+str(e.isFault))
 
-def faultMon(args):
-    if(len(args)>1):
-        if(args[1]=='help'):
-            print("This functions computes the fault monitor of the given fsa")
-            print("Usage:\n     fm outputname inputname")
-        elif(len(args)>2):
-            if(not args[1] in fsalst):
-                fsalst[args[1]]=fm(fsalst[args[2]])
-            else:
-                print("Error, output name already exists") #TODO ask to overwrite?
-        else:
-            print("Not enough arguments provided, type \"fm help\" to help")
-    else:
-        print("Not enough arguments provided, type \"fm help\" to help")
-
-def observer(args):
-    if(len(args)>1):
-        if(args[1]=='help'):
-            print("This functions computes the equivalent DFA of the given NFA")
-            print("Usage:\n     nfa2dfa outputname inputname")
-            print("Alternative:\n     obs outputname inputname")
-        elif(len(args)>2):
-            if(not args[1] in fsalst):
-                fsalst[args[1]]=nfa2dfa(fsalst[args[2]])
-            else:
-                print("Error, output name already exists") #TODO ask to overwrite?
-        else:
-            print("Not enough arguments provided, type \"fm help\" to help")
-    else:
-        print("Not enough arguments provided, type \"fm help\" to help")
+#list of loaded FSA
+fsalst=dict()
+eventslst=[]
 
 commands={
     'changepath' : changepath,
+    'path' : currpath,
     'load': loadfsa,
+    'rm': removefsa,
     'save': savefsa,
-    'build': buildfsa,
+    'build': fsabuilder,
+    'addstate': addstate,
+    'rmstate': rmstate,
+    'addevent' : addevent,
+    'rmevent' : rmevent,
+    'addtrans' : addtrans,
+    'rmtrans' : rmtrans,
     'show': showfsa,
-    'list': listfsa,
-    'cc': concComp,
-    'fm': faultMon,
+    'xlist': listfsa,
+    'elist': listevents,
+    'cc': conccomp,
+    'fm': faultmon,
+    'diag' : diagnoser,
     'nfa2dfa': observer,
     'obs': observer,
+    'supervisor': supervisor,
+    'exth': exth,
     'help': help
 }
 
 
 home=os.path.expanduser("~")
-path=home+'\\Documents\\FsaToolbox\\'
+path=home+'\\Documents\\FsaToolbox'
 
 if not os.path.exists(path):
     os.makedirs(path)
 
 help()
+print("->exit")
 print("\n\nNote: the default path is:")
 print(path)
 print("")
-fsalst=dict()
+
 
 while(1):
-    cmd=input(">>").split(' ')
-    
-    #remove empty strings or double spaces
-    while("" in cmd):
-        cmd.remove("")
-    
+    cmd=shlex.split(input(">>"))
+    if cmd==[]:
+        continue
+    args = cmd[1:] #extract arguments
+
+    if(cmd[0]=='changepath'):
+        path=changepath(args, path)
+        continue
+    if(cmd[0]=='exit'):
+        break
     if(cmd[0] in commands):
-        commands[cmd[0]](cmd)
+        commands[cmd[0]](args,eventslst,fsalst,path)
     else:
         print("unrecognized command")
 

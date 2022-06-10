@@ -17,5 +17,5 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Dennis Loi & Andrea Panzino",
-    install_requires=["numpy","pandas","tabulate"]
+    install_requires=["numpy", "pandas", "tabulate"]
 )

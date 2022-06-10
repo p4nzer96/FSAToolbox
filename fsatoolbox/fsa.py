@@ -3,10 +3,9 @@ import numpy as np
 import pandas as pd
 from tabulate import tabulate
 from fsatoolbox import event, state
+from fsatoolbox.utils import load_module
 
-import os   # **********************************************************************************************************
-from loadfsa import * # **********************************************************************************************************
-from loadfsa_GUI import * # **********************************************************************************************************
+
 class fsa:
     """
     Class used to represent a Finite State Automaton (FSA)
@@ -26,34 +25,74 @@ class fsa:
 
     """
 
-    def __init__(self, X=None, E=None, delta=None, x0=None, Xm=None, **kwargs) -> None:
-    #def __init__(self, X=None, E=None, delta=None, x0=None, Xm=None, is_Reachable=None, is_co_Reachable=None, is_Blocking=None, is_Trim=None, is_Reversible=None, **kwargs) -> None:
+    def __init__(self, X=None, E=None, delta=pd.DataFrame(columns=["start", "transition", "end"]), x0=None, Xm=None, **kwargs) -> None:
 
-        self.X = X if X else []  # States
-        self.E = E if E else []  # Alphabet
-        self.delta = delta  # Delta relation
-        self.x0 = x0 if x0 else []  # Initial states
-        self.Xm = Xm if Xm else []  # Final states
+        self._X = X if X else []  # States
+        self._E = E if E else []  # Alphabet
+        self._delta = delta  # Delta relation
+        self._x0 = x0 if x0 else []  # Initial states
+        self._Xm = Xm if Xm else []  # Final states
 
         # Optional: Name of the FSA
-        self.name = kwargs.get('name') if kwargs.get('name') else object.__repr__(self)
 
-        # added by me **************************************************************************************************
+        self._name = kwargs.get('name') if kwargs.get('name') else object.__repr__(self)
+
+        # FSA properties
+
         self.is_Reachable = None
         self.is_co_Reachable = None
         self.is_Blocking = None
         self.is_Trim = None
         self.is_Reversible = None
 
+    def __repr__(self):
 
+        rep = self._name + "\n" + self.showfsa()
+        return rep
 
+    @property
+    def X(self):
+        return self._X
 
+    @X.setter
+    def X(self, value):
+        for x in value:
+            if x in self._X:
+                self.add_state(x)
+            else:
+                self.remove_state(x)
 
+    @property
+    def E(self):
+        return self._E
 
+    @E.setter
+    def E(self, value):
+        for e in value:
+            if e not in self._E:
+                self.add_event(e)
+            else:
+                self.remove_event(e)
 
+    @property
+    def delta(self):
+        return self._delta
+
+    @delta.setter
+    def delta(self, value):
+        self._delta = value
+
+    @property
+    def x0(self):
+        return self._x0
+
+    @property
+    def Xm(self):
+        return self._Xm
 
     @classmethod
     def from_file(cls, filename, **kwargs):
+
         """
         Generates a FSA from file
 
@@ -74,22 +113,11 @@ class fsa:
         Xm = []  # Final states
 
         # File opening
-        # **************************************************************************************************************
-        jsonObject = {}
-        if os.path.isfile(filename):
-            extension = os.path.splitext(filename)
-            # print("extension: ", extension)
-            if ".txt" in extension or ".fsa" in extension:
-                #jsonObject = load_txt_or_fsa(filename)
-                jsonObject = load_txt_or_fsa_GUI(filename) # ***********************************************************
-            elif ".csv" in extension:
-                #jsonObject = load_csv(filename)
-                jsonObject = load_csv_GUI(filename) # ******************************************************************
-            elif ".json" in extension:
-                with open(filename) as file:
-                    jsonObject = json.load(file)
 
-        #print("jsonObject: ", jsonObject)
+        jsonObject = load_module.loadfile(filename)
+
+        if jsonObject is None:
+            raise TypeError
 
         # Reading states and properties
 
@@ -149,8 +177,7 @@ class fsa:
                 idx = [x.label for x in X].index(start_state)
                 i_state = X[idx]
 
-            # transition = jsonObject['delta'][key]['event']  # Transition
-            transition = jsonObject['delta'][key]['name']  # Transition # ************************************************
+            transition = jsonObject['delta'][key]['event']  # Transition
 
             if transition not in [e.label for e in E]:  # Check if transition is in E
                 raise ValueError("Invalid event")
@@ -160,8 +187,7 @@ class fsa:
                 idx = [x.label for x in E].index(transition)
                 trans = E[idx]
 
-            # end_state = jsonObject['delta'][key]['end']
-            end_state = jsonObject['delta'][key]['ends'] # *****************************************************************
+            end_state = jsonObject['delta'][key]['end']
 
             if end_state not in [s.label for s in X]:  # Check if end state is in X
                 raise ValueError("Invalid end state")
@@ -180,132 +206,6 @@ class fsa:
             return cls(X, E, delta, x0, Xm, name=fsa_name)
 
         return cls(X, E, delta, x0, Xm)
-
-
-
-
-
-
-
-
-    '''
-    @classmethod
-    def from_file(cls, filename, **kwargs):
-        """
-        Generates a FSA from file
-
-        Args:
-            filename (str): the path of the .json file containing the definition of the FSA
-
-
-        Returns:
-            fsa: An instance of FSA
-
-        """
-
-        # Load from file
-
-        X = []  # States
-        E = []  # Alphabet
-        x0 = []  # Initial states
-        Xm = []  # Final states
-
-        # File opening
-
-        with open(filename) as jsonFile:
-            jsonObject = json.load(jsonFile)
-
-        # Reading states and properties
-
-        state_properties = {"isInitial": None, "isFinal": None, "isForbidden": None}
-
-        for state_name in jsonObject['X']:
-            for prop in state_properties.keys():
-
-                if prop in jsonObject['X'][state_name]:
-                    state_properties[prop] = jsonObject['X'][state_name][prop]
-
-            # Creating the state
-            State = state(state_name,
-                          state_properties["isInitial"],
-                          state_properties["isFinal"],
-                          state_properties["isForbidden"])
-
-            if state_properties["isInitial"]:  # If the state is initial, add it to initial states
-                x0.append(State)
-
-            if state_properties["isFinal"]:  # If the state is final, add it to final states
-                Xm.append(State)
-
-            # Add the state to X
-            X.append(State)
-
-        event_properties = {"isObservable": None, "isControllable": None, "isFault": None}
-
-        # Reading events and properties
-
-        for event_name in jsonObject['E']:
-            for prop in event_properties.keys():
-                if prop in jsonObject['E'][event_name]:
-                    event_properties[prop] = jsonObject['E'][event_name][prop]  # Is observable?
-
-            # Creating the event
-            Event = event(event_name,
-                          event_properties["isObservable"],
-                          event_properties["isControllable"],
-                          event_properties["isFault"])
-
-            E.append(Event)
-
-        data = []
-
-        # Reading delta
-
-        for key in jsonObject['delta']:
-
-            start_state = jsonObject['delta'][key]['start']  # Start state
-
-            if start_state not in [s.label for s in X]:  # Check if start state is in X
-                raise ValueError("Invalid start state")
-
-            else:
-
-                idx = [x.label for x in X].index(start_state)
-                i_state = X[idx]
-
-            # transition = jsonObject['delta'][key]['event']  # Transition
-            transition = jsonObject['delta'][key]['name']  # Transition # ************************************************
-
-            if transition not in [e.label for e in E]:  # Check if transition is in E
-                raise ValueError("Invalid event")
-
-            else:
-
-                idx = [x.label for x in E].index(transition)
-                trans = E[idx]
-
-            # end_state = jsonObject['delta'][key]['end']
-            end_state = jsonObject['delta'][key]['ends'] # *****************************************************************
-
-            if end_state not in [s.label for s in X]:  # Check if end state is in X
-                raise ValueError("Invalid end state")
-
-            else:
-
-                idx = [x.label for x in X].index(end_state)
-                f_state = X[idx]
-
-            data.append([i_state, trans, f_state])
-
-        delta = pd.DataFrame(data, columns=["start", "transition", "end"])
-
-        if kwargs.get("name"):
-            fsa_name = kwargs.get("name")
-            return cls(X, E, delta, x0, Xm, name=fsa_name)
-
-        return cls(X, E, delta, x0, Xm)
-
-    '''
 
     def to_file(self, filename):
 
@@ -355,13 +255,10 @@ class fsa:
         with open(filename, "w") as outfile:
             json.dump(fsa_dict, outfile, indent=4)
 
-    def showfsa(self, ui_mode=False, **kwargs):
+    def showfsa(self):
 
         """
         Shows a graphical representation of the FSA
-
-        Args:
-            ui_mode (bool): If True, plot the FSA in UI
 
         Returns:
             str: String that show the fsa structure
@@ -416,11 +313,9 @@ class fsa:
                     true_props_label.append(props_label[idx])
 
             if len(true_props_label) != 0:
-
                 state_table[:, i] = ", ".join(true_props_label)
 
             else:
-
                 state_table[:, i] = "-"
 
         # Populating the table representing the properties of the events
@@ -469,11 +364,6 @@ class fsa:
 
         return text
 
-    def __repr__(self):
-
-        rep = self.name + "\n" + self.showfsa()
-        return rep
-
     def filter_delta(self, start=None, transition=None, end=None):
         """
         Filters the delta by starting state, transition or ending state
@@ -519,6 +409,8 @@ class fsa:
             isForbidden(bool, optional): determines if the state is forbidden
         """
 
+        self._refresh_fsa()
+
         if isinstance(new_state, state):  # if state is an instance of state
 
             if new_state not in self.X:
@@ -540,7 +432,7 @@ class fsa:
 
             if new_state not in [x.label for x in self.X]:
 
-                new_state = state(new_state, isInitial, isFinal)
+                new_state = state(new_state, isInitial, isFinal, isForbidden)
                 self.X.append(new_state)
 
                 if new_state.isFinal:
@@ -557,6 +449,19 @@ class fsa:
         else:
 
             raise ValueError
+
+    def remove_state(self, state):
+        self._refresh_fsa()
+        state = self._state_parser(state)
+
+        for x in self._X:
+            if x == state:
+                self._X.remove(x)
+
+        if not self._delta.empty:
+
+            self._delta.drop(self.delta[((self._delta.start == state) |
+                                         (self._delta.end == state))].index, inplace=True)
 
     def add_event(self, new_event, isObservable=None, isControllable=None, isFault=None):
         """
@@ -594,6 +499,26 @@ class fsa:
         else:
 
             raise ValueError
+
+    def remove_event(self, event):
+        """
+        Removes an event or a list of events from the FSA
+        Args:
+            event (state):
+        """
+
+        self._refresh_fsa()
+
+        self._refresh_fsa()
+        event = self._event_parser(event)
+
+        for e in self._E:
+            if e == event:
+                self._E.remove(e)
+
+        if not self._delta.empty:
+
+            self._delta.drop(self.delta[(self._delta.transition == event)], inplace=True)
 
     def add_transition(self, initial_state, tr_event, end_state):
 
@@ -657,250 +582,84 @@ class fsa:
         temp_df = pd.DataFrame([[i_state, transition, e_state]], columns=["start", "transition", "end"])
         self.delta = pd.concat([self.delta, temp_df], axis=0, ignore_index=True)
 
-    def get_reachability_info(self):
-        reachable_states = []
-        current_start_states = []
-        current_start_states.append(self.x0[0])
-        # print("reachable_states:\n", reachable_states)
-        end_algorithm_flag = 0
-        iter_loop = 0
-        reachable_states.append(current_start_states[0])
+        self._refresh_fsa()
 
-        #check if x0 is not connected to any transitions
-        current_start_filtered_deltas = self.filter_delta(start=str(self.x0[0]), transition=None, end=None)
-        if len(current_start_filtered_deltas) == 0:
-            end_algorithm_flag = 1
+    def remove_transition(self, start, event, end):
 
+        start = self._state_parser(start)
+        event = self._event_parser(event)
+        end = self._state_parser(end)
 
-        # print("reachable_states:\n", reachable_states)
-        while end_algorithm_flag == 0:
-            iter_loop += 1
-            # print("iter_loop = ", iter_loop)
-            num_failed_filtering = 0
-            for i in range(len(current_start_states)):
-                current_start_filtered_deltas = self.filter_delta(start=str(current_start_states[i].label), transition=None, end=None)
-                # print("current_start_filtered_deltas:\n", current_start_filtered_deltas)
-                if len(current_start_filtered_deltas) == 0:
-                    # print("current_start_filtered_deltas:\n", current_start_filtered_deltas)
-                    num_failed_filtering += 1
-                    # print("num_failed_filtering = ", num_failed_filtering)
+        self._delta.drop(self.delta[((self._delta.start == start) &
+                                     (self._delta.transition == event) &
+                                     (self._delta.end == end))].index, inplace=True)
+
+        self._refresh_fsa()
+
+    # Internal Methods -------------------------------------------------------------
+
+    def _state_parser(self, states):
+
+        if isinstance(states, list):
+            parsed_states = []
+            for x in states:
+                if isinstance(x, state):
+                    parsed_states.append(x)
+                elif isinstance(x, str):
+                    for fsa_x in self.X:
+                        if x == fsa_x.label:
+                            parsed_states.append(fsa_x)
                 else:
-                    for iter in range(len(current_start_filtered_deltas)):
-                        # print("iter:", iter)
-                        current_start_state = current_start_filtered_deltas.end[current_start_filtered_deltas.index[iter]]
-                        # print("current_start_state: ", current_start_state)
-                        if current_start_state.label not in [x.label for x in reachable_states]:
-                            reachable_states.append(current_start_state)
-                            current_start_states.insert(iter, current_start_state)
-                            # print("reachable_states:\n", reachable_states)
-                            # print("current_start_states:\n", current_start_states)
-                    # print("exit for")
-                if num_failed_filtering == len(current_start_filtered_deltas) or len(current_start_states) == len(self.X):
-                    end_algorithm_flag = 1
-                    # print("end_algorithm_flag = ", end_algorithm_flag)
-                else:
-                    pass
-
-        for iter_x in range(len(self.X)):
-            for iter_reach in range(len(reachable_states)):
-                # print(str(reachable_states[iter_reach].label) + "=?=" + str(self.X[iter_x].label))
-                if str(reachable_states[iter_reach].label) == str(self.X[iter_x].label):
-                    self.X[iter_x].is_Reachable = 1
-                    break
-                else:
-                    self.X[iter_x].is_Reachable = 0
-
-        print("reachable_states:\n", reachable_states)
-        if len(reachable_states) == len(self.X):
-            print("The FSA is reachable")
-            self.is_Reachable = 1
+                    raise TypeError
+            return parsed_states
+        elif isinstance(states, str):
+            for fsa_x in self.X:
+                if states == fsa_x.label:
+                    return fsa_x
+        elif isinstance(states, state):
+            return states
         else:
-            print("The FSA is not reachable")
-            self.is_Reachable = 0
+            raise TypeError
 
-        return self.is_Reachable
-    
-    def get_co_reachability_info(self):
-        co_reachable_states = []
-        current_end_states = []
-        for i in range(len(self.Xm)):
-            current_end_states.append(self.Xm[i])
-            co_reachable_states.append(self.Xm[i])
-        end_algorithm_flag = 0
-        iter_loop = 0
-        # print("co_reachable_states:\n", co_reachable_states)
+    def _event_parser(self, events):
 
-        # check if there are not final states
-        if len(self.Xm) == 0:
-            end_algorithm_flag = 1
-
-        while end_algorithm_flag == 0:
-            iter_loop += 1
-            # print("iter_loop = ", iter_loop)
-            num_failed_filtering = 0
-            for i in range(len(current_end_states)):
-                current_end_filtered_deltas = self.filter_delta(start=None, transition=None, end=str(current_end_states[i].label))
-                if len(current_end_filtered_deltas) == 0:
-                    # print("current_end_filtered_deltas:\n", current_end_filtered_deltas)
-                    num_failed_filtering += 1
-                    # print("num_failed_filtering = ", num_failed_filtering)
+        if isinstance(events, list):
+            parsed_events = []
+            for e in events:
+                if isinstance(e, event):
+                    parsed_events.append(e)
+                elif isinstance(e, str):
+                    for fsa_x in self.X:
+                        if e == fsa_x.label:
+                            parsed_events.append(fsa_x)
                 else:
-                    for iter in range(len(current_end_filtered_deltas)):
-                        current_end_state = current_end_filtered_deltas.start[current_end_filtered_deltas.index[iter]]
-                        # print("current_end_states:\n", current_end_states)
-                        if current_end_state.label not in [x.label for x in co_reachable_states]:
-                            co_reachable_states.append(current_end_state)
-                            current_end_states.insert(iter, current_end_state)
-                            # print("co_reachable_states:\n", co_reachable_states)
-                            # print("current_end_states:\n", current_end_states)
-                if num_failed_filtering == len(current_end_filtered_deltas) or len(current_end_states) == len(self.X):
-                    end_algorithm_flag = 1
-                    # print("end_algorithm_flag = ", end_algorithm_flag)
-                else:
-                    pass
-
-        for iter_x in range(len(self.X)):
-            for iter_reach in range(len(co_reachable_states)):
-                # print(str(co_reachable_states[iter_reach].label) + "=?=" + str(self.X[iter_x].label))
-                if str(co_reachable_states[iter_reach].label) == str(self.X[iter_x].label):
-                    self.X[iter_x].is_co_Reachable = 1
-                    break
-                else:
-                    self.X[iter_x].is_co_Reachable = 0
-
-        print("co_reachable_states:\n", co_reachable_states)
-        if len(co_reachable_states) == len(self.X):
-            print("The FSA is co_reachable")
-            self.is_co_Reachable = 1
+                    raise TypeError
+            return parsed_events
+        elif isinstance(events, str):
+            for fsa_e in self.E:
+                if events == fsa_e.label:
+                    return fsa_e
+        elif isinstance(events, event):
+            return event
         else:
-            print("The FSA is not co_reachable")
-            self.is_co_Reachable = 0
+            raise TypeError
 
-        return self.is_co_Reachable
+    def _refresh_fsa(self):
 
-    def get_blockingness_info(self):
+        for x in self._X:
+            if x.isInitial is True and x not in self._x0:
+                self._x0.append(x)
+            elif x.isInitial is False and x in self._x0:
+                self._x0.remove(x)
 
-        if self.is_Reachable == None:
-            self.get_reachability_info()
-        if self.is_co_Reachable == None:
-            self.get_co_reachability_info()
+        for x in self._X:
+            if x.isFinal is True and x not in self._Xm:
+                self._Xm.append(x)
+            elif x.isFinal is False and x in self._Xm:
+                self._Xm.remove(x)
 
-        self.is_Blocking = 0
-        for iter_x in range(len(self.X)):
-            if self.X[iter_x].is_Reachable == 1 and self.X[iter_x].is_co_Reachable == 0:
-                self.X[iter_x].is_Blocking = 1
-                self.is_Blocking = 1
-            else:
-                self.X[iter_x].is_Blocking = 0
-
-
-        return self.is_Blocking
-
-    def get_trim_info(self):
-
-        if self.is_Reachable == None:
-            self.get_reachability_info()
-        if self.is_co_Reachable == None:
-            self.get_co_reachability_info()
-
-        if self.is_Reachable == 1 and self.is_co_Reachable == 1:
-            self.is_Trim = 1
-        else:
-            self.is_Trim = 0
-
-        return self.is_Trim
-
-    def get_deadness_info(self):
-
-        for iter_x in range(len(self.X)):
-            current_deltas = self.filter_delta(start=str(self.X[iter_x].label), transition=None, end=None)
-            if len(current_deltas) != 0:
-                self.X[iter_x].is_Dead = 0
-            else:
-                self.X[iter_x].is_Dead = 1
-
-    def get_co_reachability_to_x0_info(self):
-        current_end_state = None
-        co_reachable_to_x0_states = []
-        current_end_states = []
-        for i in range(len(self.x0)):
-            current_end_states.append(self.x0[i])
-            co_reachable_to_x0_states.append(self.x0[i])
-        end_algorithm_flag = 0
-        iter_loop = 0
-        # print("co_reachable_to_x0_states:\n", co_reachable_to_x0_states)
-
-        # check if x0 is not an end state among the transitions
-        current_end_filtered_deltas = self.filter_delta(start=None, transition=None, end=str(self.x0[0]))
-        if len(current_end_filtered_deltas) == 0:
-            end_algorithm_flag = 1
-
-        while end_algorithm_flag == 0:
-            # print("end_algorithm_flag = ", end_algorithm_flag)
-            iter_loop += 1
-            # print("iter_loop = ", iter_loop)
-            num_failed_filtering = 0
-            # print("len(current_end_states) = ", len(current_end_states))
-            for i in range(len(current_end_states)):
-                # print("i: ", i)
-                current_end_filtered_deltas = self.filter_delta(start=None, transition=None, end=str(current_end_states[i].label))
-                # print("current_end_filtered_deltas:\n", current_end_filtered_deltas)
-                if len(current_end_filtered_deltas) == 0:
-                    # print("current_end_filtered_deltas:\n", current_end_filtered_deltas)
-                    num_failed_filtering += 1
-                    # print("num_failed_filtering = ", num_failed_filtering)
-                else:
-                    for iter in range(len(current_end_filtered_deltas)):
-                        current_end_state = current_end_filtered_deltas.start[current_end_filtered_deltas.index[iter]]
-                        # print("current_end_state:\n", current_end_state)
-                        if current_end_state.label not in [x.label for x in co_reachable_to_x0_states]:
-                            co_reachable_to_x0_states.append(current_end_state)
-                            current_end_states.insert(iter, current_end_state)
-                            # print("co_reachable_to_x0_states:\n", co_reachable_to_x0_states)
-                            # print("current_end_states:\n", current_end_states)
-
-                # print("num_failed_filtering :", num_failed_filtering)
-                # print("len(current_end_filtered_deltas) :", len(current_end_filtered_deltas))
-                if num_failed_filtering == len(current_end_filtered_deltas) or current_end_state == self.x0[0] or len(current_end_states) == len(self.X):
-                    end_algorithm_flag = 1
-                    # print("end_algorithm_flag = ", end_algorithm_flag)
-                else:
-                    pass
-
-        for iter_x in range(len(self.X)):
-            for iter_reach in range(len(co_reachable_to_x0_states)):
-                # print(str(co_reachable_to_x0_states[iter_reach].label) + "=?=" + str(self.X[iter_x].label))
-                if str(co_reachable_to_x0_states[iter_reach].label) == str(self.X[iter_x].label):
-                    self.X[iter_x].is_co_Reachable_to_x0 = 1
-                    break
-                else:
-                    self.X[iter_x].is_co_Reachable_to_x0 = 0
-
-        print("co_reachable_to_x0_states:\n", co_reachable_to_x0_states)
-        if len(co_reachable_to_x0_states) == len(self.X):
-            print("The FSA is co-reachable to the initial state")
-            self.is_co_Reachable_to_x0 = 1
-        else:
-            print("The FSA is not co-reachable to the initial state")
-            self.is_co_Reachable_to_x0 = 0
-
-    def get_reversibility_info(self):
-        # print("get_reversibility_info")
-        if self.is_Reachable == None:
-            # print("get_reachability_info")
-            self.get_reachability_info()
-        if self.X[0].is_co_Reachable_to_x0 == None:
-            # print("get_co_reachability_to_initial_state_info")
-            self.get_co_reachability_to_x0_info()
-
-        for iter_x in range(len(self.X)):
-            if self.X[iter_x].is_Reachable == 1:
-                if self.X[iter_x].is_co_Reachable_to_x0 == 0:
-                    self.is_Reversible = 0
-                    break
-                else:
-                    self.is_Reversible = 1
-            else:
-                pass
-
-        return self.is_Reversible
+        self.is_Reachable = None
+        self.is_co_Reachable = None
+        self.is_Trim = None
+        self.is_Blocking = None
+        self.is_Reversible = None

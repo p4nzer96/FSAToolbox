@@ -1,11 +1,6 @@
 from fsatoolbox import fsa
 from fsatoolbox.state import state
-
-
-def v_print(string, verbose=False, **kwargs):
-
-    if verbose:
-        print(string, **kwargs)
+from fsatoolbox.utils.misc import v_print
 
 
 def cc(G0, G1, verbose=False, name_style=0):
@@ -114,9 +109,6 @@ def cc(G0, G1, verbose=False, name_style=0):
 
     # Adding states in the CC FSA
 
-    CC.x0 = []
-    CC.Xm = []
-
     for x in X:
 
         if name_style == 0:
@@ -143,9 +135,6 @@ def cc(G0, G1, verbose=False, name_style=0):
             new_state.isInitial = True
 
         # Forbidden States
-
-        if None in (x[0].isForbidden, x[1].isForbidden):
-            raise TypeError("Forbidden state not set")
 
         if x[0].isForbidden or x[1].isForbidden:
             new_state.isForbidden = True

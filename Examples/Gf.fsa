@@ -1,13 +1,19 @@
 {
     "X": {
         "x0": {
-            "isInitial": true
+            "isInitial": true,
+            "isFinal": false,
+            "isForbidden": false
         },
         "x1": {
-            "isInitial": false
+            "isInitial": false,
+            "isFinal": false,
+            "isForbidden": false
         },
         "x2": {
-            "isInitial": false
+            "isInitial": false,
+            "isFinal": true,
+            "isForbidden": true
         }
     },
     "E": {
