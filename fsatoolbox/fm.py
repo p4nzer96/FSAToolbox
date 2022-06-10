@@ -1,7 +1,7 @@
 from fsatoolbox import fsa, state
 
 
-def fm(G):
+def fm(G, verbose=False):
     """
     Given an input automaton G, computes its Fault Monitor
 
@@ -26,10 +26,10 @@ def fm(G):
     for el in FM.E:
         if el.isFault is None:
             raise ValueError("The event " + el.label + " is not initialized properly: Fault state not set")
-        elif el.isFault == 1:
+        elif el.isFault == True:
             FM.add_transition(N, el, F)
             FM.add_transition(F, el, F)
-        elif el.isFault == 2:
+        elif el.isFault == False:
             FM.add_transition(N, el, N)
             FM.add_transition(F, el, F)
     return FM
