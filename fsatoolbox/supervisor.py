@@ -76,6 +76,9 @@ def compute_supervisor(G, H):
     # Computing the extended specification automaton
     h_hat = hhat(H)
 
+    if None in [x.isForbidden for x in G.X] + [x.isForbidden for x in G.X]:
+        raise TypeError("Found forbidden states not set")
+
     # Computing the composition automaton
     A = cc(G, h_hat)
 

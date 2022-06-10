@@ -188,10 +188,7 @@ def get_deadness_info(fsa_obj):
             x_state.is_Dead = True
             dead_states.append(x_state)
 
-    if len(dead_states) != 0:
-        print("There are dead states: {}\n".format(dead_states))
-    else:
-        print("There are no dead states\n")
+    return [x for x in fsa_obj.X if x.is_Dead is True]
 
 
 def get_co_reachability_to_x0_info(fsa_obj):
@@ -253,7 +250,6 @@ def get_co_reachability_to_x0_info(fsa_obj):
 
 
 def get_reversibility_info(fsa_obj, set_fsa=True):
-
     if fsa_obj.is_Reachable is None:
         get_reachability_info(fsa_obj)
 
@@ -269,7 +265,6 @@ def get_reversibility_info(fsa_obj, set_fsa=True):
                 is_reversible = True
 
     if set_fsa is True:
-
         fsa_obj.is_Reversible = is_reversible
 
     return is_reversible

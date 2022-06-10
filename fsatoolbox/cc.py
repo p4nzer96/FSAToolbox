@@ -136,9 +136,6 @@ def cc(G0, G1, verbose=False, name_style=0):
 
         # Forbidden States
 
-        if None in (x[0].isForbidden, x[1].isForbidden):
-            raise TypeError("Forbidden state not set")
-
         if x[0].isForbidden or x[1].isForbidden:
             new_state.isForbidden = True
 
