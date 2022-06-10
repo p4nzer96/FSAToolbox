@@ -1,5 +1,6 @@
 import fsatoolbox
 from fsatoolbox import *
+from basic_CLI.checkevents import checkevents
 
 #TODO add exit (abort) option in every input
 
@@ -104,5 +105,7 @@ def fsabuilder(args, fsalst, path):
                 G.add_transition(inp[0], inp[1], inp[2])
             except:
                 pass
+
+    checkevents(G,eventslst, fsalst)
 
     fsalst[args[0]]=G
