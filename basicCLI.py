@@ -2,20 +2,24 @@ import shlex
 import os
 from fsatoolbox import *
 
+from basic_CLI.checkevents import checkevents, updateevents
 from basic_CLI.loadfsa import loadfsa
 from basic_CLI.savefsa import savefsa
 from basic_CLI.fsabuilder import fsabuilder
 from basic_CLI.editfsa import addstate, rmstate, addevent, rmevent, addtrans, rmtrans
 from basic_CLI.conccomp import conccomp
 from basic_CLI.faultmon import faultmon
+from basic_CLI.diagnoser import diagnoser
 from basic_CLI.observer import observer
+from basic_CLI.super import supervisor
+from basic_CLI.exth import exth
 
 #commands
 
 def help(args=None):
     print("This is only a test version: available commands:")
     for key,val in commands.items():
-        print("->"+key)
+        print("-> "+key)
     print("[CTRL+C to exit]")
 
 def changepath(args, path):
@@ -72,8 +76,13 @@ def listfsa(args, fsalst, path): #TODO add some stats?
     for key,value in fsalst.items():
         print(key)
 
+def listevents(args, eventslst, fsalst, path):
+    for e in eventslst:
+        print("- "+e.label+":  Observable: "+str(e.isObservable)+", Controllable: "+str(e.isControllable)+", Fault: "+str(e.isFault))
+
 #list of loaded FSA
 fsalst=dict()
+eventslst=[]
 
 commands={
     'changepath' : changepath,
@@ -89,11 +98,15 @@ commands={
     'addtrans' : addtrans,
     'rmtrans' : rmtrans,
     'show': showfsa,
-    'list': listfsa,
+    'xlist': listfsa,
+    'elist': listevents,
     'cc': conccomp,
     'fm': faultmon,
+    'diag' : diagnoser,
     'nfa2dfa': observer,
     'obs': observer,
+    'supervisor': supervisor,
+    'exth': exth,
     'help': help
 }
 
@@ -123,7 +136,7 @@ while(1):
     if(cmd[0]=='exit'):
         break
     if(cmd[0] in commands):
-        commands[cmd[0]](args,fsalst,path)
+        commands[cmd[0]](args,eventslst,fsalst,path)
     else:
         print("unrecognized command")
 
