@@ -22,15 +22,33 @@ def changepath(args, path):
     if('-h' in args):
         print("This functions changes the default path")
         print("Usage:\n     changepath newpath (Ex: changepath C:\\Automi")
+        return path
     
     if(len(args)<1):
         print("Not enough arguments provided, type \"changepath help\" to help")
+        return path
 
     if(os.path.isdir(args[0])):
         return args[0]
     else:
         print("Invalid path")
         return path
+
+def removefsa(args, fsalst, path):
+    if('-h' in args):
+        print("Removes a fsa from the list")
+        print("Usage:\n->rm fsa_name (Ex:rm G0)")
+        return
+
+    if(len(args)<1):
+        print("Not enough arguments provided, type \"rm -h\" to help")
+        return
+
+    if(args[0] not in fsalst):
+        print("fsa not found")
+        return
+
+    del fsalst[args[0]]
 
 def currpath(args, fsalst, path):
     if('-h' in args):
@@ -61,6 +79,7 @@ commands={
     'changepath' : changepath,
     'path' : currpath,
     'load': loadfsa,
+    'rm': removefsa,
     'save': savefsa,
     'build': fsabuilder,
     'addstate': addstate,
@@ -86,6 +105,7 @@ if not os.path.exists(path):
     os.makedirs(path)
 
 help()
+print("->exit")
 print("\n\nNote: the default path is:")
 print(path)
 print("")
@@ -100,8 +120,9 @@ while(1):
     if(cmd[0]=='changepath'):
         path=changepath(args, path)
         continue
+    if(cmd[0]=='exit'):
+        break
     if(cmd[0] in commands):
-
         commands[cmd[0]](args,fsalst,path)
     else:
         print("unrecognized command")
