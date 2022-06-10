@@ -32,10 +32,10 @@ def loadfsa(args, fsalst, path):
         fsalst[name]=fsa.from_file(filepath)
     elif(os.path.isfile(filepath+'.fsa')):
         fsalst[name]=fsa.from_file(filepath+'.fsa')
-    elif(os.path.isfile(path+filepath)):
-        fsalst[name]=fsa.from_file(path+filepath)
-    elif(os.path.isfile(path+filepath+'.fsa')):
-        fsalst[name]=fsa.from_file(path+filepath+'.fsa')
+    elif(os.path.isfile(path+'\\'+filepath)):
+        fsalst[name]=fsa.from_file(path+'\\'+filepath)
+    elif(os.path.isfile(path+'\\'+filepath+'.fsa')):
+        fsalst[name]=fsa.from_file(path+'\\'+filepath+'.fsa')
     else:
         print("Error: file does not exists")
         return

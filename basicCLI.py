@@ -99,7 +99,7 @@ commands={
 
 
 home=os.path.expanduser("~")
-path=home+'\\Documents\\FsaToolbox\\'
+path=home+'\\Documents\\FsaToolbox'
 
 if not os.path.exists(path):
     os.makedirs(path)
