@@ -25,7 +25,7 @@ class fsa:
 
     """
 
-    def __init__(self, X=None, E=None, delta=None, x0=None, Xm=None, **kwargs) -> None:
+    def __init__(self, X=None, E=None, delta=pd.DataFrame(columns=["start", "transition", "end"]), x0=None, Xm=None, **kwargs) -> None:
 
         self._X = X if X else []  # States
         self._E = E if E else []  # Alphabet
@@ -69,7 +69,7 @@ class fsa:
     @E.setter
     def E(self, value):
         for e in value:
-            if e in self._E:
+            if e not in self._E:
                 self.add_event(e)
             else:
                 self.remove_event(e)
@@ -458,8 +458,10 @@ class fsa:
             if x == state:
                 self._X.remove(x)
 
-        self._delta.drop(self.delta[((self._delta.start == state) |
-                                     (self._delta.end == state))].index, inplace=True)
+        if not self._delta.empty:
+
+            self._delta.drop(self.delta[((self._delta.start == state) |
+                                         (self._delta.end == state))].index, inplace=True)
 
     def add_event(self, new_event, isObservable=None, isControllable=None, isFault=None):
         """
@@ -508,13 +510,15 @@ class fsa:
         self._refresh_fsa()
 
         self._refresh_fsa()
-        event = self._state_parser(event)
+        event = self._event_parser(event)
 
         for e in self._E:
             if e == event:
                 self._E.remove(e)
 
-        self._delta.drop(self.delta[(self._delta.transition == event)], inplace=True)
+        if not self._delta.empty:
+
+            self._delta.drop(self.delta[(self._delta.transition == event)], inplace=True)
 
     def add_transition(self, initial_state, tr_event, end_state):
 

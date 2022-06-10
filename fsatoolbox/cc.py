@@ -1,11 +1,6 @@
 from fsatoolbox import fsa
 from fsatoolbox.state import state
-
-
-def v_print(string, verbose=False, **kwargs):
-
-    if verbose:
-        print(string, **kwargs)
+from fsatoolbox.utils.misc import v_print
 
 
 def cc(G0, G1, verbose=False, name_style=0):
