@@ -18,7 +18,7 @@ from basic_CLI.analysis import reachability, coreachability, blocking, trim, dea
 
 #commands
 
-def help(args=None):
+def help(args,eventslst,fsalst,path):
     print("This is only a test version: available commands:")
     for key,val in commands.items():
         print("-> "+key)
@@ -76,9 +76,8 @@ def showfsa(args,eventslst,fsalst,path):
     print(fsalst[args[0]])
 
 def lst(args,eventslst,fsalst,path):
-    print("Elements in: " + path)
-    l = os.listdir(path)  # files only
-    l = [ f for f in os.listdir( os.curdir ) if os.path.isfile(f) ]
+    print("Elements in: " + path+"\\")
+    l = os.listdir(path+"\\")  # files only
     for el in l:
         print(el)
 
@@ -134,8 +133,16 @@ path=home+'\\Documents\\FsaToolbox'
 if not os.path.exists(path):
     os.makedirs(path)
 
-help()
-print("->exit")
+print("")
+print(" ███████╗███████╗ █████╗ ████████╗ ██████╗  ██████╗ ██╗     ██████╗  ██████╗ ██╗  ██╗")
+print(" ██╔════╝██╔════╝██╔══██╗╚══██╔══╝██╔═══██╗██╔═══██╗██║     ██╔══██╗██╔═══██╗╚██╗██╔╝")
+print(" █████╗  ███████╗███████║   ██║   ██║   ██║██║   ██║██║     ██████╔╝██║   ██║ ╚███╔╝ ")
+print(" ██╔══╝  ╚════██║██╔══██║   ██║   ██║   ██║██║   ██║██║     ██╔══██╗██║   ██║ ██╔██╗ ")
+print(" ██║     ███████║██║  ██║   ██║   ╚██████╔╝╚██████╔╝███████╗██████╔╝╚██████╔╝██╔╝ ██╗")
+print(" ╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝  ╚═════╝ ╚══════╝╚═════╝  ╚═════╝ ╚═╝  ╚═╝")
+
+print("Note: this is still in development")
+print("Type \"help\" to see the list of commands")
 print("\n\nNote: the default path is:")
 print(path)
 print("")
