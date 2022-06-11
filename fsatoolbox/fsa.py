@@ -6,6 +6,14 @@ from fsatoolbox import event, state
 from fsatoolbox.utils import load_module
 
 
+class StateNotFoundExc(Exception):
+    pass
+
+
+class EventNotFoundExc(Exception):
+    pass
+
+
 class fsa:
     """
     Class used to represent a Finite State Automaton (FSA)
@@ -25,7 +33,8 @@ class fsa:
 
     """
 
-    def __init__(self, X=None, E=None, delta=pd.DataFrame(columns=["start", "transition", "end"]), x0=None, Xm=None, **kwargs) -> None:
+    def __init__(self, X=None, E=None, delta=pd.DataFrame(columns=["start", "transition", "end"]), x0=None, Xm=None,
+                 **kwargs) -> None:
 
         self._X = X if X else []  # States
         self._E = E if E else []  # Alphabet
@@ -459,9 +468,16 @@ class fsa:
                 self._X.remove(x)
 
         if not self._delta.empty:
-
             self._delta.drop(self.delta[((self._delta.start == state) |
                                          (self._delta.end == state))].index, inplace=True)
+
+    def change_state_props(self, state, **kwargs):
+
+        if state not in self._X:
+            raise StateNotFoundError(Exception)
+
+        for prop in kwargs.keys():
+            setattr(state, prop, kwargs[prop])
 
     def add_event(self, new_event, isObservable=None, isControllable=None, isFault=None):
         """
@@ -517,8 +533,15 @@ class fsa:
                 self._E.remove(e)
 
         if not self._delta.empty:
-
             self._delta.drop(self.delta[(self._delta.transition == event)], inplace=True)
+
+    def change_event_props(self, event, **kwargs):
+
+        if event not in self._E:
+            raise EventNotFoundExc(Exception)
+
+        for prop in kwargs.keys():
+            setattr(event, prop, kwargs[prop])
 
     def add_transition(self, initial_state, tr_event, end_state):
 
