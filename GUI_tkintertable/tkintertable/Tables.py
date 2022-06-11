@@ -73,8 +73,58 @@ from tkinter import filedialog
 # **********************************************************************************************************************
 
 
+def get_event_suffix(event_string):
+    '''returns a dict with bool infos about isObservable, isControllable and isFault and the suffix-clean name of the event'''
 
+    dict_event_properties = {}
+    if event_string.endswith("_uc_f_uo") or event_string.endswith("_uc_uo_f") or event_string.endswith(
+            "_f_uc_uo") or event_string.endswith("_f_uo_uc") or event_string.endswith(
+        "_uo_f_uc") or event_string.endswith("_uo_uc_f"):
+        substring_to_remove = event_string[-8:]
+        event_string = event_string.replace(str(substring_to_remove), "")
+        event_string.replace(" ", "")
+        dict_event_properties.update({"name": event_string, "isObservable": 0, "isControllable": 0, "isFault": 1})
+    elif event_string.endswith("_uc_f"):
+        event_string = event_string.replace("_uc_f", "")
+        event_string.replace(" ", "")
+        dict_event_properties.update({"name": event_string, "isObservable": 1, "isControllable": 0, "isFault": 1})
+    elif event_string.endswith("_f_uc"):
+        event_string = event_string.replace("_f_uc", "")
+        event_string.replace(" ", "")
+        dict_event_properties.update({"name": event_string, "isObservable": 1, "isControllable": 0, "isFault": 1})
+    elif event_string.endswith("_uc_uo"):
+        event_string = event_string.replace("_uc_uo", "")
+        event_string.replace(" ", "")
+        dict_event_properties.update({"name": event_string, "isObservable": 0, "isControllable": 0, "isFault": 0})
+    elif event_string.endswith("_uo_uc"):
+        event_string = event_string.replace("_uo_uc", "")
+        event_string.replace(" ", "")
+        dict_event_properties.update({"name": event_string, "isObservable": 0, "isControllable": 0, "isFault": 0})
+    elif event_string.endswith("_uo_f"):
+        event_string = event_string.replace("_uo_f", "")
+        event_string.replace(" ", "")
+        dict_event_properties.update({"name": event_string, "isObservable": 0, "isControllable": 0, "isFault": 1})
+    elif event_string.endswith("_f_uo"):
+        event_string = event_string.replace("_f_uo", "")
+        event_string.replace(" ", "")
+        dict_event_properties.update({"name": event_string, "isObservable": 0, "isControllable": 0, "isFault": 1})
+    elif event_string.endswith("_uc"):
+        event_string = event_string.replace("_uc", "")
+        event_string.replace(" ", "")
+        dict_event_properties.update({"name": event_string, "isObservable": 1, "isControllable": 0, "isFault": 0})
+    elif event_string.endswith("_f"):
+        event_string = event_string.replace("_f", "")
+        event_string.replace(" ", "")
+        dict_event_properties.update({"name": event_string, "isObservable": 1, "isControllable": 1, "isFault": 1})
+    elif event_string.endswith("_uo"):
+        event_string = event_string.replace("_uo", "")
+        event_string.replace(" ", "")
+        dict_event_properties.update({"name": event_string, "isObservable": 0, "isControllable": 1, "isFault": 0})
+    else:
+        event_string.replace(" ", "")
+        dict_event_properties.update({"name": event_string, "isObservable": 1, "isControllable": 1, "isFault": 0})
 
+    return dict_event_properties
 
 class TableCanvas(Canvas):
     """A tkinter class for providing table functionality"""
@@ -540,6 +590,17 @@ class TableCanvas(Canvas):
                 coltype = d.results[0]
                 newname = d.results[1]
 
+            # added by me **********************************************************************************************
+
+            # global dictcolObservableEvents
+            # global dictcolControllableEvents
+            # global dictcolFaultyEvents
+            my_globals.dictcolObservableEvents.update({newname: 1})
+            my_globals.dictcolControllableEvents.update({newname: 1})
+            my_globals.dictcolFaultyEvents.update({newname: 0})
+            # **********************************************************************************************************
+
+
         if newname != None:
             if newname in self.getModel().columnNames:
                 messagebox.showwarning("Name exists",
@@ -548,17 +609,35 @@ class TableCanvas(Canvas):
             else:
                 self.model.addColumn(newname)
                 self.parentframe.configure(width=self.width)
+
+
+                # added by me ******************************************************************************************
+                dict_event_properties = get_event_suffix(newname)
+                event_name = dict_event_properties["name"]
+
+                if dict_event_properties["isObservable"] == 0:
+                    my_globals.dictcolObservableEvents[event_name] = 0
+                else:
+                    my_globals.dictcolObservableEvents[event_name] = 1
+
+                if dict_event_properties["isControllable"] == 0:
+                    my_globals.dictcolControllableEvents[event_name] = 0
+                else:
+                    my_globals.dictcolControllableEvents[event_name] = 1
+
+                if dict_event_properties["isFault"] == 0:
+                    my_globals.dictcolFaultyEvents[event_name] = 0
+                else:
+                    my_globals.dictcolFaultyEvents[event_name] = 1
+
+                if len(newname) >= 10:
+                    current_col_index = self.getSelectedColumn()
+                    width_col = 120 + (len(newname) - 10) * 10
+                    self.resizeColumn(current_col_index+1, width_col)
+
+                # ******************************************************************************************************
                 self.redrawTable()
 
-        # added by me **************************************************************************************************
-
-        #global dictcolObservableEvents
-        #global dictcolControllableEvents
-        #global dictcolFaultyEvents
-        my_globals.dictcolObservableEvents.update({newname: 1})
-        my_globals.dictcolControllableEvents.update({newname: 1})
-        my_globals.dictcolFaultyEvents.update({newname: 0})
-        # **************************************************************************************************************
         return
 
 
@@ -590,6 +669,10 @@ class TableCanvas(Canvas):
 
 
 
+
+
+
+
     # added by me ******************************************************************************************************
     def setCurrentEventAsUnobservable(self):
         """Set the event as Unobservable - can be used in a table header"""
@@ -603,8 +686,25 @@ class TableCanvas(Canvas):
             current_col_index = self.getSelectedColumn()
             current_col_name = self.model.getColumnLabel(current_col_index)
 
+
+
+            dict_event_properties = get_event_suffix(current_col_name)
+
+            event_name = dict_event_properties["name"]
+            suffix = "_uo"
+            if dict_event_properties["isControllable"] == 0:
+                suffix += "_uc"
+            if dict_event_properties["isFault"] == 1:
+                suffix += "_f"
+
+            my_globals.dictcolObservableEvents[event_name] = 0
+
+            self.model.relabel_Column(current_col_index, event_name+suffix)
+            self.redraw()
+
+
+
             #current_col_name = self.getSelectedColumn()
-            my_globals.dictcolObservableEvents[str(current_col_name)] = 0
             #print(current_col_index)
             #print(str(self.model.getColumnLabel(current_col_index)))
             #print("Observable events:", my_globals.dictcolObservableEvents)
@@ -621,10 +721,24 @@ class TableCanvas(Canvas):
                                 "Observable Event?",
                                       parent=self.parentframe)
         if n:
-            #global dictcolObservableEvents
             current_col_index = self.getSelectedColumn()
             current_col_name = self.model.getColumnLabel(current_col_index)
-            my_globals.dictcolObservableEvents[str(current_col_name)] = 1
+
+            dict_event_properties = get_event_suffix(current_col_name)
+
+            event_name = dict_event_properties["name"]
+            suffix = ""
+
+            if dict_event_properties["isControllable"] == 0:
+                suffix += "_uc"
+            if dict_event_properties["isFault"] == 1:
+                suffix += "_f"
+
+            my_globals.dictcolObservableEvents[event_name] = 1
+
+            self.model.relabel_Column(current_col_index, event_name+suffix)
+            self.redraw()
+
             #print(current_col_index)
             #print(str(self.model.getColumnLabel(current_col_index)))
             #print("Observable events:", my_globals.dictcolObservableEvents)
@@ -645,7 +759,22 @@ class TableCanvas(Canvas):
             #global dictcolControllableEvents
             current_col_index = self.getSelectedColumn()
             current_col_name = self.model.getColumnLabel(current_col_index)
-            my_globals.dictcolControllableEvents[str(current_col_name)] = 0
+
+            dict_event_properties = get_event_suffix(current_col_name)
+
+            event_name = dict_event_properties["name"]
+            suffix = "_uc"
+            if dict_event_properties["isObservable"] == 0:
+                suffix += "_uo"
+            if dict_event_properties["isFault"] == 1:
+                suffix += "_f"
+
+            my_globals.dictcolControllableEvents[event_name] = 0
+
+            self.model.relabel_Column(current_col_index, event_name+suffix)
+            self.redraw()
+
+
             #print(current_col_index)
             #print(str(self.model.getColumnLabel(current_col_index)))
             #print("Controllable events:", my_globals.dictcolControllableEvents)
@@ -665,7 +794,23 @@ class TableCanvas(Canvas):
             #global dictcolControllableEvents
             current_col_index = self.getSelectedColumn()
             current_col_name = self.model.getColumnLabel(current_col_index)
-            my_globals.dictcolControllableEvents[str(current_col_name)] = 1
+
+            dict_event_properties = get_event_suffix(current_col_name)
+
+            event_name = dict_event_properties["name"]
+            suffix = ""
+            if dict_event_properties["isObservable"] == 0:
+                suffix += "_uo"
+            if dict_event_properties["isFault"] == 1:
+                suffix += "_f"
+
+            my_globals.dictcolControllableEvents[event_name] = 1
+
+            self.model.relabel_Column(current_col_index, event_name+suffix)
+            self.redraw()
+
+
+
             #print(current_col_index)
             #print(str(self.model.getColumnLabel(current_col_index)))
             #print("Controllable events:", my_globals.dictcolControllableEvents)
@@ -686,7 +831,23 @@ class TableCanvas(Canvas):
 
             current_col_index = self.getSelectedColumn()
             current_col_name = self.model.getColumnLabel(current_col_index)
-            my_globals.dictcolFaultyEvents[str(current_col_name)] = 1
+
+            dict_event_properties = get_event_suffix(current_col_name)
+
+            event_name = dict_event_properties["name"]
+            suffix = "_f"
+            if dict_event_properties["isObservable"] == 0:
+                suffix += "_uo"
+            if dict_event_properties["isControllable"] == 0:
+                suffix += "_uc"
+
+            my_globals.dictcolFaultyEvents[event_name] = 1
+
+            self.model.relabel_Column(current_col_index, event_name+suffix)
+            self.redraw()
+
+
+
             #print(current_col_index)
             #print(str(self.model.getColumnLabel(current_col_index)))
             #print("Faulty events:", my_globals.dictcolFaultyEvents)
@@ -705,7 +866,27 @@ class TableCanvas(Canvas):
             #global dictcolFaultyEvents
             current_col_index = self.getSelectedColumn()
             current_col_name = self.model.getColumnLabel(current_col_index)
-            my_globals.dictcolFaultyEvents[str(current_col_name)] = 0
+
+
+            dict_event_properties = get_event_suffix(current_col_name)
+
+            event_name = dict_event_properties["name"]
+            suffix = ""
+            if dict_event_properties["isObservable"] == 0:
+                suffix += "_uo"
+            if dict_event_properties["isControllable"] == 0:
+                suffix += "_uc"
+
+            my_globals.dictcolFaultyEvents[event_name] = 0
+
+            self.model.relabel_Column(current_col_index, event_name+suffix)
+            self.redraw()
+
+
+
+
+
+
             #print(current_col_index)
             #print(str(self.model.getColumnLabel(current_col_index)))
             #print("Faulty events:", my_globals.dictcolFaultyEvents)
@@ -2743,28 +2924,70 @@ class ColumnHeader(Canvas):
         #global dictcolFaultyEvents
         col = self.table.currentcol
         previous_col_name = self.model.getColumnLabel(col)
+        if previous_col_name.endswith("_uc_f_uo") or previous_col_name.endswith("_uc_uo_f") or previous_col_name.endswith(
+                "_f_uc_uo") or previous_col_name.endswith("_f_uo_uc") or previous_col_name.endswith(
+            "_uo_f_uc") or previous_col_name.endswith("_uo_uc_f"):
+            string_lenght = len(previous_col_name)
+            substring_to_remove = previous_col_name[-8:]
+            previous_col_name = previous_col_name.replace(str(substring_to_remove), "")
+            previous_col_name.replace(" ", "")
+        elif previous_col_name.endswith("_uc_f"):
+            previous_col_name = previous_col_name.replace("_uc_f", "")
+            previous_col_name.replace(" ", "")
+        elif previous_col_name.endswith("_f_uc"):
+            previous_col_name = previous_col_name.replace("_f_uc", "")
+            previous_col_name.replace(" ", "")
+        elif previous_col_name.endswith("_uc_uo"):
+            previous_col_name = previous_col_name.replace("_uc_uo", "")
+            previous_col_name.replace(" ", "")
+        elif previous_col_name.endswith("_uo_uc"):
+            previous_col_name = previous_col_name.replace("_uo_uc", "")
+            previous_col_name.replace(" ", "")
+        elif previous_col_name.endswith("_uo_f"):
+            previous_col_name = previous_col_name.replace("_uo_f", "")
+            previous_col_name.replace(" ", "")
+        elif previous_col_name.endswith("_f_uo"):
+            previous_col_name = previous_col_name.replace("_f_uo", "")
+            previous_col_name.replace(" ", "")
+        elif previous_col_name.endswith("_uc"):
+            previous_col_name = previous_col_name.replace("_uc", "")
+            previous_col_name.replace(" ", "")
+        elif previous_col_name.endswith("_f"):
+            previous_col_name = previous_col_name.replace("_f", "")
+            previous_col_name.replace(" ", "")
+        elif previous_col_name.endswith("_uo"):
+            previous_col_name = previous_col_name.replace("_uo", "")
+            previous_col_name.replace(" ", "")
+        else:
+            previous_col_name.replace(" ", "")
+
+        print("previous_col_name: ", previous_col_name)
+
         current_observable_value = my_globals.dictcolObservableEvents.get(str(previous_col_name))
         current_controllable_value = my_globals.dictcolControllableEvents.get(str(previous_col_name))
         current_faulty_value = my_globals.dictcolFaultyEvents.get(str(previous_col_name))
+        print("current_observable_value: ", current_observable_value)
+        print("current_controllable_value: ", current_controllable_value)
+        print("current_faulty_value: ", current_faulty_value)
         label_Obs = ""
         label_Unobs = ""
         label_Contr = ""
         label_Uncontr = ""
         label_Faulty = ""
         label_Unfaulty = ""
-        if(current_observable_value==1):
+        if current_observable_value==1:
             label_Obs = "(It is)"
             label_Unobs = "(It's not)"
         else:
             label_Obs = "(It's not)"
             label_Unobs = "(It is)"
-        if(current_controllable_value==1):
+        if current_controllable_value==1:
             label_Contr = "(It is)"
             label_Uncontr = "(It's not)"
         else:
             label_Contr = "(It's not)"
             label_Uncontr = "(It is)"
-        if(current_faulty_value==1):
+        if current_faulty_value==1:
             label_Faulty = "(It is)"
             label_Unfaulty = "(It's not)"
         else:
@@ -2842,6 +3065,8 @@ class ColumnHeader(Canvas):
         popupmenu.post(event.x_root, event.y_root)
         return popupmenu
 
+
+    '''
     def relabel_Column(self):
         #print("relabel_Column")
         col=self.table.currentcol
@@ -2874,8 +3099,108 @@ class ColumnHeader(Canvas):
         del my_globals.dictcolControllableEvents[str(previous_col_name)]
         del my_globals.dictcolFaultyEvents[str(previous_col_name)]
         # **************************************************************************************************************
+        
 
         return
+    '''
+    
+    
+
+    def relabel_Column(self):
+        #print("relabel_Column")
+        col=self.table.currentcol
+        previous_col_name = self.model.getColumnLabel(col)
+        # added by me **************************************************************************************************
+
+        ans = simpledialog.askstring("New column name?", "Enter new name:")
+        if ans !=None:
+            if ans == '':
+                messagebox.showwarning("Error", "Name should not be blank.")
+                return
+            else:
+                self.model.relabel_Column(col, ans)
+                self.redraw()
+
+                def get_event_from_columnlabel(columnlabel):
+                    '''To get rid of the columnlabel suffix and get its event properties'''
+                    prev_label = columnlabel
+                    dict_event_properties = {}
+                    if columnlabel.endswith("_uc_f_uo") or columnlabel.endswith("_uc_uo_f") or columnlabel.endswith(
+                            "_f_uc_uo") or columnlabel.endswith("_f_uo_uc") or columnlabel.endswith(
+                        "_uo_f_uc") or columnlabel.endswith("_uo_uc_f"):
+                        string_lenght = len(columnlabel)
+                        substring_to_remove = columnlabel[-8:]
+                        columnlabel = columnlabel.replace(str(substring_to_remove), "")
+                        columnlabel.replace(" ", "")
+                        dict_event_properties.update({prev_label: columnlabel, "properties": {"isObservable": 0, "isControllable": 0, "isFault": 1}})
+                    elif columnlabel.endswith("_uc_f"):
+                        columnlabel = columnlabel.replace("_uc_f", "")
+                        columnlabel.replace(" ", "")
+                        dict_event_properties.update({prev_label: columnlabel, "properties": {"isObservable": 1, "isControllable": 0, "isFault": 1}})
+                    elif columnlabel.endswith("_f_uc"):
+                        columnlabel = columnlabel.replace("_f_uc", "")
+                        columnlabel.replace(" ", "")
+                        dict_event_properties.update({prev_label: columnlabel, "properties": {"isObservable": 1, "isControllable": 0, "isFault": 1}})
+                    elif columnlabel.endswith("_uc_uo"):
+                        columnlabel = columnlabel.replace("_uc_uo", "")
+                        columnlabel.replace(" ", "")
+                        dict_event_properties.update({prev_label: columnlabel, "properties": {"isObservable": 0, "isControllable": 0, "isFault": 0}})
+                    elif columnlabel.endswith("_uo_uc"):
+                        columnlabel = columnlabel.replace("_uo_uc", "")
+                        columnlabel.replace(" ", "")
+                        dict_event_properties.update({prev_label: columnlabel, "properties": {"isObservable": 0, "isControllable": 0, "isFault": 0}})
+                    elif columnlabel.endswith("_uo_f"):
+                        columnlabel = columnlabel.replace("_uo_f", "")
+                        columnlabel.replace(" ", "")
+                        dict_event_properties.update({prev_label: columnlabel, "properties": {"isObservable": 0, "isControllable": 1, "isFault": 1}})
+                    elif columnlabel.endswith("_f_uo"):
+                        columnlabel = columnlabel.replace("_f_uo", "")
+                        columnlabel.replace(" ", "")
+                        dict_event_properties.update({prev_label: columnlabel, "properties": {"isObservable": 0, "isControllable": 1, "isFault": 1}})
+                    elif columnlabel.endswith("_uc"):
+                        columnlabel = columnlabel.replace("_uc", "")
+                        columnlabel.replace(" ", "")
+                        dict_event_properties.update({prev_label: columnlabel, "properties": {"isObservable": 1, "isControllable": 0, "isFault": 0}})
+                    elif columnlabel.endswith("_f"):
+                        columnlabel = columnlabel.replace("_f", "")
+                        columnlabel.replace(" ", "")
+                        dict_event_properties.update({prev_label: columnlabel, "properties": {"isObservable": 1, "isControllable": 1, "isFault": 1}})
+                    elif columnlabel.endswith("_uo"):
+                        columnlabel = columnlabel.replace("_uo", "")
+                        columnlabel.replace(" ", "")
+                        dict_event_properties.update({prev_label: columnlabel, "properties": {"isObservable": 0, "isControllable": 1, "isFault": 0}})
+                    else:
+                        columnlabel.replace(" ", "")
+                        dict_event_properties.update({prev_label: columnlabel, "properties": {"isObservable": 1, "isControllable": 1, "isFault": 0}})
+
+                    print(str(prev_label)+":      dict_event_properties: ", dict_event_properties)
+                    return dict_event_properties
+
+
+                dict_previous_col_name_properties = get_event_from_columnlabel(previous_col_name)
+                print(str(previous_col_name) + ":      dict_previous_col_name_properties: ", dict_previous_col_name_properties)
+
+                del my_globals.dictcolObservableEvents[dict_previous_col_name_properties[previous_col_name]]
+                del my_globals.dictcolControllableEvents[dict_previous_col_name_properties[previous_col_name]]
+                del my_globals.dictcolFaultyEvents[dict_previous_col_name_properties[previous_col_name]]
+
+                dict_ans_properties = get_event_from_columnlabel(ans)
+                print(str(ans) + ":      dict_ans_properties: ", dict_ans_properties)
+
+                my_globals.dictcolObservableEvents.update({dict_ans_properties[ans]: dict_ans_properties["properties"]["isObservable"]})
+                my_globals.dictcolControllableEvents.update({dict_ans_properties[ans]: dict_ans_properties["properties"]["isControllable"]})
+                my_globals.dictcolFaultyEvents.update({dict_ans_properties[ans]: dict_ans_properties["properties"]["isFault"]})
+
+
+                print("my_globals.dictcolObservableEvents: ", my_globals.dictcolObservableEvents)
+                print("my_globals.dictcolControllableEvents: ", my_globals.dictcolControllableEvents)
+                print("my_globals.dictcolFaultyEvents: ", my_globals.dictcolFaultyEvents)
+
+                return
+
+
+
+
 
     def draw_resize_symbol(self, col):
         """Draw a symbol to show that col can be resized when mouse here"""

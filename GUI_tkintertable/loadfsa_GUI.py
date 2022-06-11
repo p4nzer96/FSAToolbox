@@ -1,7 +1,7 @@
 import re
 import json
 from tkinter import filedialog, messagebox, simpledialog, PhotoImage, ttk, Tk, Label, Toplevel, Button, Text, BOTH, \
-    StringVar
+    StringVar, VERTICAL, RIGHT, LEFT, Y
 from tkinter.ttk import Frame
 from tkinter import Canvas, NW
 
@@ -14,15 +14,26 @@ def open_popup_errors_on_txt_file():
     TablesApp.example_win = Toplevel()
 
     # Set the geometry of tkinter frame
-    TablesApp.example_win.geometry("1000x670")
+    TablesApp.example_win.geometry("1020x670")
     TablesApp.example_win.title("Example: how to populate a .txt description file of the FSA")
     # Create a canvas
     canvas = Canvas(TablesApp.example_win, width=1000, height=670)
-    canvas.pack()
+    # canvas.pack()
     # Load an image in the script
     img = PhotoImage(format='png', file='./popup_example_how_to_populate_the_txt_file.png')
     # Add image to the Canvas Items
-    canvas.create_image(10, 10, anchor=NW, image=img)
+    # canvas.create_image(10, 10, anchor=NW, image=img)
+
+    canvas.create_image(0, 0, anchor=NW, image=img)
+    canvas.pack(side=LEFT, fill=BOTH, expand=1)
+
+    my_scrollbar = ttk.Scrollbar(TablesApp.example_win, orient=VERTICAL, command=canvas.yview)
+    my_scrollbar.pack(side=RIGHT, fill=Y)
+
+    canvas.configure(yscrollcommand=my_scrollbar.set)
+    canvas.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+
+
     TablesApp.example_win.mainloop()
 
     # create the text widget
@@ -48,17 +59,23 @@ def open_popup_errors_on_csv_file():
     # Create an instance of tkinter frame
     TablesApp.example_win = Toplevel()
     # Set the geometry of tkinter frame
-    TablesApp.example_win.geometry("740x720")
+    TablesApp.example_win.geometry("780x760")
     TablesApp.example_win.title("Example: how to populate a .csv description file of the FSA")
     # Create a canvas
-    canvas = Canvas(TablesApp.example_win, width=730, height=710)
-    canvas.pack()
+    canvas = Canvas(TablesApp.example_win, width=755, height=750)
+    # canvas.pack()
     # Load an image in the script
     img = PhotoImage(format='png', file='./popup_example_how_to_populate_the_csv_file.png')
 
     # Add image to the Canvas Items
-    canvas.create_image(10, 10, anchor=NW, image=img)
+    canvas.create_image(0, 0, anchor=NW, image=img)
+    canvas.pack(side=LEFT, fill=BOTH, expand=1)
 
+    my_scrollbar = ttk.Scrollbar(TablesApp.example_win, orient=VERTICAL, command=canvas.yview)
+    my_scrollbar.pack(side=RIGHT, fill=Y)
+
+    canvas.configure(yscrollcommand=my_scrollbar.set)
+    canvas.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
     TablesApp.example_win.mainloop()
 
     return
@@ -104,8 +121,6 @@ def load_txt_or_fsa_GUI(filename=None):
     flag_more_than_one_same_event = 0  # when has been specified the same event more times
 
     # print("clean_lines: ", clean_lines)
-    num_states = int(clean_lines[0][0])
-    #print("num_states: ", num_states)
 
     dict_events = {}
     dict_deltas = {}
@@ -120,7 +135,11 @@ def load_txt_or_fsa_GUI(filename=None):
     # for iter_lines in range(1, len(clean_lines)-2):
 
     flag_exception_happened = 0
+
     try:
+        num_states = int(clean_lines[0][0])
+        #print("num_states: ", num_states)
+
         while iter_lines < len(clean_lines):
             #print("clean_lines[" + str(iter_lines) + "][0] = '" + clean_lines[iter_lines][0] + "'")
             if clean_lines[iter_lines][0] == '' and flag_the_next_line_is_a_state == 0:
@@ -207,6 +226,7 @@ def load_txt_or_fsa_GUI(filename=None):
         flag_exception_happened = 1
         # Create an instance of Tkinter frame
         win = Tk()
+        win.title("Error loading the file")
         # Set the geometry of Tkinter frame
         win.geometry("400x200")
         # win.aspect(70,70,70,70)
@@ -216,8 +236,6 @@ def load_txt_or_fsa_GUI(filename=None):
         # Create a button in the main Window to open the popup
         ttk.Button(win, text="Example", command=open_popup_errors_on_txt_file).pack()
         win.mainloop()
-
-
 
 
     if flag_exception_happened == 0:
@@ -257,49 +275,50 @@ def load_txt_or_fsa_GUI(filename=None):
             text_content = "Some problems occurred:\r\n"
             statements_counter = 0
             win_geometry = ""
-
+            width_list = []
             if flag_different_number_of_states == 1:
                 statements_counter += 1
                 text_content += str(statements_counter) + ".ERROR: The number of states is different from the actual number " \
                                                           "that have been specified at the beginning of the file.\n"
-                win_geometry = "500x"
+                width_list.append(1000)
             if flag_zero_initial_states == 1:
                 if flag_more_than_one_same_state == 1:
                     statements_counter += 1
                     text_content += str(
                         statements_counter) + ".ERROR: the 'initial state' has not been specified or it could have been overwritten by the same 'state' specified more than once.\n"
-                    win_geometry = "950x"
+                    width_list.append(1000)
                 else:
                     statements_counter += 1
                     text_content += str(statements_counter) + ".ERROR: the 'initial state' has not been specified.\n"
-                    win_geometry = "500x"
+                    width_list.append(500)
             if flag_more_than_one_initial_state == 1:
                 statements_counter += 1
                 text_content += str(
                     statements_counter) + ".ERROR: only one 'state' can be specified as an 'initial state'.\n"
-                win_geometry = "500x"
+                width_list.append(500)
             if flag_end_state_not_a_state == 1:
                 statements_counter += 1
                 text_content += str(
                     statements_counter) + ".ERROR: only 'states' specified at the beginning of every group are allowed as 'end states' of a transition.\n"
-                win_geometry = "700x"
+                width_list.append(900)
             if flag_event_state == 1:
                 statements_counter += 1
                 text_content += str(
                     statements_counter) + ".WARNING: one or many 'events' is/are named as a 'state'(ignore this warning if it is the desired behaviour).\n"
-                win_geometry = "950x"
+                width_list.append(900)
             if flag_more_than_one_same_state == 1:
                 statements_counter += 1
                 text_content += str(
                     statements_counter) + ".ERROR: a 'state' can be defined only once (only one row per 'state').\n"
-                win_geometry = "950x"
+                width_list.append(600)
             if flag_end_state_not_a_state == 1 or flag_more_than_one_initial_state == 1 \
                     or flag_zero_initial_states == 1 or flag_more_than_one_same_state == 1 or flag_different_number_of_states == 1:
                 text_content += "Please correct the content of the table.\n"
 
             # auto-adapative height of the popup
             win_geometry_height = 70 + 52 * statements_counter
-            win_geometry += str(win_geometry_height)
+            width_popup = str(max(width_list))+"x"
+            win_geometry = width_popup + str(win_geometry_height)
 
             win = Tk()
             # Set the geometry of Tkinter frame
@@ -363,7 +382,6 @@ def load_csv_GUI(filename=None):
     # events properties, row 0
     list_columns = []
 
-    i = 1
     for i in range(1, len(clean_lines[0])):
         current_event = clean_lines[0][i]
         if clean_lines[0][i] and clean_lines[0][i] != '_':
@@ -588,36 +606,36 @@ def load_csv_GUI(filename=None):
         title_content = "Analysis problems"
         text_content = "Some problems occurred:\r\n"
         statements_counter = 0
-        win_geometry = ""
+        width_list = []
         if flag_zero_initial_states == 1:
             if flag_more_than_one_same_state == 1:
                 statements_counter += 1
                 text_content += str(statements_counter) + ".ERROR: the 'initial state' (_i) has not been specified or it could have been overwritten by the same 'state' specified more than once.\n"
-                win_geometry = "950x"
+                width_list.append(950)
             else:
                 statements_counter += 1
                 text_content += str(statements_counter) + ".ERROR: the 'initial state' (_i) has not been specified.\n"
-                win_geometry = "500x"
+                width_list.append(500)
         if flag_more_than_one_initial_state == 1:
             statements_counter += 1
             text_content += str(statements_counter) + ".ERROR: only one 'state' can be specified as an 'initial state' (_i).\n"
-            win_geometry = "500x"
+            width_list.append(600)
         if flag_end_state_not_a_state == 1:
             statements_counter += 1
             text_content += str(statements_counter) + ".ERROR: only 'states' specified in the column 'State' are allowed as 'end states' of a transition.\n"
-            win_geometry = "700x"
+            width_list.append(800)
         if flag_event_state == 1:
             statements_counter += 1
             text_content += str(statements_counter) + ".WARNING: one or many 'events' is/are named as a 'state' like those in the first column (ignore this warning if it is the desired behaviour).\n"
-            win_geometry = "950x"
+            width_list.append(1000)
         if flag_more_than_one_same_event == 1:
             statements_counter += 1
             text_content += str(statements_counter) + ".ERROR: an 'event' can be defined only once (only one column per 'event').\n"
-            win_geometry = "500x"
+            width_list.append(600)
         if flag_more_than_one_same_state == 1:
             statements_counter += 1
             text_content += str(statements_counter) + ".ERROR: a 'state' can be defined only once (only one row per 'state').\n"
-            win_geometry = "950x"
+            width_list.append(600)
         if flag_end_state_not_a_state == 1 or flag_more_than_one_initial_state == 1 \
                 or flag_zero_initial_states == 1 or flag_more_than_one_same_event == 1 or flag_more_than_one_same_state == 1:
             text_content += "Please correct the content of the table.\n\nClick here if you want to see an example on how to correctly populate the file."
@@ -625,7 +643,8 @@ def load_csv_GUI(filename=None):
 
         # auto-adapative height of the popup
         win_geometry_height = 100 + 52 * statements_counter
-        win_geometry += str(win_geometry_height)
+        width_popup = str(max(width_list)) + "x"
+        win_geometry = width_popup + str(win_geometry_height)
 
         win = Tk()
         # Set the geometry of Tkinter frame

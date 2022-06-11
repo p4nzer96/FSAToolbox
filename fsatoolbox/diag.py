@@ -1,4 +1,5 @@
 from fsatoolbox import *
+from fsatoolbox.nfa2dfa import nfa2dfa
 from fsatoolbox.utils.misc import v_print
 
 def diag(G, verbose=False):
@@ -17,7 +18,7 @@ def diag(G, verbose=False):
 
     #Diagnoser
     v_print("Compute the diagnoser:", verbose)
-    D=nfa2dfa(FR, verbose=verbose)
+    D=nfa2dfa(FR)
     v_print("\n\nDiagnoser:",verbose)
     v_print(FM,verbose)
 

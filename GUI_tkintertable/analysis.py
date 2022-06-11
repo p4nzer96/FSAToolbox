@@ -1,5 +1,5 @@
 def get_reachability_info(fsa):
-
+    print("REACHABILITY TEST")
     reachable_states = []
     current_start_states = []
     end_algorithm_flag = 0
@@ -7,7 +7,6 @@ def get_reachability_info(fsa):
     list_next_states = []
     dict_new_reach_states = {}
     # check if x0 is not connected to any transitions
-
 
     if len(fsa.x0) == 0:
         pass
@@ -86,7 +85,7 @@ def get_reachability_info(fsa):
 
 
 def get_co_reachability_info(fsa):
-
+    print("CO-REACHABILITY TEST")
     co_reachable_states = []
     final_states = []
 

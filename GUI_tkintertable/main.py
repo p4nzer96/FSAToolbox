@@ -144,6 +144,7 @@ class TablesApp(Frame):
         """Create the menu bar for the application. """
         print("createMenuBar")
         self.menu=Menu(self.tablesapp_win)
+        '''
         self.proj_menu={'01New':{'cmd':self.new_project},
                         '02Open':{'cmd':self.open_project},
                         '03Import file on table(.txt,.fsa,.csv,.json)': {'cmd':self.import_file},
@@ -153,11 +154,20 @@ class TablesApp(Frame):
                         '07Save As':{'cmd':self.save_as_project},
                         '08Preferences..':{'cmd':self.showPrefsDialog},
                         '09Quit':{'cmd':self.quit}}
+        '''
+        self.proj_menu={'01New':{'cmd':self.new_project},
+                        '02Import file on table(.txt,.fsa,.csv,.json)': {'cmd':self.import_file},
+                        '03Analyze file(.txt,.fsa,.csv,.json)': {'cmd': self.just_analyze_file},
+                        '04Close':{'cmd':self.close_project},
+                        '05Preferences..':{'cmd':self.showPrefsDialog},
+                        '06Quit':{'cmd':self.quit}}
+
         if self.parent:
             self.proj_menu['08Return to Database']={'cmd':self.return_data}
         self.proj_menu=self.create_pulldown(self.menu,self.proj_menu)
         self.menu.add_cascade(label='Project',menu=self.proj_menu['var'])
 
+        '''
         self.records_menu={'01Add Row':{'cmd':self.add_Row},
                          '02Delete Row':{'cmd':self.delete_Row},
                          '03Add Column':{'cmd':self.add_Column},
@@ -168,17 +178,25 @@ class TablesApp(Frame):
                          '08From table to Json': {'cmd': self.from_Table_To_Json},
                          '09Analyze FSA': {'cmd': self.analyze_FSA},
                          }
+        '''
+        self.records_menu={'01Add Row':{'cmd':self.add_Row},
+                         '02Delete Row':{'cmd':self.delete_Row},
+                         '03Add Column':{'cmd':self.add_Column},
+                         '04Delete Column':{'cmd':self.delete_Column},
+                         '05Auto Add Rows':{'cmd':self.autoAdd_Rows},
+                         '06Auto Add Columns':{'cmd':self.autoAdd_Columns},
+                         '07From table to Json': {'cmd': self.from_Table_To_Json},
+                         '08Analyze FSA': {'cmd': self.analyze_FSA},
+                         }
+
         self.records_menu=self.create_pulldown(self.menu,self.records_menu)
         self.menu.add_cascade(label='Records',menu=self.records_menu['var'])
 
-        self.sheet_menu={'01Add Sheet':{'cmd':self.add_Sheet},
-                         '02Remove Sheet':{'cmd':self.delete_Sheet},
-                         '03Copy Sheet':{'cmd':self.copy_Sheet},
-                         '04Rename Sheet':{'cmd':self.rename_Sheet},
-                         }
+        #self.sheet_menu={'01Add Sheet':{'cmd':self.add_Sheet}, '02Remove Sheet':{'cmd':self.delete_Sheet}, '03Copy Sheet':{'cmd':self.copy_Sheet}, '04Rename Sheet':{'cmd':self.rename_Sheet} }
+        self.sheet_menu = {'01Rename Sheet': {'cmd': self.rename_Sheet},}
         self.sheet_menu=self.create_pulldown(self.menu,self.sheet_menu)
-        self.menu.add_cascade(label='Sheet',menu=self.sheet_menu['var'])
-
+        # self.menu.add_cascade(label='Sheet',menu=self.sheet_menu['var'])
+        self.menu.add_cascade(label='Sheet name', menu=self.sheet_menu['var'])
         self.IO_menu={'01Import from csv file':{'cmd':self.import_csv},
                       '02Export to csv file':{'cmd':self.export_csv},
                       }
@@ -187,8 +205,12 @@ class TablesApp(Frame):
         self.menu.add_cascade(label='Import/Export',menu=self.IO_menu['var'])
 
         # Help menu
-        self.help_menu={'01Online Help':{'cmd':self.online_documentation},
-                        '02About':{'cmd':self.about_Tables}}
+
+        #self.help_menu={'01Online Help':{'cmd':self.online_documentation},'02About':{'cmd':self.about_Tables}}
+        self.help_menu={'01How to populate a .txt or .fsa file': {'cmd': self.help_how_populate_txt_or_fsa},
+                        '02How to populate a .csv file': {'cmd': self.help_how_populate_csv},
+                        '03How to populate a .json file': {'cmd': self.help_how_populate_json}}
+
         self.help_menu=self.create_pulldown(self.menu,self.help_menu)
         self.menu.add_cascade(label='Help',menu=self.help_menu['var'])
 
@@ -445,22 +467,25 @@ class TablesApp(Frame):
         Xm = f.Xm
         delta = f.delta
 
+
+
         num_chars_per_line = 50
-        text_content = ""
+        text_content = "FSA name: " + my_globals.last_sheet + "\n"
+        text_content += "______________________________________\n"
+
         if x0:
-            text_content += "FSA 5-TUPLA:\n"
             # states
             text_states = ""
             text_states += "States: ["
             chars_count = len(text_states)
             for i in range(len(X) - 1):
-                current_text = str(X[i]) + ", "
+                current_text = str(X[i].label) + ", "
                 text_states += current_text
                 chars_count += len(current_text)
                 if chars_count >= num_chars_per_line:
-                    text_states += "\n           "
+                    text_states += "\n            "
                     chars_count = 0
-            text_states += str(X[len(X) - 1]) + "]\n"
+            text_states += str(X[len(X) - 1].label) + "]\n"
             text_content += text_states
 
             # initial states
@@ -468,13 +493,13 @@ class TablesApp(Frame):
             text_initial_states += "Initial states: ["
             chars_count = len(text_initial_states)
             for i in range(len(x0) - 1):
-                current_text = str(x0[i]) + ", "
+                current_text = str(x0[i].label) + ", "
                 text_initial_states += current_text
                 chars_count += len(current_text)
                 if chars_count >= num_chars_per_line:
                     text_initial_states += "\n                    "
                     chars_count = 0
-            text_initial_states += str(x0[len(x0) - 1]) + "]\n"
+            text_initial_states += str(x0[len(x0) - 1].label) + "]\n"
             text_content += text_initial_states
 
             # final states
@@ -483,16 +508,46 @@ class TablesApp(Frame):
                 text_final_states += "Final states: ["
                 chars_count = len(text_final_states)
                 for i in range(len(Xm) - 1):
-                    current_text = str(Xm[i]) + ", "
+                    current_text = str(Xm[i].label) + ", "
                     text_final_states += current_text
                     chars_count += len(current_text)
                     if chars_count >= num_chars_per_line:
                         text_final_states += "\n                   "
                         chars_count = 0
-                text_final_states += str(Xm[len(Xm) - 1]) + "]\n"
+                text_final_states += str(Xm[len(Xm) - 1].label) + "]\n"
                 text_content += text_final_states
             else:
                 text_content += "Final states: []\n"
+
+            # forbidden states
+            num_forbidden_states = 0
+            for iter_X in range(len(X)):
+                if X[iter_X].isForbidden == 1:
+                    num_forbidden_states += 1
+            if num_forbidden_states != 0:
+                counter_forbidden_states = 0
+                text_forbidden_states = ""
+                text_forbidden_states += "Forbidden states: ["
+                chars_count = len(text_forbidden_states)
+                for i in range(len(X)):
+                    if X[i].isForbidden == 1:
+                        if counter_forbidden_states < num_forbidden_states - 1:
+                            current_text = str(X[i].label) + ", "
+                        else:
+                            current_text = str(X[i].label) + "]"
+                        counter_forbidden_states += 1
+                        text_forbidden_states += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_forbidden_states += "\n                        "
+                            chars_count = 0
+                text_content += text_forbidden_states + "\n"
+            else:
+                text_content += "Forbidden states: []\n"
+
+
+            text_content += "______________________________________\n"
+
 
             # alphabet
             if E:
@@ -500,75 +555,395 @@ class TablesApp(Frame):
                 text_alphabet += "Alphabet: ["
                 chars_count = len(text_alphabet)
                 for i in range(len(E) - 1):
-                    current_text = str(E[i]) + ", "
+                    current_text = str(E[i].label) + ", "
                     text_alphabet += current_text
                     chars_count += len(current_text)
                     if chars_count >= num_chars_per_line:
                         text_alphabet += "\n                "
                         chars_count = 0
-                text_alphabet += str(E[len(E) - 1]) + "]\n"
+                text_alphabet += str(E[len(E) - 1].label) + "]\n"
                 text_content += text_alphabet
             else:
                 text_content += "Alphabet: []\n"
 
+            # unobservable events
+            num_unobservable_events = 0
+            for iter_E in range(len(E)):
+                if E[iter_E].isObservable == 0:
+                    num_unobservable_events += 1
+            if num_unobservable_events != 0:
+                counter_unobservable_events = 0
+                text_alphabet = ""
+                text_alphabet += "Unobservable events: ["
+                chars_count = len(text_alphabet)
+                for i in range(len(E)):
+                    if E[i].isObservable == 0:
+                        if counter_unobservable_events < num_unobservable_events - 1:
+                            current_text = str(E[i].label) + ", "
+                        else:
+                            current_text = str(E[i].label) + "]"
+                        counter_unobservable_events += 1
+                        text_alphabet += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_alphabet += "\n                "
+                            chars_count = 0
+                text_content += text_alphabet + "\n"
+            else:
+                text_content += "Unobservable events: []\n"
 
+            # uncontrollable events
+            num_uncontrollable_events = 0
+            for iter_E in range(len(E)):
+                if E[iter_E].isControllable == 0:
+                    num_uncontrollable_events += 1
+            if num_uncontrollable_events != 0:
+                counter_uncontrollable_events = 0
+                text_alphabet = ""
+                text_alphabet += "Uncontrollable events: ["
+                chars_count = len(text_alphabet)
+                for i in range(len(E)):
+                    if E[i].isControllable == 0:
+                        if counter_uncontrollable_events < num_uncontrollable_events - 1:
+                            current_text = str(E[i].label) + ", "
+                        else:
+                            current_text = str(E[i].label) + "]"
+                        counter_uncontrollable_events += 1
+                        text_alphabet += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_alphabet += "\n                                   "
+                            chars_count = 0
+                text_content += text_alphabet + "\n"
+            else:
+                text_content += "Uncontrollable events: []\n"
+
+            # fault events
+            num_fault_events = 0
+            for iter_E in range(len(E)):
+                if E[iter_E].isFault == 1:
+                    num_fault_events += 1
+            if num_fault_events != 0:
+                counter_fault_events = 0
+                text_alphabet = ""
+                text_alphabet += "Fault events: ["
+                chars_count = len(text_alphabet)
+                for i in range(len(E)):
+                    if E[i].isFault == 1:
+                        if counter_fault_events < num_fault_events - 1:
+                            current_text = str(E[i].label) + ", "
+                        else:
+                            current_text = str(E[i].label) + "]"
+                        counter_fault_events += 1
+                        text_alphabet += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_alphabet += "\n                            "
+                            chars_count = 0
+                text_content += text_alphabet + "\n"
+            else:
+                text_content += "Fault events: []\n"
+
+            text_content += "______________________________________\n"
             # delta transitions
-            if len(delta):
-                text_delta = "\n"
-                text_delta += "Delta transitions:\n"
-                text_delta += str(delta)
+            num_chars_per_line = 50
+            text_content += "Delta transitions:\n"
+            text_delta = ""
+            if len(delta) != 0:
+                for iter_X in range(len(X)):
+                    current_start_filtered_deltas = f.filter_delta(start=str(X[iter_X].label), transition=None, end=None)
+                    print("current_start_filtered_deltas: ", current_start_filtered_deltas)
+                    if len(current_start_filtered_deltas) == 0:
+                        pass
+                    else:
+                        #chars_count = 0
+                        #text_delta += "\ndelta group " + str(X[iter_X]) + ": "
+                        #chars_count += len(text_delta)
+                        for iter_delta_row in range(len(current_start_filtered_deltas)):
+                            print("current_start_filtered_deltas.index["+str(iter_delta_row)+"]: ", current_start_filtered_deltas.index[iter_delta_row])
+                            if current_start_filtered_deltas.index[iter_delta_row] is not None:
+                                current_text = "(" + str(current_start_filtered_deltas.iloc[iter_delta_row]["start"]) + ", " + str(current_start_filtered_deltas.iloc[iter_delta_row]["transition"]) + ", " + str(current_start_filtered_deltas.iloc[iter_delta_row]["end"]) + ")  "
+                                text_delta += current_text
+                                chars_count += len(current_text)
+                                print(str(X[iter_X])+"chars_count: "+str(chars_count))
+                                if chars_count >= num_chars_per_line:
+                                    text_delta += "\n"
+                                    chars_count = 0
+                            else:
+                                pass
                 text_content += text_delta + "\n"
             else:
-                text_content += "Delta transitions: []\n"
+                text_content += " []\n"
 
 
             # Reachability
             is_reachable = analysis.get_reachability_info(f)
-            text_content += "\nREACHABILITY:\n"
+            num_chars_per_line = 50
+            text_content += "______________________________________"
+            text_content += "\nREACHABLE STATES\n"
+            text_content += "Reachable: ["
+            chars_count = len("Reachable: [")
             text_reachability = ""
-            for i in range(len(X)):
-                text_reachability += str(X[i].label) + " is reachable?: " + str(X[i].is_Reachable) + "\n"
-            text_content += text_reachability
+            num_reachable_states = 0
+            for iter_X in range(len(X)):
+                if X[iter_X].is_Reachable == 1:
+                    num_reachable_states += 1
+            if num_reachable_states != 0:
+                counter_reachable_states = 0
+                for i in range(len(X)):
+                    if X[i].is_Reachable:
+                        if counter_reachable_states < num_reachable_states-1:
+                            current_text = str(X[i].label) + ", "
+                        else:
+                            current_text = str(X[i].label) + "]"
+                        counter_reachable_states += 1
+                        text_reachability += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_reachability += "\n                   "
+                            chars_count = 0
+            else:
+                text_reachability += "]"
+            text_content += text_reachability + "\n"
 
-            text_content += "The FSA is reachable? :" + str(is_reachable) + "\n"
+
+
+            text_content += "Not reachable: ["
+            chars_count = len("Not reachable: [")
+            text_unreachability = ""
+            num_unreachable_states = 0
+            for iter_X in range(len(X)):
+                if X[iter_X].is_Reachable == 0:
+                    num_unreachable_states += 1
+            counter_unreachable_states = 0
+            if num_unreachable_states != 0:
+                for i in range(len(X)):
+                    if X[i].is_Reachable == 0:
+                        if counter_unreachable_states < num_unreachable_states-1:
+                            current_text = str(X[i].label) + ", "
+                        else:
+                            current_text = str(X[i].label) + "]"
+                        counter_unreachable_states += 1
+                        text_unreachability += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_unreachability += "\n                           "
+                            chars_count = 0
+            else:
+                text_unreachability += "]"
+            text_content += text_unreachability + "\n"
+
+
+            text_content += "FSA is reachable? "
+            if is_reachable == 1:
+                text_content += "YES\n"
+            else:
+                text_content += "NO\n"
+
 
             # Co-Reachability
             is_co_reachable = analysis.get_co_reachability_info(f)
-            text_content += "\nCO-REACHABILITY:\n"
+            num_chars_per_line = 50
+            text_content += "______________________________________"
+            text_content += "\nCO-REACHABLE STATES\n"
+            text_content += "Co-reachable: ["
+            chars_count = len("Co-reachable: [")
             text_co_reachability = ""
-            for i in range(len(X)):
-                text_co_reachability += str(X[i].label) + " is co-reachable?: " + str(X[i].is_co_Reachable) + "\n"
-            text_content += text_co_reachability
+            num_co_reachable_states = 0
+            for iter_X in range(len(X)):
+                if X[iter_X].is_co_Reachable == 1:
+                    num_co_reachable_states += 1
+            counter_co_reachable_states = 0
+            if num_co_reachable_states != 0:
+                for i in range(len(X)):
+                    if X[i].is_co_Reachable:
+                        if counter_co_reachable_states < num_co_reachable_states-1:
+                            current_text = str(X[i].label) + ", "
+                        else:
+                            current_text = str(X[i].label) + "]"
+                        counter_co_reachable_states += 1
+                        text_co_reachability += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_co_reachability += "\n                        "
+                            chars_count = 0
+            else:
+                text_co_reachability += "]"
+            text_content += text_co_reachability + "\n"
 
-            text_content += "The FSA is co-reachable? :" + str(is_co_reachable) + "\n"
 
-            # Blockingness
+            # UncoReachability
+            text_content += "Not co-reachable: ["
+            chars_count = len("Not co-reachable: [")
+            text_uncoreachability = ""
+            num_uncoreachable_states = 0
+            for iter_X in range(len(X)):
+                if X[iter_X].is_co_Reachable == 0:
+                    num_uncoreachable_states += 1
+            counter_uncoreachable_states = 0
+            if num_uncoreachable_states != 0:
+                for i in range(len(X)):
+                    if X[i].is_co_Reachable == 0:
+                        if counter_uncoreachable_states < num_uncoreachable_states-1:
+                            current_text = str(X[i].label) + ", "
+                        else:
+                            current_text = str(X[i].label) + "]"
+                        counter_uncoreachable_states += 1
+                        text_uncoreachability += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_uncoreachability += "\n                                "
+                            chars_count = 0
+            else:
+                text_uncoreachability += "]"
+            text_content += text_uncoreachability + "\n"
+
+            text_content += "FSA is co-reachable? "
+            if is_co_reachable == 1:
+                text_content += "YES\n"
+            else:
+                text_content += "NO\n"
+
+
+            # Blocking
             is_blocking = analysis.get_blockingness_info(f)
-            text_content += "\nBLOCKINGNESS:\n"
-            text_blockingness = ""
-            for i in range(len(X)):
-                text_blockingness += str(X[i].label) + " is blocking?: " + str(X[i].is_Blocking) + "\n"
-            text_content += text_blockingness
+            num_chars_per_line = 50
+            text_content += "______________________________________"
+            text_content += "\nBLOCKING STATES\n"
+            text_content += "Blocking: ["
+            chars_count = len("Blocking: [")
+            text_blocking = ""
+            num_blocking_states = 0
+            for iter_X in range(len(X)):
+                if X[iter_X].is_Blocking == 1:
+                    num_blocking_states += 1
+            counter_blocking_states = 0
+            if num_blocking_states != 0:
+                for i in range(len(X)):
+                    if X[i].is_Blocking:
+                        if counter_blocking_states < num_blocking_states-1:
+                            current_text = str(X[i].label) + ", "
+                        else:
+                            current_text = str(X[i].label) + "]"
+                        counter_blocking_states += 1
+                        text_blocking += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_blocking += "\n               "
+                            chars_count = 0
+            else:
+                text_blocking += "]"
+            text_content += text_blocking + "\n"
 
-            text_content += "The FSA is blocking? :" + str(is_blocking) + "\n"
 
-            # Deadness
+            # Not blocking
+            text_content += "Not blocking: ["
+            chars_count = len("Not blocking: [")
+            text_unblocking = ""
+            num_unblocking_states = 0
+            for iter_X in range(len(X)):
+                if X[iter_X].is_Blocking == 0:
+                    num_unblocking_states += 1
+            counter_unblocking_states = 0
+            if num_unblocking_states != 0:
+                for i in range(len(X)):
+                    if X[i].is_Blocking == 0:
+                        if counter_unblocking_states < num_unblocking_states-1:
+                            current_text = str(X[i].label) + ", "
+                        else:
+                            current_text = str(X[i].label) + "]"
+                        counter_unblocking_states += 1
+                        text_unblocking += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_unblocking += "\n                       "
+                            chars_count = 0
+            else:
+                text_unblocking += "]"
+            text_content += text_unblocking + "\n"
+
+            text_content += "FSA is blocking? "
+            if is_blocking == 1:
+                text_content += "YES\n"
+            else:
+                text_content += "NO\n"
+
+
+            # dead
             analysis.get_deadness_info(f)
-            text_content += "\nDEADNESS:\n"
-            text_deadness = ""
-            for i in range(len(X)):
-                text_deadness += str(X[i].label) + " is dead?: " + str(X[i].is_Dead) + "\n"
-            text_content += text_deadness
+            num_chars_per_line = 50
+            text_content += "______________________________________"
+            text_content += "\nDEAD STATES\n"
+            text_content += "Dead: ["
+            chars_count = len("Dead: [")
+            text_dead = ""
+            num_dead_states = 0
+            for iter_X in range(len(X)):
+                if X[iter_X].is_Dead == 1:
+                    num_dead_states += 1
+            counter_dead_states = 0
+            if num_dead_states != 0:
+                for i in range(len(X)):
+                    if X[i].is_Dead:
+                        if counter_dead_states < num_dead_states-1:
+                            current_text = str(X[i].label) + ", "
+                        else:
+                            current_text = str(X[i].label) + "]"
+                        counter_dead_states += 1
+                        text_dead += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_dead += "\n                    "
+                            chars_count = 0
+            else:
+                text_dead += "]"
+            text_content += text_dead + "\n"
+
+
+
+            text_content += "Not dead: ["
+            chars_count = len("Not dead: [")
+            text_undead = ""
+            num_undead_states = 0
+            for iter_X in range(len(X)):
+                if X[iter_X].is_Dead == 0:
+                    num_undead_states += 1
+            counter_undead_states = 0
+            if num_undead_states != 0:
+                for i in range(len(X)):
+                    if X[i].is_Dead == 0:
+                        if counter_undead_states < num_undead_states-1:
+                            current_text = str(X[i].label) + ", "
+                        else:
+                            current_text = str(X[i].label) + "]"
+                        counter_undead_states += 1
+                        text_undead += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_undead += "\n                  "
+                            chars_count = 0
+            else:
+                text_undead += "]"
+            text_content += text_undead + "\n"
+
 
             # Trim
             is_trim = f.get_trim_info()
-            text_content += "\nTRIM:\n"
-            text_content += "The FSA is trim? :" + str(is_trim) + "\n"
+            text_content += "______________________________________"
+            text_content += "\nTRIM\n"
+            if is_trim == 1:
+                text_content += "FSA is trim? YES\n"
+            else:
+                text_content += "FSA is trim? NO\n"
 
             # Reversibility
             is_reversible = analysis.get_reversibility_info(f)
+            text_content += "______________________________________"
             text_content += "\nREVERSIBILITY:\n"
-            text_content += "The FSA is reversible? :" + str(is_reversible)
+            if is_reversible == 1:
+                text_content += "FSA is reversible? YES\n"
+            else:
+                text_content += "FSA is reversible? NO\n"
 
         else:
             text_content = "Error: At least the initial state must be specified."
@@ -592,10 +967,10 @@ class TablesApp(Frame):
             """Save as a new filename"""
             ta = TablesApp(Frame)
             filename = filedialog.asksaveasfilename(parent=ta.tablesapp_win,
-                                                defaultextension='.txt',
-                                                initialdir=ta.defaultsavedir,
-                                                filetypes=[("Text file","*.txt"),
-                                                           ("All files","*.*")])
+                                                    defaultextension='.txt',
+                                                    initialdir=ta.defaultsavedir,
+                                                    filetypes=[("Text file","*.txt"),
+                                                               ("All files","*.*")])
             if not filename:
                 print ('Returning')
                 return
@@ -603,6 +978,8 @@ class TablesApp(Frame):
             with open(filename, 'w') as f:
                 f.write(text_content)
             return
+
+
 
         importButton = Button(win, text='Save on file', command=save_fsa_analysis_results, background="green", foreground="white")
         importButton.grid(row=20, column=0, sticky='news', padx=2, pady=2)
@@ -620,6 +997,8 @@ class TablesApp(Frame):
         # Making the text read only
         text_area.configure(state='disabled')
         win.mainloop()
+
+
 
 
 
@@ -644,7 +1023,7 @@ class TablesApp(Frame):
         if os.path.isfile(filename):
             extension = os.path.splitext(filename)
             #print("extension: ", extension)
-            if ".txt" in extension:
+            if ".txt" in extension or ".fsa" in extension:
                 self.parse_txt_file_and_obtain_the_json(filename)
             elif ".json" in extension:
                 self.parse_json_file_and_populate_the_table(filename)
@@ -688,7 +1067,7 @@ class TablesApp(Frame):
 
             #print("clean_lines[" + str(iter_list) + "]: " + str(clean_lines[iter_list]))
             clean_lines[iter_list] = clean_lines[iter_list].split(" ")
-
+        fd.close()
 
         dict_start_states = {}  # to populate column 0 with keys (states), and for every key a dictionary of info on isInitial, isFinal, isFault
         list_start_states = []  # the indexes of the list represent the row of the related the start_state value
@@ -697,21 +1076,22 @@ class TablesApp(Frame):
         dict_deltas = {}
 
         print("clean_lines: ", clean_lines)
-        num_states = int(clean_lines[0][0])
-        #print("num_states: ", num_states)
-
-        dict_events = {}
-        dict_deltas = {}
-
-        index_row_start_states = 0
-        index_column_events = 1  # the index '0' is for the column "States", so the events start from column '1'
-        index_delta_events = 0
-        current_start_state = ""
-        current_event = ""
-        flag_the_next_line_is_a_state = 0
-        iter_lines = 1
-        # for iter_lines in range(1, len(clean_lines)-2):
         try:
+            num_states = int(clean_lines[0][0])
+            #print("num_states: ", num_states)
+
+            dict_events = {}
+            dict_deltas = {}
+
+            index_row_start_states = 0
+            index_column_events = 1  # the index '0' is for the column "States", so the events start from column '1'
+            index_delta_events = 0
+            current_start_state = ""
+            current_event = ""
+            flag_the_next_line_is_a_state = 0
+            iter_lines = 1
+            # for iter_lines in range(1, len(clean_lines)-2):
+
             while iter_lines < len(clean_lines):
                 #print("clean_lines[" + str(iter_lines) + "][0] = '" + clean_lines[iter_lines][0] + "'")
                 if clean_lines[iter_lines][0] == '' and flag_the_next_line_is_a_state == 0:
@@ -791,10 +1171,12 @@ class TablesApp(Frame):
             # Create an instance of Tkinter frame
             win = Tk()
             # Set the geometry of Tkinter frame
-            win.geometry("400x200")
+            win.geometry("440x200")
+            win.title("Error loading the file")
             # win.aspect(70,70,70,70)
-            Label(win, text="There are some sintax error in the .txt file you tried to import.\r\n"
-                            "Click here if you want to see an example on how to\r\ncorrectly populate the file.",
+            Label(win, text="There are some syntax error in the .txt or .fsa file you tried to import.\r\n"
+                            "             Click here if you want to see an example on how to\r\n"
+                            "                                  correctly populate the file.",
                   font=('Helvetica 10 bold')).pack(pady=20)
             # Create a button in the main Window to open the popup
             ttk.Button(win, text="Example", command=self.open_popup_errors_on_txt_file).pack()
@@ -826,50 +1208,65 @@ class TablesApp(Frame):
         my_globals.dictcolFaultyEvents.clear()
         #print("clear", self.currenttable.model.columnlabels)
         self.currenttable.model.addColumn("State")
+
+        dict_event_suffixes = {}
+
+
+
         i = 1
+        dict_col_label_widths = {}
+        dict_col_label_widths.update({"0": len("State")})
         while len(self.currenttable.model.columnlabels) <= len(list_events):
             # self.currenttable.model.addColumn("name"+str(len(self.currenttable.model.columnlabels)))
-            self.currenttable.model.addColumn(list_events[i - 1])
-            print(self.currenttable.model.columnlabels)
 
-
-            if dict_events[list_events[i - 1]]["isObservable"]:
+            print("list_events[i - 1]: ", list_events[i - 1])
+            suffix_event = ""
+            if "isObservable" in dict_events[list_events[i - 1]]:
                 if dict_events[list_events[i - 1]]["isObservable"] == "o":
                     #print("o")
                     my_globals.setEventAsObservable(self.currenttable, list_events[i - 1])
                 elif dict_events[list_events[i - 1]]["isObservable"] == "uo":
                     # print("uo")
+                    suffix_event += "_uo"
                     my_globals.setEventAsUnobservable(self.currenttable, list_events[i - 1])
             else:
-                #print("uo")
-                my_globals.setEventAsUnobservable(self.currenttable, list_events[i - 1])
+                my_globals.setEventAsObservable(self.currenttable, list_events[i - 1])
 
-            if dict_events[list_events[i - 1]]["isControllable"]:
+            if "isControllable" in dict_events[list_events[i - 1]]:
                 if dict_events[list_events[i - 1]]["isControllable"] == "c":
                     #print("c")
                     my_globals.setEventAsControllable(self.currenttable, list_events[i - 1])
                 elif dict_events[list_events[i - 1]]["isControllable"] == "uc":
                     # print("uc")
+                    suffix_event += "_uc"
                     my_globals.setEventAsUncontrollable(self.currenttable, list_events[i - 1])
             else:
-                #print("uc")
-                my_globals.setEventAsUncontrollable(self.currenttable, list_events[i - 1])
+                my_globals.setEventAsControllable(self.currenttable, list_events[i - 1])
 
-            if dict_events[list_events[i - 1]]["isFault"]:
+            if "isFault" in dict_events[list_events[i - 1]]:
                 if dict_events[list_events[i - 1]]["isFault"] == "f":
                     #print("c")
+                    suffix_event += "_f"
                     my_globals.setEventAsFaulty(self.currenttable, list_events[i - 1])
                 elif dict_events[list_events[i - 1]]["isFault"] == "uf":
                     # print("uc")
                     my_globals.setEventAsUnfaulty(self.currenttable, list_events[i - 1])
             else:
-                #print("uc")
                 my_globals.setEventAsUnfaulty(self.currenttable, list_events[i - 1])
+
+            dict_event_suffixes.update({list_events[i - 1]: suffix_event})
+            self.currenttable.model.addColumn(list_events[i - 1]+suffix_event)
+
+            num_chars = len(list_events[i - 1]+suffix_event)
+            dict_col_label_widths.update({str(i): num_chars})
+
+
+            print("self.currenttable.model.columnlabels:", self.currenttable.model.columnlabels)
 
             i += 1
 
 
-
+        print("dict_event_suffixes:", dict_event_suffixes)
 
         while self.currenttable.model.getRowCount() < len(list_start_states):
             self.currenttable.model.addRow()
@@ -945,7 +1342,9 @@ class TablesApp(Frame):
 
 
             self.currenttable.model.setValueAt(list_start_states[i]+return_suffix(str_check), i, 0)
-
+            num_chars = len(list_start_states[i]+return_suffix(str_check))
+            if num_chars > dict_col_label_widths["0"]:
+                dict_col_label_widths.update({"0": num_chars})
 
             '''
             if dict_start_states[list_start_states[i]]["isInitial"] == "0" and dict_start_states[list_start_states[i]][
@@ -988,15 +1387,17 @@ class TablesApp(Frame):
                 break
             if str(key_dict_deltas) in dict_deltas:
                 #print("key_dict_deltas: ", key_dict_deltas)
-
-                column_index = self.currenttable.model.getColumnIndex(dict_deltas[str(key_dict_deltas)]["name"])
+                print("dict_event_suffixes[dict_deltas[str(key_dict_deltas)][name]]: ", dict_event_suffixes[dict_deltas[str(key_dict_deltas)]["name"]])
+                print("dict_deltas[str(key_dict_deltas)][name]+dict_event_suffixes[dict_deltas[str(key_dict_deltas)][name]]:", dict_deltas[str(key_dict_deltas)]["name"]+dict_event_suffixes[dict_deltas[str(key_dict_deltas)]["name"]])
+                column_index = self.currenttable.model.getColumnIndex(dict_deltas[str(key_dict_deltas)]["name"]+dict_event_suffixes[dict_deltas[str(key_dict_deltas)]["name"]])
+                print("column_index: ", column_index)
                 row_index = dict_start_states[dict_deltas[str(key_dict_deltas)]["start"]]["row"]
                 #print("(row_index, column_index): ", row_index, column_index)
                 #print("dict_deltas[str(key_dict_deltas)][event]: ", dict_deltas[str(key_dict_deltas)]["name"])
                 #print("dict_deltas[str(key_dict_deltas)][end]: ", dict_deltas[str(key_dict_deltas)]["ends"])
                 # self.currenttable.model.setValueAt(dict_deltas[str(key_dict_deltas)]["ends"], row_index, column_index)
 
-                list_cell_value_end_states = dict_deltas[str(key_dict_deltas)]["ends"].split(";")
+                list_cell_value_end_states = dict_deltas[str(key_dict_deltas)]["ends"].split("-")
                 #print("qui, list_cell_value_end_states: ", list_cell_value_end_states)
                 i = 0
                 while i < len(list_cell_value_end_states):
@@ -1014,29 +1415,42 @@ class TablesApp(Frame):
 
                 string_cell_value_end_states = " ".join(map(str, list_cell_value_end_states))
                 #print("string_cell_value_end_states: ", string_cell_value_end_states)
-                string_cell_value_end_states = re.sub(" +", ";", string_cell_value_end_states)
+                string_cell_value_end_states = re.sub(" +", "-", string_cell_value_end_states)
                 self.currenttable.model.setValueAt(string_cell_value_end_states, row_index, column_index)
                 #print("string_cell_value_end_states: ", string_cell_value_end_states)
 
                 num_chars = len(string_cell_value_end_states)
-                if num_chars >= 10:
-                    width_col = 100 + (num_chars - 10) * 7
+                if num_chars > dict_col_label_widths[str(column_index)]:
+                    dict_col_label_widths.update({str(column_index): num_chars})
+                '''
+                if num_chars >= 10 or dict_col_label_widths[str(column_index)] >= 10:
+                    max_chars = num_chars if (num_chars > dict_col_label_widths[str(column_index)]) else dict_col_label_widths[str(column_index)]
+                    print("column_index:"+str(column_index)+ "  max_chars:"+ str(max_chars))
+                    width_col = 120 + (max_chars - 10) * 10
                     self.currenttable.resizeColumn(column_index, width_col)
+                '''
                 counter_macro_deltas += 1
                 key_dict_deltas += 1
             else:
                 key_dict_deltas += 1
                 pass
 
+        # resize every column based on the max number of chars of each column
+        for i in range(0, len(self.currenttable.model.columnlabels)):
+            if dict_col_label_widths[str(i)] >= 10:
+                width_col = 120 + (dict_col_label_widths[str(i)] - 10) * 10
+                self.currenttable.resizeColumn(i, width_col)
+
+
+
 
         # in order to make the update of the table visible without the need to be touched before by the user
 
-        self.currenttable.resizeColumn(0, 101)  # dummy resize
-        self.currenttable.resizeColumn(0, 100)  # reset the width of col 0 to the default value
+        # self.currenttable.resizeColumn(0, 101)  # dummy resize
+        # self.currenttable.resizeColumn(0, 100)  # reset the width of col 0 to the default value
 
         # self.new_project(data)
         # self.filename=filename
-        fd.close()
         return
 
     # ******************************************************************************************************************
@@ -1123,7 +1537,7 @@ class TablesApp(Frame):
                         #print("dict_deltas[str(key)]: ", dict_deltas[str(key)])
                         # del dict_deltas[str(key)]
                         flag_time_to_delete = 1
-                if (flag_time_to_delete == 1):
+                if flag_time_to_delete == 1:
                     dict_deltas[str(current_key)]["ends"] = current_ends
                     #print("TO DELETE")
                     for i in range(len(list_keys_already_done)):
@@ -1159,44 +1573,49 @@ class TablesApp(Frame):
         #print("clear", self.currenttable.model.columnlabels)
         self.currenttable.model.addColumn("State")
         i = 1
+
+        dict_event_suffixes = {}
+        dict_col_label_widths = {}
+        dict_col_label_widths.update({"0": len("State")})
+
         while len(self.currenttable.model.columnlabels) <= len(list_events):
             # self.currenttable.model.addColumn("name"+str(len(self.currenttable.model.columnlabels)))
-            self.currenttable.model.addColumn(list_events[i - 1])
-            print(self.currenttable.model.columnlabels)
 
+            print(self.currenttable.model.columnlabels)
+            suffix_event = ""
             from tkintertable.Tables import TableCanvas
             if "isObservable" in dict_events[list_events[i - 1]]:
                 if dict_events[list_events[i - 1]]["isObservable"] == "1" or dict_events[list_events[i - 1]]["isObservable"] == 1:
-                    #print("o")
                     my_globals.setEventAsObservable(self.currenttable, list_events[i - 1])
                 elif dict_events[list_events[i - 1]]["isObservable"] == "0" or dict_events[list_events[i - 1]]["isObservable"] == 0:
-                    # print("uo")
+                    suffix_event += "_uo"
                     my_globals.setEventAsUnobservable(self.currenttable, list_events[i - 1])
             else:
-                #print("uo")
-                my_globals.setEventAsUnobservable(self.currenttable, list_events[i - 1])
+                my_globals.setEventAsObservable(self.currenttable, list_events[i - 1])
 
             if "isControllable" in dict_events[list_events[i - 1]]:
                 if dict_events[list_events[i - 1]]["isControllable"] == "1" or dict_events[list_events[i - 1]]["isControllable"] == 1:
-                    #print("c")
                     my_globals.setEventAsControllable(self.currenttable, list_events[i - 1])
                 elif dict_events[list_events[i - 1]]["isControllable"] == "0" or dict_events[list_events[i - 1]]["isControllable"] == 0:
-                    # print("uc")
+                    suffix_event += "_uc"
                     my_globals.setEventAsUncontrollable(self.currenttable, list_events[i - 1])
             else:
-                #print("uc")
-                my_globals.setEventAsUncontrollable(self.currenttable, list_events[i - 1])
+                my_globals.setEventAsControllable(self.currenttable, list_events[i - 1])
 
             if "isFault" in dict_events[list_events[i - 1]]:
                 if dict_events[list_events[i - 1]]["isFault"] == "1" or dict_events[list_events[i - 1]]["isFault"] == 1:
-                    #print("c")
+                    suffix_event += "_f"
                     my_globals.setEventAsFaulty(self.currenttable, list_events[i - 1])
                 elif dict_events[list_events[i - 1]]["isFault"] == "0" or dict_events[list_events[i - 1]]["isFault"] == 0:
-                    # print("uc")
                     my_globals.setEventAsUnfaulty(self.currenttable, list_events[i - 1])
             else:
-                #print("uc")
                 my_globals.setEventAsUnfaulty(self.currenttable, list_events[i - 1])
+
+            dict_event_suffixes.update({list_events[i - 1]: suffix_event})
+            print("dict_event_suffixes: ", dict_event_suffixes)
+            num_chars = len(list_events[i - 1] + suffix_event)
+            dict_col_label_widths.update({str(i): num_chars})
+            self.currenttable.model.addColumn(list_events[i - 1]+dict_event_suffixes[list_events[i - 1]])
 
             i += 1
 
@@ -1273,7 +1692,9 @@ class TablesApp(Frame):
 
 
             self.currenttable.model.setValueAt(list_start_states[i]+return_suffix(str_check), i, 0)
-
+            num_chars = len(list_start_states[i]+return_suffix(str_check))
+            if num_chars > dict_col_label_widths["0"]:
+                dict_col_label_widths.update({"0": num_chars})
             '''
             if dict_start_states[list_start_states[i]]["isInitial"] == "0" and dict_start_states[list_start_states[i]][
                 "isFinal"] == "0" and dict_start_states[list_start_states[i]]["isForbidden"] == "0":
@@ -1320,7 +1741,7 @@ class TablesApp(Frame):
             if str(key_dict_deltas) in dict_deltas:
                 #print("key_dict_deltas: ", key_dict_deltas)
 
-                column_index = self.currenttable.model.getColumnIndex(dict_deltas[str(key_dict_deltas)]["name"])
+                column_index = self.currenttable.model.getColumnIndex(dict_deltas[str(key_dict_deltas)]["name"]+dict_event_suffixes[dict_deltas[str(key_dict_deltas)]["name"]])
                 row_index = dict_start_states[dict_deltas[str(key_dict_deltas)]["start"]]["row"]
                 #print("(row_index, column_index): ", row_index, column_index)
                 #print("dict_deltas[str(key_dict_deltas)][name]: ", dict_deltas[str(key_dict_deltas)]["name"])
@@ -1356,13 +1777,9 @@ class TablesApp(Frame):
                 #print("column_index: ", column_index)
                 #print("get_column_Name", self.currenttable.model.getColumnName(column_index))
                 num_chars = len(string_cell_value_end_states)
-                if num_chars >= 10:
-                    #print("self.currenttable.model.columnlabels: ", self.currenttable.model.columnlabels)
-                    #print("self.currenttable.model.columnNames: ", self.currenttable.model.columnNames)
-                    #print("column_index: ", column_index)
-                    #print("get_column_Name", self.currenttable.model.getColumnName(column_index))
-                    width_col = 100 + (num_chars - 10) * 7
-                    self.currenttable.resizeColumn(column_index, width_col)
+                if num_chars > dict_col_label_widths[str(column_index)]:
+                    dict_col_label_widths.update({str(column_index): num_chars})
+
                 counter_macro_deltas += 1
                 key_dict_deltas += 1
             else:
@@ -1370,9 +1787,15 @@ class TablesApp(Frame):
                 pass
 
 
+        # resize every column based on the max number of chars of each column
+        for i in range(0, len(self.currenttable.model.columnlabels)):
+            if dict_col_label_widths[str(i)] >= 10:
+                width_col = 120 + (dict_col_label_widths[str(i)] - 10) * 10
+                self.currenttable.resizeColumn(i, width_col)
+
         # in order to make the update of the table visible without the need to be touched before by the user
-        self.currenttable.resizeColumn(0, 101)  # dummy resize
-        self.currenttable.resizeColumn(0, 100)  # reset the width of col 0 to the default value
+        # self.currenttable.resizeColumn(0, 101)  # dummy resize
+        # self.currenttable.resizeColumn(0, 100)  # reset the width of col 0 to the default value
 
         # self.new_project(data)
         # self.filename=filename
@@ -1403,7 +1826,7 @@ class TablesApp(Frame):
 
         print(lines)
 
-
+        print("self.sheets: ", self.sheets)
 
         clean_lines = []
 
@@ -1449,18 +1872,18 @@ class TablesApp(Frame):
 
 
         dict_event_properties = {}
+        dict_event_suffixes = {}
         # events properties, row 0
-
+        dict_col_label_widths = {}
+        dict_col_label_widths.update({"0": len("State")})
         try:
-            i = 1
-            for i in range(1,len(clean_lines[0])):
+            for i in range(1, len(clean_lines[0])):
                 current_event = clean_lines[0][i]
                 if clean_lines[0][i] and clean_lines[0][i] != '_':
                     if current_event.endswith("_uc_f_uo") or current_event.endswith("_uc_uo_f") or current_event.endswith(
                             "_f_uc_uo") or current_event.endswith("_f_uo_uc") or current_event.endswith(
                             "_uo_f_uc") or current_event.endswith("_uo_uc_f"):
-                        string_lenght = len(current_event)
-                        substring_to_remove = current_event[-6:]
+                        substring_to_remove = current_event[-8:]
                         current_event = current_event.replace(str(substring_to_remove), "")
                         current_event.replace(" ", "")
                         if current_event in dict_event_properties:
@@ -1529,14 +1952,16 @@ class TablesApp(Frame):
 
                 #print("dict_event_properties: ", dict_event_properties)
                 clean_lines[0][i] = current_event
-                self.currenttable.model.addColumn(current_event)
 
+
+                suffix_event = ""
                 if "isObservable" in dict_event_properties[current_event]:
                     if dict_event_properties[current_event]["isObservable"] == 1:
                         #print("o")
                         my_globals.setEventAsObservable(self.currenttable, current_event)
                     elif dict_event_properties[current_event]["isObservable"] == 0:
                         # print("uo")
+                        suffix_event += "_uo"
                         my_globals.setEventAsUnobservable(self.currenttable, current_event)
                 else:
                     #print("uo")
@@ -1548,6 +1973,7 @@ class TablesApp(Frame):
                         my_globals.setEventAsControllable(self.currenttable, current_event)
                     elif dict_event_properties[current_event]["isControllable"] == 0:
                         # print("uc")
+                        suffix_event += "_uc"
                         my_globals.setEventAsUncontrollable(self.currenttable, current_event)
                 else:
                     #print("uc")
@@ -1556,6 +1982,7 @@ class TablesApp(Frame):
                 if "isFault" in dict_event_properties[current_event]:
                     if dict_event_properties[current_event]["isFault"] == 1:
                         #print("c")
+                        suffix_event += "_f"
                         my_globals.setEventAsFaulty(self.currenttable, current_event)
                     elif dict_event_properties[current_event]["isFault"] == 0:
                         # print("uc")
@@ -1564,8 +1991,10 @@ class TablesApp(Frame):
                     #print("uc")
                     my_globals.setEventAsUnfaulty(self.currenttable, current_event)
 
-
-
+                dict_event_suffixes.update({current_event: suffix_event})
+                self.currenttable.model.addColumn(current_event + suffix_event)
+                num_chars = len(current_event + suffix_event)
+                dict_col_label_widths.update({str(i): num_chars})
             #print("dict_event_properties: ", dict_event_properties)
 
 
@@ -1608,8 +2037,11 @@ class TablesApp(Frame):
                 for col in range(0, len(clean_lines[0])):
                     #print("row, col): ("+str(row)+","+str(col)+")"+": "+str(clean_lines[row][col]))
                     self.currenttable.model.setValueAt(clean_lines[row][col], row-1, col)
-                    if len(clean_lines[row][col]) >= 10:
-                        width_col = 100 + (len(clean_lines[row][col]) - 10) * 7
+                    num_chars = len(clean_lines[row][col])
+                    if num_chars > dict_col_label_widths[str(col)]:
+                        dict_col_label_widths.update({str(col): num_chars})
+                    if dict_col_label_widths[str(col)] >= 10:
+                        width_col = 120 + (dict_col_label_widths[str(col)]-10) * 10
                         self.currenttable.resizeColumn(col, width_col)
 
 
@@ -1617,10 +2049,12 @@ class TablesApp(Frame):
             # Create an instance of Tkinter frame
             win = Tk()
             # Set the geometry of Tkinter frame
+            win.title("Error loading the file")
             win.geometry("400x200")
             # win.aspect(70,70,70,70)
-            Label(win, text="There are some sintax error in the .csv file you tried to import.\r\n"
-                            "Click here if you want to see an example on how to\r\ncorrectly populate the file.",
+            Label(win, text="There are some syntax error in the .csv file you tried to import.\r\n"
+                            "         Click here if you want to see an example on how to\r\n"
+                            "                           correctly populate the file.",
                   font=('Helvetica 10 bold')).pack(pady=20)
             # Create a button in the main Window to open the popup
             ttk.Button(win, text="Example", command=self.open_popup_errors_on_csv_file).pack()
@@ -1629,8 +2063,8 @@ class TablesApp(Frame):
 
 
         # in order to make the update of the table visible without the need to be touched before by the user
-        self.currenttable.resizeColumn(0, 101)  # dummy resize
-        self.currenttable.resizeColumn(0, 100)  # reset the width of col 0 to the default value
+        # self.currenttable.resizeColumn(0, 101)  # dummy resize
+        # self.currenttable.resizeColumn(0, 100)  # reset the width of col 0 to the default value
 
 
 
@@ -1726,11 +2160,11 @@ class TablesApp(Frame):
         self.example_win = Toplevel(win)
 
         # Set the geometry of tkinter frame
-        self.example_win.geometry("1000x670")
+        self.example_win.geometry("1030x670")
         self.example_win.title("Example: how to populate a .txt description file of the FSA")
         # Create a canvas
         canvas = Canvas(self.example_win, width=1000, height=670)
-        canvas.pack()
+        #canvas.pack()
         # Load an image in the script
         #img = (PIL.Image.open("./popup_example_how_to_populate_the_txt_file.png"))
 
@@ -1748,6 +2182,15 @@ class TablesApp(Frame):
 
         # Add image to the Canvas Items
         canvas.create_image(10, 10, anchor=NW, image=img)
+
+        canvas.pack(side=LEFT, fill=BOTH, expand=1)
+
+        my_scrollbar = ttk.Scrollbar(self.example_win, orient=VERTICAL, command=canvas.yview)
+        my_scrollbar.pack(side=RIGHT, fill=Y)
+
+        canvas.configure(yscrollcommand=my_scrollbar.set)
+        canvas.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+
 
         self.example_win.mainloop()
 
@@ -1788,11 +2231,12 @@ class TablesApp(Frame):
         self.example_win = Toplevel(win)
 
         # Set the geometry of tkinter frame
-        self.example_win.geometry("740x720")
+        self.example_win.geometry("770x755")
         self.example_win.title("Example: how to populate a .csv description file of the FSA")
         # Create a canvas
-        canvas = Canvas(self.example_win, width=730, height=710)
-        canvas.pack()
+        canvas = Canvas(self.example_win, width=750, height=750)
+        # canvas.pack()
+
         # Load an image in the script
         #img = (PIL.Image.open("./popup_example_how_to_populate_the_txt_file.png"))
 
@@ -1809,9 +2253,16 @@ class TablesApp(Frame):
         # new_image = ImageTk.PhotoImage(resized_image)
 
         # Add image to the Canvas Items
-        canvas.create_image(10, 10, anchor=NW, image=img)
+        canvas.create_image(0, 0, anchor=NW, image=img)
+        canvas.pack(side=LEFT, fill=BOTH, expand=1)
 
+        my_scrollbar = ttk.Scrollbar(self.example_win, orient=VERTICAL, command=canvas.yview)
+        my_scrollbar.pack(side=RIGHT, fill=Y)
+
+        canvas.configure(yscrollcommand=my_scrollbar.set)
+        canvas.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
         self.example_win.mainloop()
+
 
 
         # create the text widget
@@ -1907,6 +2358,7 @@ class TablesApp(Frame):
         self.saved = 0
         return sheetname
 
+
     def delete_Sheet(self):
         """Delete a sheet"""
         print("delete_Sheet")
@@ -1914,15 +2366,20 @@ class TablesApp(Frame):
         name = self.notebook.tab(s, 'text')
         #self.notebook.delete(s)
         self.notebook.forget(s)
-        del self.sheets[s]
+        # del self.sheets[s] # modified by me **************************************************************************
+        del self.sheets[name] # added by me ****************************************************************************
         return
+
+
+
 
     def copy_Sheet(self, newname=None):
         """Copy a sheet"""
         print("copy_Sheet")
         newdata = self.currenttable.getModel().getData().copy()
         if newname==None:
-            self.add_Sheet(None, newdata)
+            return                          # added by me *********************************************************
+            # self.add_Sheet(None, newdata) # modified by me ******************************************************
         else:
             self.add_Sheet(newname, newdata)
         return
@@ -1936,6 +2393,7 @@ class TablesApp(Frame):
                                                 initialvalue=s)
         if newname == None:
             return
+        my_globals.last_sheet = newname # added by me *******************************************************************
         self.copy_Sheet(newname)
         self.delete_Sheet()
         return
@@ -2028,7 +2486,7 @@ class TablesApp(Frame):
         if string.strip(self.findtext.get())=='':
             return
         searchstring=self.findtext.get()
-        if self.currenttable!=None:
+        if self.currenttable is not None:
             self.currenttable.findValue(searchstring)
         return
 
@@ -2038,7 +2496,7 @@ class TablesApp(Frame):
         if not hasattr(self,'currenttable'):
             return
         searchstring=self.findtext.get()
-        if self.currenttable!=None:
+        if self.currenttable is not None:
             self.currenttable.findValue(searchstring, findagain=1)
         return
 
@@ -2083,6 +2541,113 @@ class TablesApp(Frame):
         link='http://sourceforge.net/projects/tkintertable/'
         webbrowser.open(link,autoraise=bool(1))
         return
+
+
+    # added by me **********************************************************************
+    def help_how_populate_txt_or_fsa(self):
+        """Open a popup showing an image describing how to populate a .txt or .fsa file to define an fsa"""
+
+        self.example_win = Toplevel()
+        # Set the geometry of tkinter frame
+        self.example_win.geometry("1020x670")
+        self.example_win.title("Example: how to populate a .txt description file of the FSA")
+        # Create a canvas
+        canvas = Canvas(self.example_win, width=1000, height=670)
+        # canvas.pack()
+        # Load an image in the script
+        img = PhotoImage(format='png', file='./popup_example_how_to_populate_the_txt_file.png')
+        # Add image to the Canvas Items
+        canvas.create_image(0, 0, anchor=NW, image=img)
+        canvas.pack(side=LEFT, fill=BOTH, expand=1)
+
+        my_scrollbar = ttk.Scrollbar(self.example_win, orient=VERTICAL, command=canvas.yview)
+        my_scrollbar.pack(side=RIGHT, fill=Y)
+
+        canvas.configure(yscrollcommand=my_scrollbar.set)
+        canvas.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+
+
+
+        self.example_win.mainloop()
+        return
+
+
+
+
+
+    # **********************************************************************************
+
+
+
+    # added by me **********************************************************************
+    def help_how_populate_csv(self):
+        """Open a popup showing an image describing how to populate a .csv file to define an fsa"""
+
+        self.example_win = Toplevel()
+        # Set the geometry of tkinter frame
+        self.example_win.geometry("780x760")
+        self.example_win.title("Example: how to populate a .csv description file of the FSA")
+        # Create a canvas
+        canvas = Canvas(self.example_win, width=755, height=755)
+        # canvas.pack()
+        # Load an image in the script
+        img = PhotoImage(format='png', file='./popup_example_how_to_populate_the_csv_file.png')
+
+        # Add image to the Canvas Items
+        canvas.create_image(0, 0, anchor=NW, image=img)
+        canvas.pack(side=LEFT, fill=BOTH, expand=1)
+
+        my_scrollbar = ttk.Scrollbar(self.example_win, orient=VERTICAL, command=canvas.yview)
+        my_scrollbar.pack(side=RIGHT, fill=Y)
+
+        canvas.configure(yscrollcommand=my_scrollbar.set)
+        canvas.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+
+        self.example_win.mainloop()
+        return
+
+
+
+
+
+    # **********************************************************************************
+
+
+
+    # added by me **********************************************************************
+    def help_how_populate_json(self):
+        """Open a popup showing an image describing how to populate a .json file to define an fsa"""
+
+        self.example_win = Toplevel()
+        # Set the geometry of tkinter frame
+        self.example_win.geometry("980x765")
+        self.example_win.title("Example: how to populate a .csv description file of the FSA")
+        # Create a canvas
+        canvas = Canvas(self.example_win, width=940, height=760)
+        # canvas.pack()
+        # Load an image in the script
+        img = PhotoImage(format='png', file='./popup_example_how_to_populate_the_json_file.png')
+
+        # Add image to the Canvas Items
+        canvas.create_image(0, 0, anchor=NW, image=img)
+        canvas.pack(side=LEFT, fill=BOTH, expand=1)
+
+        my_scrollbar = ttk.Scrollbar(self.example_win, orient=VERTICAL, command=canvas.yview)
+        my_scrollbar.pack(side=RIGHT, fill=Y)
+
+        canvas.configure(yscrollcommand=my_scrollbar.set)
+        canvas.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+
+        self.example_win.mainloop()
+        return
+
+
+
+
+    # **********************************************************************************
+
+
+
 
     def quit(self):
         print("quit")
@@ -2160,7 +2725,7 @@ def main():
     parser.add_option("-f", "--file", dest="tablefile",
                         help="Open a table file", metavar="FILE")
     opts, remainder = parser.parse_args()
-    if opts.tablefile != None:
+    if opts.tablefile is not None:
         app=TablesApp(datafile=opts.tablefile)
     else:
         app=TablesApp()

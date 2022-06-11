@@ -10,32 +10,33 @@ from tkinter.ttk import Frame
 #global dictcolFaultyEvents
 from tkinter.ttk import Combobox
 
+import my_globals
+
 dictcolObservableEvents = {'event1': 1, 'event2': 1, 'event3': 1, 'event4': 1}
 dictcolControllableEvents = {'event1': 1, 'event2': 1, 'event3': 1, 'event4': 1}
 dictcolFaultyEvents = {'event1': 0, 'event2': 0, 'event3': 0, 'event4': 0}
 
+last_sheet = "Sheet1"
 
 # added by me ******************************************************************************************************
 def setEventAsUnobservable(MyTable, column_name=None):
     """Set the event as Unobservable - can be used in a table header"""
     print("setEventAsUnobservable")
     global dictcolObservableEvents
-    if column_name == None:
+    if column_name is None:
         n = messagebox.askyesno("Setting",
                                 "Unobservable Event?")
         if n:
-
 
             current_col_index = MyTable.getSelectedColumn()
             current_col_name = MyTable.model.getColumnLabel(current_col_index)
             dictcolObservableEvents[str(current_col_name)] = 0
             # print(current_col_index)
             # print(str(self.model.getColumnLabel(current_col_index)))
-            print("Observable events:", dictcolObservableEvents)
     else:
         dictcolObservableEvents[str(column_name)] = 0
 
-
+    print("Observable events:", dictcolObservableEvents)
 # ******************************************************************************************************************
 
 
@@ -45,7 +46,7 @@ def setEventAsObservable(MyTable, column_name=None):
     print("setEventAsObservable")
 
     global dictcolObservableEvents
-    if column_name == None:
+    if column_name is None:
 
         n = messagebox.askyesno("Setting",
                                 "Observable Event?")
@@ -56,12 +57,12 @@ def setEventAsObservable(MyTable, column_name=None):
             dictcolObservableEvents[str(current_col_name)] = 1
             # print(current_col_index)
             # print(str(self.model.getColumnLabel(current_col_index)))
-            print("Observable events:", dictcolObservableEvents)
     else:
         dictcolObservableEvents[str(column_name)] = 1
         # print(current_col_index)
         # print(str(self.model.getColumnLabel(current_col_index)))
-        print("Observable events:", dictcolObservableEvents)
+
+    print("Observable events:", dictcolObservableEvents)
 
 
 # ******************************************************************************************************************
@@ -73,7 +74,7 @@ def setEventAsUncontrollable(MyTable, column_name=None):
 
     global dictcolControllableEvents
 
-    if column_name == None:
+    if column_name is None:
 
         n = messagebox.askyesno("Setting",
                                 "Uncontrollable Event?")
@@ -84,11 +85,10 @@ def setEventAsUncontrollable(MyTable, column_name=None):
             dictcolControllableEvents[str(current_col_name)] = 0
             # print(current_col_index)
             # print(str(self.model.getColumnLabel(current_col_index)))
-            print("Controllable events:", dictcolControllableEvents)
     else:
         dictcolControllableEvents[str(column_name)] = 0
 
-
+    print("Controllable events:", dictcolControllableEvents)
 # ******************************************************************************************************************
 
 # added by me ******************************************************************************************************
@@ -98,7 +98,7 @@ def setEventAsControllable(MyTable, column_name=None):
 
     global dictcolControllableEvents
 
-    if column_name == None:
+    if column_name is None:
 
         n = messagebox.askyesno("Setting",
                                 "Controllable Event?")
@@ -109,11 +109,10 @@ def setEventAsControllable(MyTable, column_name=None):
             dictcolControllableEvents[str(current_col_name)] = 1
             # print(current_col_index)
             # print(str(self.model.getColumnLabel(current_col_index)))
-            print("Controllable events:", dictcolControllableEvents)
     else:
         dictcolControllableEvents[str(column_name)] = 1
 
-
+    print("Controllable events:", dictcolControllableEvents)
 # ******************************************************************************************************************
 
 
@@ -124,7 +123,7 @@ def setEventAsFaulty(MyTable, column_name=None):
 
     global dictcolFaultyEvents
 
-    if column_name == None:
+    if column_name is None:
         n = messagebox.askyesno("Setting",
                                 "Faulty Event?")
         if n:
@@ -135,11 +134,10 @@ def setEventAsFaulty(MyTable, column_name=None):
             dictcolFaultyEvents[str(current_col_name)] = 1
             # print(current_col_index)
             # print(str(self.model.getColumnLabel(current_col_index)))
-            print("Faulty events:", dictcolFaultyEvents)
     else:
         dictcolFaultyEvents[str(column_name)] = 1
 
-
+    print("Faulty events:", dictcolFaultyEvents)
 # ******************************************************************************************************************
 
 # added by me ******************************************************************************************************
@@ -149,7 +147,7 @@ def setEventAsUnfaulty(MyTable, column_name=None):
 
     global dictcolFaultyEvents
 
-    if column_name == None:
+    if column_name is None:
 
         n = messagebox.askyesno("Setting",
                                 "Observable Event?")
@@ -160,13 +158,12 @@ def setEventAsUnfaulty(MyTable, column_name=None):
             dictcolFaultyEvents[str(current_col_name)] = 0
             # print(current_col_index)
             # print(str(self.model.getColumnLabel(current_col_index)))
-            print("Faulty events:", dictcolFaultyEvents)
     else:
         dictcolFaultyEvents[str(column_name)] = 0
         # print(current_col_index)
         # print(str(self.model.getColumnLabel(current_col_index)))
-        print("Faulty events:", dictcolFaultyEvents)
 
+    print("Faulty events:", dictcolFaultyEvents)
 
 # ******************************************************************************************************************
 
@@ -197,6 +194,65 @@ def fromTableToJson(MyTable):
         print("columnlabels:", MyTable.model.columnlabels.values())
         # rows start from 0, columns start from 0
 
+
+        list_events = []
+        curr_event = ""
+        for i in range(1, len(list_columnlabels)):
+            curr_event = list_columnlabels[i]
+            if curr_event.endswith("_uc_f_uo") or curr_event.endswith("_uc_uo_f") or curr_event.endswith(
+                    "_f_uc_uo") or curr_event.endswith("_f_uo_uc") or curr_event.endswith(
+                "_uo_f_uc") or curr_event.endswith("_uo_uc_f"):
+                substring_to_remove = curr_event[-8:]
+                curr_event = curr_event.replace(str(substring_to_remove), "")
+                curr_event.replace(" ", "")
+                print("curr_event["+str(i)+"]: "+curr_event)
+            elif curr_event.endswith("_uc_f"):
+                curr_event = curr_event.replace("_uc_f", "")
+                curr_event.replace(" ", "")
+                print("curr_event[" + str(i) + "]: " + curr_event)
+            elif curr_event.endswith("_f_uc"):
+                curr_event = curr_event.replace("_f_uc", "")
+                curr_event.replace(" ", "")
+                print("curr_event[" + str(i) + "]: " + curr_event)
+            elif curr_event.endswith("_uc_uo"):
+                curr_event = curr_event.replace("_uc_uo", "")
+                curr_event.replace(" ", "")
+                print("curr_event[" + str(i) + "]: " + curr_event)
+            elif curr_event.endswith("_uo_uc"):
+                curr_event = curr_event.replace("_uo_uc", "")
+                curr_event.replace(" ", "")
+                print("curr_event[" + str(i) + "]: " + curr_event)
+            elif curr_event.endswith("_uo_f"):
+                curr_event = curr_event.replace("_uo_f", "")
+                curr_event.replace(" ", "")
+                print("curr_event[" + str(i) + "]: " + curr_event)
+            elif curr_event.endswith("_f_uo"):
+                curr_event = curr_event.replace("_f_uo", "")
+                curr_event.replace(" ", "")
+                print("curr_event[" + str(i) + "]: " + curr_event)
+            elif curr_event.endswith("_uc"):
+                curr_event = curr_event.replace("_uc", "")
+                curr_event.replace(" ", "")
+                print("curr_event[" + str(i) + "]: " + curr_event)
+            elif curr_event.endswith("_f"):
+                curr_event = curr_event.replace("_f", "")
+                curr_event.replace(" ", "")
+                print("curr_event[" + str(i) + "]: " + curr_event)
+            elif curr_event.endswith("_uo"):
+                curr_event = curr_event.replace("_uo", "")
+                curr_event.replace(" ", "")
+                print("curr_event[" + str(i) + "]: " + curr_event)
+            else:
+                curr_event.replace(" ", "")
+                print("curr_event[" + str(i) + "]: " + curr_event)
+
+            if curr_event in list_events:
+                flag_more_than_one_same_event = 1
+            list_events.append(curr_event)
+
+        print("list_events: ", list_events)
+
+
         json_dict = {"X": {}, "E": {}, "delta": {}}
         dict_X = {}
         dict_E = {}
@@ -208,14 +264,14 @@ def fromTableToJson(MyTable):
         for iter_row in range(num_rows):
             for iter_col in range(num_cols):
                 print("iter_row,iter_col:" + str(iter_row) + "," + str(iter_col))
-                if MyTable.model.getCellRecord(iter_row, iter_col) != None:
+                if MyTable.model.getCellRecord(iter_row, iter_col) is not None:
                     current_cell = MyTable.model.getCellRecord(iter_row, iter_col)
                     print("current_cell: ", current_cell)
                     if iter_col == 0:
                         if current_cell[0] and current_cell[0] != '_':
                             if current_cell.endswith("_i_f_p") or current_cell.endswith(
                                     "_i_p_f") or current_cell.endswith("_f_i_p") or current_cell.endswith(
-                                    "_f_p_i") or current_cell.endswith("_p_f_i") or current_cell.endswith("_p_i_f"):
+                                "_f_p_i") or current_cell.endswith("_p_f_i") or current_cell.endswith("_p_i_f"):
                                 string_lenght = len(current_cell)
                                 substring_to_remove = current_cell[-6:]
                                 current_state = current_cell.replace(str(substring_to_remove), "")
@@ -299,57 +355,38 @@ def fromTableToJson(MyTable):
                                 iter_col) + " is not a valid name for a state.\nPlease insert a valid one.")
                     else:
                         current_delta_ends = current_cell.split("-")
+                        iter_current_delta_ends = 0
+                        # to cancel any equal states entered in a cell when more states are specified in it
+                        while iter_current_delta_ends < len(current_delta_ends):
+                            print(current_delta_ends)
+                            current_delta_end_value = current_delta_ends[iter_current_delta_ends]
+                            occurrences_current_delta_end = current_delta_ends.count(current_delta_end_value)
+                            if occurrences_current_delta_end > 1:
+                                j = iter_current_delta_ends
+                                j += 1
+                                while j < len(current_delta_ends):
+                                    if current_delta_end_value == current_delta_ends[j]:
+                                        del current_delta_ends[j]
+                                        print("del j: "+ str(j))
+                                        print("current_delta_ends: ", current_delta_ends)
+                                        j -= 1
+                                    else:
+                                        j += 1
+                            iter_current_delta_ends += 1
+
+                        print("current_delta_ends: ", current_delta_ends)
                         flag_end_while = 0
-                        while (flag_end_while == 0):
+                        while flag_end_while == 0:
                             if '' in current_delta_ends:
                                 current_delta_ends.remove('')
                             else:
                                 flag_end_while = 1
 
+
                         for i in range(len(current_delta_ends)):
-                            dict_delta.update({str(iter_delta_key): {"start": str(current_state), "name": str(
-                                MyTable.model.getColumnLabel(iter_col)), "ends": str(current_delta_ends[i])}})
+                            dict_delta.update({str(iter_delta_key): {"start": str(current_state), "name": list_events[iter_col-1], "ends": str(current_delta_ends[i])}})
                             print("dict_delta", dict_delta)
-                            current_key_event = str(MyTable.model.getColumnLabel(iter_col))
-
-                            '''
-                            if current_key_event.endswith("_uc_f_uo") or current_key_event.endswith(
-                                    "_uc_uo_f") or current_key_event.endswith(
-                                    "_f_uc_uo") or current_key_event.endswith("_f_uo_uc") or current_key_event.endswith(
-                                "_uo_f_uc") or current_key_event.endswith("_uo_uc_f"):
-                                print("_uc_f_uo")
-                                string_lenght = len(current_key_event)
-                                substring_to_remove = current_key_event[-6:]
-                                current_key_event = current_key_event.replace(str(substring_to_remove), "")
-                            elif current_key_event.endswith("_uc_f"):
-                                print("_uc_f")
-                                current_key_event = current_key_event.replace("_uc_f", "")
-                            elif current_key_event.endswith("_f_uc"):
-                                print("_f_uc")
-                                current_key_event = current_key_event.replace("_f_uc", "")
-                            elif current_key_event.endswith("_uc_uo"):
-                                print("_uc_uo")
-                                current_key_event = current_key_event.replace("_uc_uo", "")
-                            elif current_key_event.endswith("_uo_uc"):
-                                print("_uo_uc")
-                                current_key_event = current_key_event.replace("_uo_uc", "")
-                            elif current_key_event.endswith("_uo_f"):
-                                print("_uo_f")
-                                current_key_event = current_key_event.replace("_uo_f", "")
-                            elif current_key_event.endswith("_f_uo"):
-                                print("_f_uo")
-                                current_key_event = current_key_event.replace("_f_uo", "")
-                            elif current_key_event.endswith("_uc"):
-                                print("_uc")
-                                current_key_event = current_key_event.replace("_uc", "")
-                            elif current_key_event.endswith("_f"):
-                                print("_f")
-                                current_key_event = current_key_event.replace("_f", "")
-                            elif current_key_event.endswith("_uo"):
-                                print("_uo")
-                                current_key_event = current_key_event.replace("_uo", "")
-                            '''
-
+                            current_key_event = list_events[iter_col-1]
                             dict_E.update({current_key_event: {"isObservable": dictcolObservableEvents[current_key_event],
                                                                "isControllable":
                                                                    dictcolControllableEvents[current_key_event],
@@ -361,8 +398,8 @@ def fromTableToJson(MyTable):
                 else:
                     pass
 
-        print(dict_X)
-
+        print("dict_X: ", dict_X)
+        print("dict_E: ", dict_E)
         flag_zero_initial_states = 0
         flag_more_than_one_initial_state = 0
         counter_initial_states = 0
@@ -392,44 +429,45 @@ def fromTableToJson(MyTable):
             title_content = "Conversion problems"
             text_content = "Some problems occurred:\r\n"
             statements_counter = 0
-            win_geometry = ""
+            width_list = []
             if flag_zero_initial_states == 1:
                 if flag_more_than_one_same_state == 1:
                     statements_counter += 1
                     text_content += str(statements_counter) + ".ERROR: the 'initial state' (_i) has not been specified or it could have been overwritten by the same 'state' specified more than once.\n"
-                    win_geometry = "950x"
+                    width_list.append(950)
                 else:
                     statements_counter += 1
                     text_content += str(statements_counter) + ".ERROR: the 'initial state' (_i) has not been specified.\n"
-                    win_geometry = "500x"
+                    width_list.append(500)
             if flag_more_than_one_initial_state == 1:
                 statements_counter += 1
                 text_content += str(statements_counter) + ".ERROR: only one 'state' can be specified as an 'initial state' (_i).\n"
-                win_geometry = "500x"
+                width_list.append(600)
             if flag_end_state_not_a_state == 1:
                 statements_counter += 1
                 text_content += str(statements_counter) + ".ERROR: only 'states' specified in the column 'State' are allowed as 'end states' of a transition.\n"
-                win_geometry = "700x"
+                width_list.append(800)
             if flag_event_state == 1:
                 statements_counter += 1
                 text_content += str(statements_counter) + ".WARNING: one or many 'events' is/are named as a 'state' like those in the first column (ignore this warning if it is the desired behaviour).\n"
-                win_geometry = "950x"
+                width_list.append(1000)
             if flag_more_than_one_same_event == 1:
                 statements_counter += 1
                 text_content += str(statements_counter) + ".ERROR: an 'event' can be defined only once (only one column per 'event').\n"
-                win_geometry = "500x"
+                width_list.append(600)
             if flag_more_than_one_same_state == 1:
                 statements_counter += 1
                 text_content += str(statements_counter) + ".ERROR: a 'state' can be defined only once (only one row per 'state').\n"
-                win_geometry = "950x"
+                width_list.append(600)
             if flag_end_state_not_a_state == 1 or flag_more_than_one_initial_state == 1 \
-                or flag_zero_initial_states == 1 or flag_more_than_one_same_event == 1 or flag_more_than_one_same_state == 1:
+                    or flag_zero_initial_states == 1 or flag_more_than_one_same_event == 1 or flag_more_than_one_same_state == 1:
                 text_content += "Please correct the content of the table.\n"
 
 
             # auto-adapative height of the popup
             win_geometry_height = 70 + 52 * statements_counter
-            win_geometry += str(win_geometry_height)
+            width_popup = str(max(width_list))+"x"
+            win_geometry = width_popup + str(win_geometry_height)
 
             win = Tk()
             # Set the geometry of Tkinter frame
@@ -464,7 +502,7 @@ def fromTableToJson(MyTable):
 
 # added by me *******************************************************************************************************
 def from_table_to_json():
-# def fromTableToJson():
+    # def fromTableToJson():
     img = PhotoImage(format='png', file='./venv/Lib/site-packages/tkintertable/logo_convert_to_json.png', height=32, width=32)
     return img
 # ******************************************************************************************************************
@@ -552,14 +590,20 @@ def analyzeFsa(MyTable):
         delta = f.delta
 
 
+        #current_start_filtered_deltas = f.filter_delta(start=str(x0[0].label), transition=None, end=None)
 
+        #print("current_start_filtered_deltas.start: ", current_start_filtered_deltas.iloc[0]["start"])
+        #print("current_start_filtered_deltas.transition: ", current_start_filtered_deltas.iloc[0]["transition"])
+        #print("current_start_filtered_deltas.end: ", current_start_filtered_deltas.iloc[0]["end"])
+
+        '''
         if x0:
             print("TEST AREA:")
             print("Stati: ", X)
             print("Stati iniziali: ", x0)
             print("Stati finali: ", Xm)
             print("Eventi/alfabeto: ", E)
-            print("Transizioni delta dataFrame view:\n", delta)
+            #print("Transizioni delta dataFrame view:\n", delta)
 
             print("\n REACHABILITY TEST:")
             is_reachable = analysis.get_reachability_info(f)
@@ -597,24 +641,25 @@ def analyzeFsa(MyTable):
             print("The FSA is reversible? :" + str(is_reversible))
         else:
             print("Error: At least the initial state must be specified.")
-
+        '''
 
         num_chars_per_line = 50
-        text_content = ""
+        text_content = "FSA name: " + last_sheet + "\n"
+        text_content += "______________________________________\n"
+
         if x0:
-            text_content += "FSA 5-TUPLA:\n"
             # states
             text_states = ""
             text_states += "States: ["
             chars_count = len(text_states)
             for i in range(len(X) - 1):
-                current_text = str(X[i]) + ", "
+                current_text = str(X[i].label) + ", "
                 text_states += current_text
                 chars_count += len(current_text)
                 if chars_count >= num_chars_per_line:
-                    text_states += "\n           "
+                    text_states += "\n            "
                     chars_count = 0
-            text_states += str(X[len(X) - 1]) + "]\n"
+            text_states += str(X[len(X) - 1].label) + "]\n"
             text_content += text_states
 
             # initial states
@@ -622,13 +667,13 @@ def analyzeFsa(MyTable):
             text_initial_states += "Initial states: ["
             chars_count = len(text_initial_states)
             for i in range(len(x0) - 1):
-                current_text = str(x0[i]) + ", "
+                current_text = str(x0[i].label) + ", "
                 text_initial_states += current_text
                 chars_count += len(current_text)
                 if chars_count >= num_chars_per_line:
                     text_initial_states += "\n                    "
                     chars_count = 0
-            text_initial_states += str(x0[len(x0) - 1]) + "]\n"
+            text_initial_states += str(x0[len(x0) - 1].label) + "]\n"
             text_content += text_initial_states
 
             # final states
@@ -637,16 +682,46 @@ def analyzeFsa(MyTable):
                 text_final_states += "Final states: ["
                 chars_count = len(text_final_states)
                 for i in range(len(Xm) - 1):
-                    current_text = str(Xm[i]) + ", "
+                    current_text = str(Xm[i].label) + ", "
                     text_final_states += current_text
                     chars_count += len(current_text)
                     if chars_count >= num_chars_per_line:
                         text_final_states += "\n                   "
                         chars_count = 0
-                text_final_states += str(Xm[len(Xm) - 1]) + "]\n"
+                text_final_states += str(Xm[len(Xm) - 1].label) + "]\n"
                 text_content += text_final_states
             else:
                 text_content += "Final states: []\n"
+
+            # forbidden states
+            num_forbidden_states = 0
+            for iter_X in range(len(X)):
+                if X[iter_X].isForbidden == 1:
+                    num_forbidden_states += 1
+            if num_forbidden_states != 0:
+                counter_forbidden_states = 0
+                text_forbidden_states = ""
+                text_forbidden_states += "Forbidden states: ["
+                chars_count = len(text_forbidden_states)
+                for i in range(len(X)):
+                    if X[i].isForbidden == 1:
+                        if counter_forbidden_states < num_forbidden_states - 1:
+                            current_text = str(X[i].label) + ", "
+                        else:
+                            current_text = str(X[i].label) + "]"
+                        counter_forbidden_states += 1
+                        text_forbidden_states += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_forbidden_states += "\n                        "
+                            chars_count = 0
+                text_content += text_forbidden_states + "\n"
+            else:
+                text_content += "Forbidden states: []\n"
+
+
+            text_content += "______________________________________\n"
+
 
             # alphabet
             if E:
@@ -654,74 +729,395 @@ def analyzeFsa(MyTable):
                 text_alphabet += "Alphabet: ["
                 chars_count = len(text_alphabet)
                 for i in range(len(E) - 1):
-                    current_text = str(E[i]) + ", "
+                    current_text = str(E[i].label) + ", "
                     text_alphabet += current_text
                     chars_count += len(current_text)
                     if chars_count >= num_chars_per_line:
                         text_alphabet += "\n                "
                         chars_count = 0
-                text_alphabet += str(E[len(E) - 1]) + "]\n"
+                text_alphabet += str(E[len(E) - 1].label) + "]\n"
                 text_content += text_alphabet
             else:
                 text_content += "Alphabet: []\n"
 
+            # unobservable events
+            num_unobservable_events = 0
+            for iter_E in range(len(E)):
+                if E[iter_E].isObservable == 0:
+                    num_unobservable_events += 1
+            if num_unobservable_events != 0:
+                counter_unobservable_events = 0
+                text_alphabet = ""
+                text_alphabet += "Unobservable events: ["
+                chars_count = len(text_alphabet)
+                for i in range(len(E)):
+                    if E[i].isObservable == 0:
+                        if counter_unobservable_events < num_unobservable_events - 1:
+                            current_text = str(E[i].label) + ", "
+                        else:
+                            current_text = str(E[i].label) + "]"
+                        counter_unobservable_events += 1
+                        text_alphabet += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_alphabet += "\n                "
+                            chars_count = 0
+                text_content += text_alphabet + "\n"
+            else:
+                text_content += "Unobservable events: []\n"
 
+            # uncontrollable events
+            num_uncontrollable_events = 0
+            for iter_E in range(len(E)):
+                if E[iter_E].isControllable == 0:
+                    num_uncontrollable_events += 1
+            if num_uncontrollable_events != 0:
+                counter_uncontrollable_events = 0
+                text_alphabet = ""
+                text_alphabet += "Uncontrollable events: ["
+                chars_count = len(text_alphabet)
+                for i in range(len(E)):
+                    if E[i].isControllable == 0:
+                        if counter_uncontrollable_events < num_uncontrollable_events - 1:
+                            current_text = str(E[i].label) + ", "
+                        else:
+                            current_text = str(E[i].label) + "]"
+                        counter_uncontrollable_events += 1
+                        text_alphabet += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_alphabet += "\n                                   "
+                            chars_count = 0
+                text_content += text_alphabet + "\n"
+            else:
+                text_content += "Uncontrollable events: []\n"
+
+            # fault events
+            num_fault_events = 0
+            for iter_E in range(len(E)):
+                if E[iter_E].isFault == 1:
+                    num_fault_events += 1
+            if num_fault_events != 0:
+                counter_fault_events = 0
+                text_alphabet = ""
+                text_alphabet += "Fault events: ["
+                chars_count = len(text_alphabet)
+                for i in range(len(E)):
+                    if E[i].isFault == 1:
+                        if counter_fault_events < num_fault_events - 1:
+                            current_text = str(E[i].label) + ", "
+                        else:
+                            current_text = str(E[i].label) + "]"
+                        counter_fault_events += 1
+                        text_alphabet += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_alphabet += "\n                            "
+                            chars_count = 0
+                text_content += text_alphabet + "\n"
+            else:
+                text_content += "Fault events: []\n"
+
+            text_content += "______________________________________\n"
             # delta transitions
-            if len(delta):
-                text_delta = "\n"
-                text_delta += "Delta transitions:\n"
-                text_delta += str(delta)
+            num_chars_per_line = 50
+            text_content += "Delta transitions:\n"
+            text_delta = ""
+            if len(delta) != 0:
+                for iter_X in range(len(X)):
+                    current_start_filtered_deltas = f.filter_delta(start=str(X[iter_X].label), transition=None, end=None)
+                    print("current_start_filtered_deltas: ", current_start_filtered_deltas)
+                    if len(current_start_filtered_deltas) == 0:
+                        pass
+                    else:
+                        #chars_count = 0
+                        #text_delta += "\ndelta group " + str(X[iter_X]) + ": "
+                        #chars_count += len(text_delta)
+                        for iter_delta_row in range(len(current_start_filtered_deltas)):
+                            print("current_start_filtered_deltas.index["+str(iter_delta_row)+"]: ", current_start_filtered_deltas.index[iter_delta_row])
+                            if current_start_filtered_deltas.index[iter_delta_row] is not None:
+                                current_text = "(" + str(current_start_filtered_deltas.iloc[iter_delta_row]["start"]) + ", " + str(current_start_filtered_deltas.iloc[iter_delta_row]["transition"]) + ", " + str(current_start_filtered_deltas.iloc[iter_delta_row]["end"]) + ")  "
+                                text_delta += current_text
+                                chars_count += len(current_text)
+                                print(str(X[iter_X])+"chars_count: "+str(chars_count))
+                                if chars_count >= num_chars_per_line:
+                                    text_delta += "\n"
+                                    chars_count = 0
+                            else:
+                                pass
                 text_content += text_delta + "\n"
             else:
-                text_content += "Delta transitions: []\n"
+                text_content += " []\n"
+
 
             # Reachability
             is_reachable = analysis.get_reachability_info(f)
-            text_content += "\nREACHABILITY:\n"
+            num_chars_per_line = 50
+            text_content += "______________________________________"
+            text_content += "\nREACHABLE STATES\n"
+            text_content += "Reachable: ["
+            chars_count = len("Reachable: [")
             text_reachability = ""
-            for i in range(len(X)):
-                text_reachability += str(X[i].label) + " is reachable?: " + str(X[i].is_Reachable) + "\n"
-            text_content += text_reachability
+            num_reachable_states = 0
+            for iter_X in range(len(X)):
+                if X[iter_X].is_Reachable == 1:
+                    num_reachable_states += 1
+            if num_reachable_states != 0:
+                counter_reachable_states = 0
+                for i in range(len(X)):
+                    if X[i].is_Reachable:
+                        if counter_reachable_states < num_reachable_states-1:
+                            current_text = str(X[i].label) + ", "
+                        else:
+                            current_text = str(X[i].label) + "]"
+                        counter_reachable_states += 1
+                        text_reachability += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_reachability += "\n                   "
+                            chars_count = 0
+            else:
+                text_reachability += "]"
+            text_content += text_reachability + "\n"
 
-            text_content += "The FSA is reachable? :" + str(is_reachable) + "\n"
+
+
+            text_content += "Not reachable: ["
+            chars_count = len("Not reachable: [")
+            text_unreachability = ""
+            num_unreachable_states = 0
+            for iter_X in range(len(X)):
+                if X[iter_X].is_Reachable == 0:
+                    num_unreachable_states += 1
+            counter_unreachable_states = 0
+            if num_unreachable_states != 0:
+                for i in range(len(X)):
+                    if X[i].is_Reachable == 0:
+                        if counter_unreachable_states < num_unreachable_states-1:
+                            current_text = str(X[i].label) + ", "
+                        else:
+                            current_text = str(X[i].label) + "]"
+                        counter_unreachable_states += 1
+                        text_unreachability += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_unreachability += "\n                           "
+                            chars_count = 0
+            else:
+                text_unreachability += "]"
+            text_content += text_unreachability + "\n"
+
+
+            text_content += "FSA is reachable? "
+            if is_reachable == 1:
+                text_content += "YES\n"
+            else:
+                text_content += "NO\n"
+
 
             # Co-Reachability
             is_co_reachable = analysis.get_co_reachability_info(f)
-            text_content += "\nCO-REACHABILITY:\n"
+            num_chars_per_line = 50
+            text_content += "______________________________________"
+            text_content += "\nCO-REACHABLE STATES\n"
+            text_content += "Co-reachable: ["
+            chars_count = len("Co-reachable: [")
             text_co_reachability = ""
-            for i in range(len(X)):
-                text_co_reachability += str(X[i].label) + " is co-reachable?: " + str(X[i].is_co_Reachable) + "\n"
-            text_content += text_co_reachability
+            num_co_reachable_states = 0
+            for iter_X in range(len(X)):
+                if X[iter_X].is_co_Reachable == 1:
+                    num_co_reachable_states += 1
+            counter_co_reachable_states = 0
+            if num_co_reachable_states != 0:
+                for i in range(len(X)):
+                    if X[i].is_co_Reachable:
+                        if counter_co_reachable_states < num_co_reachable_states-1:
+                            current_text = str(X[i].label) + ", "
+                        else:
+                            current_text = str(X[i].label) + "]"
+                        counter_co_reachable_states += 1
+                        text_co_reachability += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_co_reachability += "\n                        "
+                            chars_count = 0
+            else:
+                text_co_reachability += "]"
+            text_content += text_co_reachability + "\n"
 
-            text_content += "The FSA is co-reachable? :" + str(is_co_reachable) + "\n"
 
-            # Blockingness
+            # UncoReachability
+            text_content += "Not co-reachable: ["
+            chars_count = len("Not co-reachable: [")
+            text_uncoreachability = ""
+            num_uncoreachable_states = 0
+            for iter_X in range(len(X)):
+                if X[iter_X].is_co_Reachable == 0:
+                    num_uncoreachable_states += 1
+            counter_uncoreachable_states = 0
+            if num_uncoreachable_states != 0:
+                for i in range(len(X)):
+                    if X[i].is_co_Reachable == 0:
+                        if counter_uncoreachable_states < num_uncoreachable_states-1:
+                            current_text = str(X[i].label) + ", "
+                        else:
+                            current_text = str(X[i].label) + "]"
+                        counter_uncoreachable_states += 1
+                        text_uncoreachability += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_uncoreachability += "\n                                "
+                            chars_count = 0
+            else:
+                text_uncoreachability += "]"
+            text_content += text_uncoreachability + "\n"
+
+            text_content += "FSA is co-reachable? "
+            if is_co_reachable == 1:
+                text_content += "YES\n"
+            else:
+                text_content += "NO\n"
+
+
+            # Blocking
             is_blocking = analysis.get_blockingness_info(f)
-            text_content += "\nBLOCKINGNESS:\n"
-            text_blockingness = ""
-            for i in range(len(X)):
-                text_blockingness += str(X[i].label) + " is blocking?: " + str(X[i].is_Blocking) + "\n"
-            text_content += text_blockingness
+            num_chars_per_line = 50
+            text_content += "______________________________________"
+            text_content += "\nBLOCKING STATES\n"
+            text_content += "Blocking: ["
+            chars_count = len("Blocking: [")
+            text_blocking = ""
+            num_blocking_states = 0
+            for iter_X in range(len(X)):
+                if X[iter_X].is_Blocking == 1:
+                    num_blocking_states += 1
+            counter_blocking_states = 0
+            if num_blocking_states != 0:
+                for i in range(len(X)):
+                    if X[i].is_Blocking:
+                        if counter_blocking_states < num_blocking_states-1:
+                            current_text = str(X[i].label) + ", "
+                        else:
+                            current_text = str(X[i].label) + "]"
+                        counter_blocking_states += 1
+                        text_blocking += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_blocking += "\n               "
+                            chars_count = 0
+            else:
+                text_blocking += "]"
+            text_content += text_blocking + "\n"
 
-            text_content += "The FSA is blocking? :" + str(is_blocking) + "\n"
 
-            # Deadness
+            # Not blocking
+            text_content += "Not blocking: ["
+            chars_count = len("Not blocking: [")
+            text_unblocking = ""
+            num_unblocking_states = 0
+            for iter_X in range(len(X)):
+                if X[iter_X].is_Blocking == 0:
+                    num_unblocking_states += 1
+            counter_unblocking_states = 0
+            if num_unblocking_states != 0:
+                for i in range(len(X)):
+                    if X[i].is_Blocking == 0:
+                        if counter_unblocking_states < num_unblocking_states-1:
+                            current_text = str(X[i].label) + ", "
+                        else:
+                            current_text = str(X[i].label) + "]"
+                        counter_unblocking_states += 1
+                        text_unblocking += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_unblocking += "\n                       "
+                            chars_count = 0
+            else:
+                text_unblocking += "]"
+            text_content += text_unblocking + "\n"
+
+            text_content += "FSA is blocking? "
+            if is_blocking == 1:
+                text_content += "YES\n"
+            else:
+                text_content += "NO\n"
+
+
+            # dead
             analysis.get_deadness_info(f)
-            text_content += "\nDEADNESS:\n"
-            text_deadness = ""
-            for i in range(len(X)):
-                text_deadness += str(X[i].label) + " is dead?: " + str(X[i].is_Dead) + "\n"
-            text_content += text_deadness
+            num_chars_per_line = 50
+            text_content += "______________________________________"
+            text_content += "\nDEAD STATES\n"
+            text_content += "Dead: ["
+            chars_count = len("Dead: [")
+            text_dead = ""
+            num_dead_states = 0
+            for iter_X in range(len(X)):
+                if X[iter_X].is_Dead == 1:
+                    num_dead_states += 1
+            counter_dead_states = 0
+            if num_dead_states != 0:
+                for i in range(len(X)):
+                    if X[i].is_Dead:
+                        if counter_dead_states < num_dead_states-1:
+                            current_text = str(X[i].label) + ", "
+                        else:
+                            current_text = str(X[i].label) + "]"
+                        counter_dead_states += 1
+                        text_dead += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_dead += "\n                    "
+                            chars_count = 0
+            else:
+                text_dead += "]"
+            text_content += text_dead + "\n"
+
+
+
+            text_content += "Not dead: ["
+            chars_count = len("Not dead: [")
+            text_undead = ""
+            num_undead_states = 0
+            for iter_X in range(len(X)):
+                if X[iter_X].is_Dead == 0:
+                    num_undead_states += 1
+            counter_undead_states = 0
+            if num_undead_states != 0:
+                for i in range(len(X)):
+                    if X[i].is_Dead == 0:
+                        if counter_undead_states < num_undead_states-1:
+                            current_text = str(X[i].label) + ", "
+                        else:
+                            current_text = str(X[i].label) + "]"
+                        counter_undead_states += 1
+                        text_undead += current_text
+                        chars_count += len(current_text)
+                        if chars_count >= num_chars_per_line:
+                            text_undead += "\n                  "
+                            chars_count = 0
+            else:
+                text_undead += "]"
+            text_content += text_undead + "\n"
+
 
             # Trim
             is_trim = f.get_trim_info()
-            text_content += "\nTRIM:\n"
-            text_content += "The FSA is trim? :" + str(is_trim) + "\n"
+            text_content += "______________________________________"
+            text_content += "\nTRIM\n"
+            if is_trim == 1:
+                text_content += "FSA is trim? YES\n"
+            else:
+                text_content += "FSA is trim? NO\n"
 
             # Reversibility
             is_reversible = analysis.get_reversibility_info(f)
+            text_content += "______________________________________"
             text_content += "\nREVERSIBILITY:\n"
-            text_content += "The FSA is reversible? :" + str(is_reversible)
+            if is_reversible == 1:
+                text_content += "FSA is reversible? YES\n"
+            else:
+                text_content += "FSA is reversible? NO\n"
 
         else:
             text_content = "Error: At least the initial state must be specified."
@@ -745,10 +1141,10 @@ def analyzeFsa(MyTable):
             """Save as a new filename"""
             ta = TablesApp(Frame)
             filename = filedialog.asksaveasfilename(parent=ta.tablesapp_win,
-                                                defaultextension='.txt',
-                                                initialdir=ta.defaultsavedir,
-                                                filetypes=[("Text file","*.txt"),
-                                                           ("All files","*.*")])
+                                                    defaultextension='.txt',
+                                                    initialdir=ta.defaultsavedir,
+                                                    filetypes=[("Text file","*.txt"),
+                                                               ("All files","*.*")])
             if not filename:
                 print ('Returning')
                 return
@@ -775,6 +1171,7 @@ def analyzeFsa(MyTable):
         # Making the text read only
         text_area.configure(state='disabled')
         win.mainloop()
+
 
 
 
@@ -1173,7 +1570,6 @@ def setCurrentEventAsFaulty(TableCanvas):
         # print(current_col_index)
         # print(str(TableCanvas.model.getColumnLabel(current_col_index)))
         print("Faulty events:", dictcolFaultyEvents)
-
 
 # ******************************************************************************************************************
 

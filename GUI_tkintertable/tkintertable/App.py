@@ -51,6 +51,7 @@ class TablesApp(Frame):
     """
     def __init__(self,parent=None,data=None,datafile=None):
         "Initialize the application."
+        print("__init__TablesApp(Frame)")
         self.parent=parent
 
         #If there is data to be loaded, show the dialog first
@@ -92,7 +93,7 @@ class TablesApp(Frame):
 
     def createMenuBar(self):
         """Create the menu bar for the application. """
-
+        print("createMenuBar")
         self.menu=Menu(self.tablesapp_win)
         self.proj_menu={'01New':{'cmd':self.new_project},
                         '02Open':{'cmd':self.open_project},
@@ -145,7 +146,7 @@ class TablesApp(Frame):
 
     def create_pulldown(self,menu,dict):
         """ Create a pulldown in var from the info in dict  """
-
+        print("create_pulldown")
         var = Menu(menu,tearoff=0)
         items = dict.keys()
         #items.sort()
@@ -168,7 +169,7 @@ class TablesApp(Frame):
 
     def createSearchBar(self, event=None):
         """Add a find entry box"""
-
+        print("createSearchBar")
         frame = Frame(self.tablesapp_win)
         row=0
         def close():
@@ -187,7 +188,7 @@ class TablesApp(Frame):
 
     def loadprefs(self):
         """Setup default prefs file if any of the keys are not present"""
-
+        print("loadprefs")
         defaultprefs = {'textsize':14,
                          'windowwidth': 800 ,'windowheight':600}
         for prop in defaultprefs.keys():
@@ -199,12 +200,13 @@ class TablesApp(Frame):
         return
 
     def showPrefsDialog(self):
+        print("showPrefsDialog")
         self.prefswindow = self.currenttable.showtablePrefs()
         return
 
     def new_project(self, data=None):
         """Create a new table, with model and add the frame"""
-
+        print("new_project")
         if hasattr(self,'currenttable'):
             self.notebook.destroy()
             self.currenttable.destroy()
@@ -227,7 +229,7 @@ class TablesApp(Frame):
         return
 
     def open_project(self, filename=None):
-
+        print("open_project")
         if filename == None:
             filename=filedialog.askopenfilename(defaultextension='.tblprj"',
                                                       initialdir=os.getcwd(),
@@ -243,7 +245,7 @@ class TablesApp(Frame):
         return
 
     def save_project(self):
-
+        print("save_project")
         if not hasattr(self, 'filename'):
             self.save_as_project()
         elif self.filename == None:
@@ -255,7 +257,7 @@ class TablesApp(Frame):
 
     def save_as_project(self):
         """Save as a new filename"""
-
+        print("save_as_project")
         filename=filedialog.asksaveasfilename(parent=self.tablesapp_win,
                                                 defaultextension='.tblprj',
                                                 initialdir=self.defaultsavedir,
@@ -270,7 +272,7 @@ class TablesApp(Frame):
 
     def do_save_project(self, filename):
         """Get model dicts and write all to pickle file"""
-
+        print("do_save_project")
         data={}
         for s in self.sheets.keys():
             currtable = self.sheets[s]
@@ -283,13 +285,14 @@ class TablesApp(Frame):
         return
 
     def close_project(self):
+        print("close_project")
         if hasattr(self,'currenttable'):
             #self.notebook.destroy()
             self.currenttable.destroy()
         return
 
     def import_csv(self):
-
+        print("import_csv")
         importer = TableImporter()
         #just use the dialog to load and import the file
         importdialog = importer.import_Dialog(self.tablesapp_win)
@@ -302,6 +305,7 @@ class TablesApp(Frame):
         return
 
     def export_csv(self):
+        print("export_csv")
         from .Tables_IO import TableExporter
         exporter = TableExporter()
         exporter.ExportTableData(self.currenttable)
@@ -309,7 +313,7 @@ class TablesApp(Frame):
 
     def add_Sheet(self, sheetname=None, sheetdata=None):
         """Add a new sheet - handles all the table creation stuff"""
-
+        print("add_Sheet")
         def checksheet_name(name):
             if name == '':
                 messagebox.showwarning("Whoops", "Name should not be blank.")
@@ -343,7 +347,7 @@ class TablesApp(Frame):
 
     def delete_Sheet(self):
         """Delete a sheet"""
-
+        print("delete_Sheet")
         s = self.notebook.index(self.notebook.select())
         name = self.notebook.tab(s, 'text')
         #self.notebook.delete(s)
@@ -353,7 +357,7 @@ class TablesApp(Frame):
 
     def copy_Sheet(self, newname=None):
         """Copy a sheet"""
-
+        print("copy_Sheet")
         newdata = self.currenttable.getModel().getData().copy()
         if newname==None:
             self.add_Sheet(None, newdata)
@@ -363,7 +367,7 @@ class TablesApp(Frame):
 
     def rename_Sheet(self):
         """Rename a sheet"""
-
+        print("rename_Sheet")
         #s = self.notebook.getcurselection()
         s = self.notebook.index(self.notebook.select())
         newname = simpledialog.askstring("New sheet name?", "Enter new sheet name:",
@@ -376,7 +380,7 @@ class TablesApp(Frame):
 
     def setcurrenttable(self, event):
         """Set the currenttable so that menu items work with visible sheet"""
-
+        print("setcurrenttable")
         try:
             #s = self.notebook.getcurselection()
             s = self.notebook.index(self.notebook.select())
@@ -387,27 +391,28 @@ class TablesApp(Frame):
 
     def add_Row(self):
         """Add a new row"""
+        print("add_Row")
         self.currenttable.addRow()
         self.saved = 0
         return
 
     def delete_Row(self):
         """Delete currently selected row"""
-
+        print("delete_Row")
         self.currenttable.deleteRow()
         self.saved = 0
         return
 
     def add_Column(self):
         """Add a new column"""
-
+        print("add_Column")
         self.currenttable.addColumn()
         self.saved = 0
         return
 
     def delete_Column(self):
         """Delete currently selected column in table"""
-
+        print("delete_Column")
         self.currenttable.deleteColumn()
         self.saved = 0
         return
@@ -415,49 +420,49 @@ class TablesApp(Frame):
     # added by me ******************************************************************************************************
     def from_Table_To_Json(self):
         """Convert the current table content into a Json file"""
-
+        print("from_Table_To_Json")
         self.currenttable.fromTableToJson()
         self.saved = 0
         return
 
     def setEventAsUnobservable(self, column_name=None):
         """Set the event as Unobservable - can be used in a table header"""
-
+        print("setEventAsUnobservable")
         self.currenttable.setEventAsUnobservable(column_name)
         self.saved = 0
         return
 
     def setEventAsObservable(self, column_name=None):
         """Set the event as Observable - can be used in a table header"""
-
+        print("setEventAsObservable")
         self.currenttable.setEventAsObservable(column_name)
         self.saved = 0
         return
 
     def setEventAsUncontrollable(self, column_name=None):
         """Set the event as Uncontrollable - can be used in a table header"""
-
+        print("setEventAsUncontrollable")
         self.currenttable.setEventAsUncontrollable(column_name)
         self.saved = 0
         return
 
     def setEventAsControllable(self, column_name=None):
         """Set the event as Controllable - can be used in a table header"""
-
+        print("setEventAsControllable")
         self.currenttable.setEventAsControllable(column_name)
         self.saved = 0
         return
 
     def setEventAsFaulty(self, column_name=None):
         """Set the event as Faulty - can be used in a table header"""
-
+        print("setEventAsFaulty")
         self.currenttable.setEventAsFaulty(column_name)
         self.saved = 0
         return
 
     def setEventAsUnfaulty(self, column_name=None):
         """Set the event as Unfaulty - can be used in a table header"""
-
+        print("setEventAsUnfaulty")
         self.currenttable.setEventAsUnfaulty(column_name)
         self.saved = 0
         return
@@ -469,25 +474,26 @@ class TablesApp(Frame):
 
     def autoAdd_Rows(self):
         """Auto add x rows"""
-
+        print("autoAdd_Rows")
         self.currenttable.autoAddRows()
         self.saved = 0
         return
 
     def autoAdd_Columns(self):
         """Auto add x rows"""
-
+        print("autoAdd_Columns")
         self.currenttable.autoAddColumns()
         self.saved = 0
         return
 
     def findValue(self):
+        print("findValue")
         self.currenttable.findValue()
         return
 
     def do_find_text(self, event=None):
         """Find the text in the table"""
-
+        print("do_find_text")
         if not hasattr(self,'currenttable'):
             return
         import string
@@ -500,7 +506,7 @@ class TablesApp(Frame):
 
     def do_find_again(self, event=None):
         """Find again"""
-
+        print("do_find_again")
         if not hasattr(self,'currenttable'):
             return
         searchstring=self.findtext.get()
@@ -509,15 +515,17 @@ class TablesApp(Frame):
         return
 
     def plot(self, event=None):
+        print("plot")
         self.currenttable.plotSelected()
         return
 
     def plotSetup(self, event=None):
+        print("plotSetup")
         self.currenttable.plotSetup()
         return
 
     def about_Tables(self):
-
+        print("about_Tables")
         self.ab_win=Toplevel()
         self.ab_win.geometry('+100+350')
         self.ab_win.title('About TablesApp')
@@ -543,21 +551,22 @@ class TablesApp(Frame):
 
     def online_documentation(self,event=None):
         """Open the online documentation"""
-
+        print("online_documentation")
         import webbrowser
         link='https://github.com/dmnfarrell/tkintertable/wiki'
         webbrowser.open(link,autoraise=1)
         return
 
     def quit(self):
+        print(quit)
         self.tablesapp_win.destroy()
 
         return
 
 class ToolBar(Frame):
     """Uses the parent instance to provide the functions"""
-
     def __init__(self, parent=None, parentapp=None):
+        print("__init__ToolBar(Frame)")
         Frame.__init__(self, parent, width=600, height=40)
         from . import Table_images
         self.parentframe = parent
@@ -588,6 +597,7 @@ class ToolBar(Frame):
         return
 
     def add_button(self, name, callback, img=None):
+        print("add_button")
         if img==None:
             b = Button(self, text=name, command=callback)
         else:
@@ -602,7 +612,7 @@ class ToolBar(Frame):
 
 def main():
     "Run the application"
-   
+    print("main")
     from optparse import OptionParser
     parser = OptionParser()
     parser.add_option("-f", "--file", dest="tablefile",
