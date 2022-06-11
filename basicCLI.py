@@ -89,41 +89,67 @@ def listevents(args, eventslst, fsalst, path):
     for e in eventslst:
         print("- "+e.label+":  Observable: "+str(e.isObservable)+", Controllable: "+str(e.isControllable)+", Fault: "+str(e.isFault))
 
+def editevent(args, eventslst, fsalst, path):
+    if ('-h' in args):
+        print("This function is used to edit an event that is loaded in the event list")
+        print("Usage:\n->editevent event-name -options")
+        print("-o set the event as observable")
+        print("-c set the event as controllable")
+        print("-f set the event as a fault event")
+        return
+    if(len(args)<1):
+        print("Not enough arguments provided, type \"editevent -h\" to help")
+        return
+
+    if not (any(e.label == args[0] for e in eventslst)):
+        print("Error, event not found in the event list")
+        return
+
+    e = [i for i in eventslst if i.label == args[0]][0]
+    e.isObservable=('-o' in args)
+    e.isControllable=('-c' in args)
+    e.isFault=('-f' in args)
+
+    print("- "+e.label+":  Observable: "+str(e.isObservable)+", Controllable: "+str(e.isControllable)+", Fault: "+str(e.isFault))
+
+    updateevents(eventslst, fsalst)
+
 #list of loaded FSA
 fsalst=dict()
 eventslst=[]
 
 commands={
-    'changepath' : changepath,
-    'path' : currpath,
-    'load': loadfsa,
-    'rm': removefsa,
-    'save': savefsa,
-    'build': fsabuilder,
-    'addstate': addstate,
-    'rmstate': rmstate,
-    'addevent' : addevent,
-    'rmevent' : rmevent,
-    'addtrans' : addtrans,
-    'rmtrans' : rmtrans,
-    'show': showfsa,
-    'reach' : reachability,
-    'coreach' : coreachability,
-    'blocking' : blocking,
-    'trim' : trim,
-    'dead' : dead,
-    'reverse' : reverse,
-    'lst' : lst,
-    'xlist': listfsa,
-    'elist': listevents,
-    'cc': conccomp,
-    'fm': faultmon,
-    'diag' : diagnoser,
-    'nfa2dfa': observer,
-    'obs': observer,
-    'supervisor': supervisor,
-    'exth': exth,
-    'help': help
+    'changepath' :  changepath,
+    'path' :        currpath,
+    'load':         loadfsa,
+    'rm':           removefsa,
+    'save':         savefsa,
+    'build':        fsabuilder,
+    'addstate':     addstate,
+    'rmstate':      rmstate,
+    'addevent' :    addevent,
+    'rmevent' :     rmevent,
+    'addtrans' :    addtrans,
+    'rmtrans' :     rmtrans,
+    'show':         showfsa,
+    'reach' :       reachability,
+    'coreach' :     coreachability,
+    'blocking' :    blocking,
+    'trim' :        trim,
+    'dead' :        dead,
+    'reverse' :     reverse,
+    'lst' :         lst,
+    'xlist':        listfsa,
+    'elist':        listevents,
+    'editevent' :   editevent,
+    'cc':           conccomp,
+    'fm':           faultmon,
+    'diag' :        diagnoser,
+    'nfa2dfa':      observer,
+    'obs':          observer,
+    'supervisor':   supervisor,
+    'exth':         exth,
+    'help':         help
 }
 
 

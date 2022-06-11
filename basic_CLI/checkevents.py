@@ -3,9 +3,16 @@ from fsatoolbox import *
 
 def updateevents(eventslst, fsalst):
     for e in eventslst:
-        for G in fsalst:
-            pass
-            #G.change_event_prop(e.label, isObservable=e.isObservable, isControllable=e.isControllable, isFault=e.isFault)
+        for k,G in fsalst.items():
+            try:
+                props={
+                    'isObservable':     e.isObservable,
+                    'isControllable':   e.isControllable,
+                    'isFault':          e.isFault
+                }
+                G.change_event_props(e, **props)
+            except Exception as ex:
+                pass
 
 def checkevents(G, eventslst, fsalst):
     for e in G.E:
@@ -20,7 +27,12 @@ def checkevents(G, eventslst, fsalst):
                 inp = input(">")
                 if inp=='2':
                     #keep the event proprieties from the pool
-                    return
+                    props={
+                        'isObservable':     ex_e.isObservable,
+                        'isControllable':   ex_e.isControllable,
+                        'isFault':          ex_e.isFault
+                    }
+                    G.change_event_props(e, **props)
                 else:
                     #update event proprieties
                     ex_e.isObservable=e.isObservable

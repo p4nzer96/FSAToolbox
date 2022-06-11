@@ -10,7 +10,7 @@ def addstate(args,eventslst,fsalst,path):
         print("Optional arguments:")
         print("-i set state as initial")
         print("-f set state as final")
-        print("-fr set state as forbidden")
+        print("-fb set state as forbidden")
         return
 
     if(len(args)<2):
@@ -21,7 +21,7 @@ def addstate(args,eventslst,fsalst,path):
         print("Error, fsa doesn't exists")
         return
     try:
-        fsalst[args[0]].add_state(args[1],isInitial=('-i' in args),isFinal=('-f' in args),isForbidden=('-f' in args),)
+        fsalst[args[0]].add_state(args[1],isInitial=('-i' in args),isFinal=('-f' in args),isForbidden=('-fb' in args),)
     except Exception as e:
         print("There was an error while adding the state:")
         print(e)
