@@ -1,7 +1,7 @@
 import fsatoolbox
 from fsatoolbox import *
 
-def exth(args, fsalst, path):
+def exth(args,eventslst,fsalst,path):
     if('-h' in args):
         print("This functions computes the extended specification automaton, given the specification automaton H")
         print("Usage:\n     exth outputname inputname (Ex: exth H1 H) ")
@@ -10,7 +10,7 @@ def exth(args, fsalst, path):
         return
 
     if(len(args)<2):
-        print("Not enough arguments provided, type \"supervisor -h\" to help")
+        print("Not enough arguments provided, type \"exth -h\" to help")
         return
 
     if(args[1] not in fsalst):

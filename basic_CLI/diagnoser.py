@@ -1,10 +1,10 @@
 import fsatoolbox
 from fsatoolbox import *
 
-def diagnoser(args, fsalst, path):
+def diagnoser(args,eventslst,fsalst,path):
     if('-h' in args):
         print("This function computes the diagnoser of a fsa")
-        print("Usage\n->diag outputname inputname (Ex: diag G1 G0")
+        print("Usage\n->diag outputname inputname (Ex: diag G1 G0)")
         print("Optional arguments:")
         print("-v verbose output, this will print the steps of the algorithm")
         return

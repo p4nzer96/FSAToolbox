@@ -1,7 +1,7 @@
 import fsatoolbox
 from fsatoolbox import *
 
-def supervisor(args, fsalst, path):
+def supervisor(args,eventslst,fsalst,path):
     if('-h' in args):
         print("This functions computes the supervisor of an automaton G, given the specification automaton H")
         print("Usage:\n     supervisor outputname automaton_name specif_automaton_name (Ex: supervisor G1 G H) ")

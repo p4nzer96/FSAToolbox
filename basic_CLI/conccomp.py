@@ -1,10 +1,10 @@
 import fsatoolbox
 from fsatoolbox import *
 
-def conccomp(args, fsalst, path):
+def conccomp(args,eventslst,fsalst,path):
     if('-h' in args):
         print("This functions computes the concurrent composition between two FSAs")
-        print("Usage:\n     cc outputname input1 input2 (Ex: cc G2 G0 G1")
+        print("Usage:\n     cc outputname input1 input2 (Ex: cc G2 G0 G1)")
         print("Optional arguments:")
         print("-v verbose output, this will print the steps of the algorithm")
         return
