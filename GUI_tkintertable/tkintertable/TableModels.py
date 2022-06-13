@@ -30,20 +30,12 @@ import operator
 import string, types, copy
 import pickle, os, sys, csv
 
-
-# added by me **********************************************************************************************************
-#from tkinter import *
-#from tkinter.ttk import *
 import _tkinter
 import sys
-# from _typeshed import StrOrBytesPath
 from enum import Enum
 from tkinter.constants import *
-# from tkinter.font import _FontDescription
 from types import TracebackType
 from typing import Any, Callable, Generic, Mapping, Optional, Protocol, Sequence, TypeVar, Union, overload
-# from typing_extensions import Literal, TypedDict
-# **********************************************************************************************************************
 
 
 from tkinter import *
@@ -58,7 +50,7 @@ class TableModel(object):
 
     def __init__(self, newdict=None, rows=None, columns=None):
         """Constructor"""
-        #print("TableModel__init__")
+        # print("TableModel__init__")
         self.initialiseFields()
         self.setupModel(newdict, rows, columns)
         return
@@ -66,8 +58,7 @@ class TableModel(object):
 
     def setupModel(self, newdict, rows=None, columns=None):
         """Create table model"""
-        #print("setupModel")
-
+        # print("setupModel")
         if newdict != None:
             self.data = copy.deepcopy(newdict)
             for k in self.keywords:
@@ -113,7 +104,7 @@ class TableModel(object):
 
     def initialiseFields(self):
         """Create base fields, some of which are not saved"""
-        #print("initialiseFields")
+        # print("initialiseFields")
         self.data = None    # holds the table dict
         self.colors = {}    # holds cell colors
         self.colors['fg']={}
@@ -128,7 +119,7 @@ class TableModel(object):
 
     def createEmptyModel(self):
         """Create the basic empty model dict"""
-        #print("createEmptyModel")
+        # print("createEmptyModel")
         self.data = {}
         # Define the starting column names and locations in the table.
         self.columnNames = []
@@ -143,7 +134,7 @@ class TableModel(object):
 
     def importCSV(self, filename, sep=','):
         """Import table data from a comma separated file."""
-        #print("importCSV")
+        # print("importCSV")
         if not os.path.isfile(filename) or not os.path.exists(filename):
             print ('no such file')
             return None
@@ -161,7 +152,7 @@ class TableModel(object):
     def importDict(self, newdata):
         """Try to create a table model from a dict of the form
            {{'rec1': {'col1': 3, 'col2': 2}, ..}"""
-        #print("importDict")
+        # print("importDict")
         #get cols from sub data keys
         colnames = []
         for k in newdata:
@@ -178,12 +169,12 @@ class TableModel(object):
 
     def getDefaultTypes(self):
         """Get possible field types for this table model"""
-        #print("getDefaultTypes")
+        # print("getDefaultTypes")
         return self.defaulttypes
 
     def getData(self):
         """Return the current data for saving"""
-        #print("getData")
+        # print("getData")
         data = copy.deepcopy(self.data)
         data['colors'] = self.colors
         data['columnnames'] = self.columnNames
@@ -202,7 +193,7 @@ class TableModel(object):
     def getAllCells(self):
         """Return a dict of the form rowname: list of cell contents
           Useful for a simple table export for example"""
-        #print("getAllCells")
+        # print("getAllCells")
         records={}
         for row in range(len(self.reclist)):
             recdata=[]
@@ -213,7 +204,7 @@ class TableModel(object):
 
     def getColCells(self, colIndex):
         """Get the viewable contents of a col into a list"""
-        #print("getColCells")
+        # print("getColCells")
         collist = []
         if self.getColumnType(colIndex) == 'Link':
             return ['xxxxxx']
@@ -225,7 +216,7 @@ class TableModel(object):
 
     def getlongestEntry(self, columnIndex):
         """Get the longest cell entry in the col"""
-        #print("getlongestEntry")
+        # print("getlongestEntry")
         collist = self.getColCells(columnIndex)
         maxw=5
         for c in collist:
@@ -240,14 +231,14 @@ class TableModel(object):
 
     def getRecordAtRow(self, rowIndex):
         """Get the entire record at the specifed row."""
-        #print("getRecordAtRow")
+        # print("getRecordAtRow")
         name = self.getRecName(rowIndex)
         record = self.data[name]
         return record
 
     def getCellRecord(self, rowIndex, columnIndex):
         """Get the data held in this row and column"""
-        #print("getCellRecord")
+        # print("getCellRecord")
         value = None
         colname = self.getColumnName(columnIndex)
         coltype = self.columntypes[colname]
@@ -261,7 +252,7 @@ class TableModel(object):
 
     def deleteCellRecord(self, rowIndex, columnIndex):
         """Remove the cell data at this row/column"""
-        #print("deleteCellRecord")
+        # print("deleteCellRecord")
         colname = self.getColumnName(columnIndex)
         coltype = self.columntypes[colname]
         name = self.getRecName(rowIndex)
@@ -271,7 +262,7 @@ class TableModel(object):
 
     def getRecName(self, rowIndex):
         """Get record name from row number"""
-        #print("getRecName")
+        # print("getRecName")
         if len(self.reclist)==0:
             return None
         if self.filteredrecs != None:
@@ -283,7 +274,7 @@ class TableModel(object):
     def setRecName(self, newname, rowIndex):
         """Set the record name to another value - requires re-setting in all
            dicts that this rec is referenced"""
-        #print("setRecName")
+        # print("setRecName")
         if len(self.reclist)==0:
             return None
         currname = self.getRecName(rowIndex)
@@ -306,7 +297,7 @@ class TableModel(object):
                                         recName=None, columnName=None):
          """Get the attribute of the record at the specified column index.
             This determines what will be displayed in the cell"""
-         #print("getRecordAttributeAtColumn")
+         # print("getRecordAttributeAtColumn")
          value = None
          if columnName != None and recName != None:
              if columnName not in self.data[recName]:
@@ -335,14 +326,14 @@ class TableModel(object):
          return value
 
     def getRecordIndex(self, recname):
-        #print("getRecordIndex")
+        # print("getRecordIndex")
         rowIndex = int(self.reclist.index(recname))
         return rowIndex
 
     def setSortOrder(self, columnIndex=None, columnName=None, reverse=0):
         """Changes the order that records are sorted in, which will
            be reflected in the table upon redrawing"""
-        #print("setSortOrder")
+        # print("setSortOrder")
         if columnName != None and columnName in self.columnNames:
             self.sortkey = columnName
         elif columnIndex != None:
@@ -356,7 +347,7 @@ class TableModel(object):
 
     def createSortMap(self, names, sortkey, reverse=0):
         """Create a sort mapping for given list"""
-        #print("createSortMap")
+        # print("createSortMap")
         recdata = []
         for rec in names:
             recdata.append(self.getRecordAttributeAtColumn(recName=rec, columnName=sortkey))
@@ -373,7 +364,7 @@ class TableModel(object):
         return sortmap
 
     def toFloats(self, l):
-        #print("toFloats")
+        # print("toFloats")
         x=[]
         for i in l:
             if i == '':
@@ -391,7 +382,7 @@ class TableModel(object):
 
     def moveColumn(self, oldcolumnIndex, newcolumnIndex):
         """Changes the order of columns"""
-        #print("moveColumn")
+        # print("moveColumn")
         self.oldnames = self.columnNames
         self.columnNames=[]
 
@@ -412,13 +403,13 @@ class TableModel(object):
 
     def getNextKey(self):
         """Return the next numeric key in the dict"""
-        #print("getNextKey")
+        # print("getNextKey")
         num = len(self.reclist)+1
         return num
 
     def addRow(self, key=None, **kwargs):
         """Add a row"""
-        #print("addRow")
+        # print("addRow")
         if key == '':
             return
         if key==None:
@@ -434,28 +425,9 @@ class TableModel(object):
         self.reclist.append(key)
         return key
 
-
-    # added by me ******************************************************************************************************
-    '''
-    def addRowOfCheckButtons(self, **kwargs):
-        """Add a row"""
-        #print("addRowOfCheckButtons")
-
-        key = 0
-        self.data[0]={}
-        for k in kwargs:
-            if not k in self.columnNames:
-                self.addColumn(k)
-            self.data[key][k] = str(kwargs[k])
-        self.reclist.append(key)
-        return key
-    '''
-    # ******************************************************************************************************************
-
-
     def deleteRow(self, rowIndex=None, key=None, update=True):
         """Delete a row"""
-        #print("deleteRow")
+        # print("deleteRow")
         if key == None or not key in self.reclist:
             key = self.getRecName(rowIndex)
         del self.data[key]
@@ -465,7 +437,7 @@ class TableModel(object):
 
     def deleteRows(self, rowlist=None):
         """Delete multiple or all rows"""
-        #print("deleteRows")
+        # print("deleteRows")
         if rowlist == None:
             rowlist = range(len(self.reclist))
         names = [self.getRecName(i) for i in rowlist]
@@ -475,7 +447,7 @@ class TableModel(object):
 
     def addColumn(self, colname=None, coltype=None):
         """Add a column"""
-        #print("addColumn")
+        # print("addColumn")
         index = self.getColumnCount()+ 1
         if colname == None:
             colname=str(index)
@@ -484,323 +456,15 @@ class TableModel(object):
             return
         self.columnNames.append(colname)
         self.columnlabels[colname] = colname
-        # added by me ************************************************************************************************************
-        '''
-        root = Tk()
-        CheckVar1 = IntVar()
-        CheckVar2 = IntVar()
-        C1 = Checkbutton(root, text="Music", variable=CheckVar1, onvalue=1, offvalue=0, width=20)
-        C2 = Checkbutton(root, text="Video", variable=CheckVar2, onvalue=1, offvalue=0, width=20)
-        #C1.pack()
-        #C2.pack()
-        btn = Button(text="Hello")
-        canvas = Canvas()
-        canvas.create_window()
-        '''
-        # ************************************************************************************************************************
-
         if coltype == None:
             self.columntypes[colname]='text'
         else:
             self.columntypes[colname]=coltype
         return
 
-
-
-    # added by me ******************************************************************************************************
-    @classmethod
-    def setEventAsUnobservable(self, column_name=None):
-        """Set the event as Unobservable - can be used in a table header"""
-        #print("setEventAsUnobservable")
-
-        if column_name == None:
-            n = messagebox.askyesno("Setting",
-                                    "Unobservable Event?",
-                                    parent=self.parentframe)
-            if n:
-                # global dictcolObservableEvents
-
-                current_col_index = self.getSelectedColumn()
-                current_col_name = self.model.getColumnLabel(current_col_index)
-                my_globals.dictcolObservableEvents[str(current_col_name)] = 0
-                # print(current_col_index)
-                # print(str(self.model.getColumnLabel(current_col_index)))
-                #print("Observable events:", my_globals.dictcolObservableEvents)
-        else:
-            my_globals.dictcolObservableEvents[str(column_name)] = 0
-
-    # ******************************************************************************************************************
-
-    # added by me ******************************************************************************************************
-    @classmethod
-    def setEventAsObservable(self, column_name=None):
-        """Set the event as Observable - can be used in a table header"""
-        #print("setEventAsObservable")
-
-        if column_name == None:
-
-            n = messagebox.askyesno("Setting",
-                                    "Observable Event?",
-                                    parent=self.parentframe)
-            if n:
-                # global dictcolObservableEvents
-                current_col_index = self.getSelectedColumn()
-                current_col_name = self.model.getColumnLabel(current_col_index)
-                my_globals.dictcolObservableEvents[str(current_col_name)] = 1
-                # print(current_col_index)
-                # print(str(self.model.getColumnLabel(current_col_index)))
-                #print("Observable events:", my_globals.dictcolObservableEvents)
-        else:
-            my_globals.dictcolObservableEvents[str(column_name)] = 1
-            # print(current_col_index)
-            # print(str(self.model.getColumnLabel(current_col_index)))
-            #print("Observable events:", my_globals.dictcolObservableEvents)
-
-    # ******************************************************************************************************************
-
-    # added by me ******************************************************************************************************
-    @classmethod
-    def setEventAsUncontrollable(self, column_name=None):
-        """Set the event as Uncontrollable - can be used in a table header"""
-        #print("setEventAsUncontrollable")
-
-        if column_name == None:
-
-            n = messagebox.askyesno("Setting",
-                                    "Uncontrollable Event?",
-                                    parent=self.parentframe)
-            if n:
-                # global dictcolControllableEvents
-                current_col_index = self.getSelectedColumn()
-                current_col_name = self.model.getColumnLabel(current_col_index)
-                my_globals.dictcolControllableEvents[str(current_col_name)] = 0
-                # print(current_col_index)
-                # print(str(self.model.getColumnLabel(current_col_index)))
-                #print("Controllable events:", my_globals.dictcolControllableEvents)
-        else:
-            my_globals.dictcolControllableEvents[str(column_name)] = 0
-
-    # ******************************************************************************************************************
-
-    # added by me ******************************************************************************************************
-    @classmethod
-    def setEventAsControllable(self, column_name=None):
-        """Set the event as Controllable - can be used in a table header"""
-        #print("setEventAsControllable")
-
-        if column_name == None:
-
-            n = messagebox.askyesno("Setting",
-                                    "Controllable Event?",
-                                    parent=self.parentframe)
-            if n:
-                # global dictcolControllableEvents
-                current_col_index = self.getSelectedColumn()
-                current_col_name = self.model.getColumnLabel(current_col_index)
-                my_globals.dictcolControllableEvents[str(current_col_name)] = 1
-                # print(current_col_index)
-                # print(str(self.model.getColumnLabel(current_col_index)))
-                #print("Controllable events:", my_globals.dictcolControllableEvents)
-        else:
-            my_globals.dictcolControllableEvents[str(column_name)] = 1
-
-    # ******************************************************************************************************************
-
-    # added by me ******************************************************************************************************
-    @classmethod
-    def setEventAsFaulty(self, column_name=None):
-        """Set the event as Faulty - can be used in a table header"""
-        #print("setEventAsFaulty")
-
-        if column_name == None:
-            n = messagebox.askyesno("Setting",
-                                    "Faulty Event?",
-                                    parent=self.parentframe)
-            if n:
-                # global dictcolFaultyEvents
-
-                current_col_index = self.getSelectedColumn()
-                current_col_name = self.model.getColumnLabel(current_col_index)
-                my_globals.dictcolFaultyEvents[str(current_col_name)] = 1
-                # print(current_col_index)
-                # print(str(self.model.getColumnLabel(current_col_index)))
-                #print("Faulty events:", my_globals.dictcolFaultyEvents)
-        else:
-            my_globals.dictcolFaultyEvents[str(column_name)] = 1
-
-    # ******************************************************************************************************************
-
-    # added by me ******************************************************************************************************
-    @classmethod
-    def setEventAsUnfaulty(self, column_name=None):
-        """Set the event as Unfaulty - can be used in a table header"""
-        #print("setEventAsUnfaulty")
-
-        if column_name == None:
-
-            n = messagebox.askyesno("Setting",
-                                    "Observable Event?",
-                                    parent=self.parentframe)
-            if n:
-                # global dictcolFaultyEvents
-                current_col_index = self.getSelectedColumn()
-                current_col_name = self.model.getColumnLabel(current_col_index)
-                my_globals.dictcolFaultyEvents[str(current_col_name)] = 0
-                # print(current_col_index)
-                # print(str(self.model.getColumnLabel(current_col_index)))
-                #print("Faulty events:", my_globals.dictcolFaultyEvents)
-        else:
-            my_globals.dictcolFaultyEvents[str(column_name)] = 0
-            # print(current_col_index)
-            # print(str(self.model.getColumnLabel(current_col_index)))
-            #print("Faulty events:", my_globals.dictcolFaultyEvents)
-
-    # ******************************************************************************************************************
-
-    # added by me *******************************************************************************************************
-    @classmethod
-    def fromTableToJson(self):
-        """Convert the current table content into a Json file"""
-        #print("fromTableToJson")
-        # Algorithm of conversion of the current table to a json file
-        n = messagebox.askyesno("Convert",
-                                "Convert table to json file?",
-                                parent=self.parentframe)
-        if n:
-            #print("columnlabels:", self.model.columnlabels.values())
-            # rows start from 0, columns start from 0
-
-            json_dict = {"X": {}, "E": {}, "delta": {}}
-            dict_X = {}
-            dict_E = {}
-            dict_delta = {}
-            current_state = ""
-            iter_ascii_delta = 65  # decimal value of the ASCII character 'A'
-            num_rows = self.model.getRowCount()
-            num_cols = len(self.model.columnlabels)
-            for iter_row in range(num_rows):
-                for iter_col in range(num_cols):
-                    #print("iter_row,iter_col:" + str(iter_row) + "," + str(iter_col))
-                    if self.model.getCellRecord(iter_row, iter_col) != None:
-                        current_cell = self.model.getCellRecord(iter_row, iter_col)
-                        #print("current_cell: ", current_cell)
-                        if iter_col == 0:
-                            if current_cell[0] and current_cell[0] != '_':
-                                if current_cell.endswith("_i_f_p") or current_cell.endswith(
-                                        "_i_p_f") or current_cell.endswith("_f_i_p") or current_cell.endswith(
-                                    "_f_p_i") or current_cell.endswith("_p_f_i") or current_cell.endswith(
-                                    "_p_i_f"):
-                                    string_lenght = len(current_cell)
-                                    substring_to_remove = current_cell[-6:]
-                                    current_state = current_cell.replace(str(substring_to_remove), "")
-                                    current_state.replace(" ", "")
-                                    dict_X.update(
-                                        {str(current_state): {"isInit": "1", "isFinal": "1", "isProhibited": "1"}})
-                                elif current_cell.endswith("_i_f"):
-                                    current_state = current_cell.replace("_i_f", "")
-                                    current_state.replace(" ", "")
-                                    dict_X.update(
-                                        {str(current_state): {"isInit": "1", "isFinal": "1", "isProhibited": "0"}})
-                                elif current_cell.endswith("_f_i"):
-                                    current_state = current_cell.replace("_f_i", "")
-                                    current_state.replace(" ", "")
-                                    dict_X.update(
-                                        {str(current_state): {"isInit": "1", "isFinal": "1", "isProhibited": "0"}})
-                                elif current_cell.endswith("_i_p"):
-                                    current_state = current_cell.replace("_i_p", "")
-                                    current_state.replace(" ", "")
-                                    dict_X.update(
-                                        {str(current_state): {"isInit": "1", "isFinal": "0", "isProhibited": "1"}})
-                                elif current_cell.endswith("_p_i"):
-                                    current_state = current_cell.replace("_p_i", "")
-                                    current_state.replace(" ", "")
-                                    dict_X.update(
-                                        {str(current_state): {"isInit": "1", "isFinal": "0", "isProhibited": "1"}})
-                                elif current_cell.endswith("_p_f"):
-                                    current_state = current_cell.replace("_p_f", "")
-                                    current_state.replace(" ", "")
-                                    dict_X.update(
-                                        {str(current_state): {"isInit": "0", "isFinal": "1", "isProhibited": "1"}})
-                                elif current_cell.endswith("_f_p"):
-                                    current_state = current_cell.replace("_f_p", "")
-                                    current_state.replace(" ", "")
-                                    dict_X.update(
-                                        {str(current_state): {"isInit": "0", "isFinal": "1", "isProhibited": "1"}})
-                                elif current_cell.endswith("_i"):
-                                    current_state = current_cell.replace("_i", "")
-                                    current_state.replace(" ", "")
-                                    dict_X.update(
-                                        {str(current_state): {"isInit": "1", "isFinal": "0", "isProhibited": "0"}})
-                                elif current_cell.endswith("_f"):
-                                    current_state = current_cell.replace("_f", "")
-                                    current_state.replace(" ", "")
-                                    dict_X.update(
-                                        {str(current_state): {"isInit": "0", "isFinal": "1", "isProhibited": "0"}})
-                                elif current_cell.endswith("_p"):
-                                    current_state = current_cell.replace("_p", "")
-                                    current_state.replace(" ", "")
-                                    dict_X.update(
-                                        {str(current_state): {"isInit": "0", "isFinal": "0", "isProhibited": "1"}})
-                                else:
-                                    current_state = current_cell
-                                    current_state.replace(" ", "")
-                                    dict_X.update(
-                                        {str(current_state): {"isInit": "0", "isFinal": "0", "isProhibited": "0"}})
-                            else:
-                                #print("cell(" + str(iter_row) + "," + str(iter_col) + " is not a valid name for a state.\nPlease insert a valid one.")
-                                pass
-                        else:
-                            current_delta_ends = current_cell.split("-")
-                            flag_end_while = 0
-                            while (flag_end_while == 0):
-                                if '' in current_delta_ends:
-                                    current_delta_ends.remove('')
-                                else:
-                                    flag_end_while = 1
-
-                            for i in range(len(current_delta_ends)):
-                                dict_delta.update({str(chr(iter_ascii_delta)): {"start": str(current_state),
-                                                                                "name": str(self.model.getColumnLabel(
-                                                                                    iter_col)),
-                                                                                "ends": str(current_delta_ends[i])}})
-                                #print("dict_delta", dict_delta)
-                                current_key_event = str(self.model.getColumnLabel(iter_col))
-                                dict_E.update({current_key_event: {
-                                    "isObs": str(my_globals.dictcolObservableEvents[current_key_event]),
-                                    "isContr": str(my_globals.dictcolControllableEvents[current_key_event]),
-                                    "isFaulty": str(my_globals.dictcolFaultyEvents[current_key_event])}})
-                                iter_ascii_delta += 1
-
-                            print(current_delta_ends)
-                    else:
-                        pass
-
-            json_dict["X"] = dict_X
-            json_dict["delta"] = dict_delta
-            json_dict["E"] = dict_E
-            print(json_dict)
-
-            with open("sample.json", "w") as outfile:
-                # json_object = json.dumps(json_dict, outfile, indent=4 )
-                json.dump(json_dict, outfile, indent=4)
-
-            # #print("cella 1,1", self.model.getCellRecord(1,1))
-
-            outfile.close()
-            #print("Tabella convertita in un json file")
-
-        return
-
-
-    # *****************************************************************************************************************
-
-
-
-
-
     def deleteColumn(self, columnIndex):
         """delete a column"""
-        #print("deleteColumn")
+        # print("deleteColumn")
         colname = self.getColumnName(columnIndex)
         self.columnNames.remove(colname)
         del self.columnlabels[colname]
@@ -819,7 +483,7 @@ class TableModel(object):
 
     def deleteColumns(self, cols=None):
         """Remove all cols or list provided"""
-        #print("deleteColumns")
+        # print("deleteColumns")
         if cols == None:
             cols = self.columnNames
         if self.getColumnCount() == 0:
@@ -830,7 +494,7 @@ class TableModel(object):
 
     def autoAddRows(self, numrows=None):
         """Automatically add x number of records"""
-        #print("autoAddRows")
+        # print("autoAddRows")
         rows = self.getRowCount()
         ints = [i for i in self.reclist if isinstance(i, int)]
         if len(ints)>0:
@@ -850,7 +514,7 @@ class TableModel(object):
 
     def autoAddColumns(self, numcols=None):
         """Automatically add x number of cols"""
-        #print("autoAddColumns")
+        # print("autoAddColumns")
         #alphabet = string.lowercase[:26]
         alphabet = string.ascii_lowercase
         currcols=self.getColumnCount()
@@ -865,59 +529,52 @@ class TableModel(object):
         extra = len(common)
         end = end + extra
         for x in range(start, end):
-            # ORIGINAL *************************************************************************************************
-            # self.addColumn(str(x))
-            # **********************************************************************************************************
-
-            # added by me **********************************************************************************************
             if x == start:
                 self.addColumn("State")
             else:
                 self.addColumn("event" + str(x-1))
-            # **********************************************************************************************************
         return
-
 
     def relabel_Column(self, columnIndex, newname):
         """Change the column label - can be used in a table header"""
-        #print("relabel_Column")
+        # print("relabel_Column")
         colname = self.getColumnName(columnIndex)
         self.columnlabels[colname]=newname
         return
 
     def getColumnType(self, columnIndex):
         """Get the column type"""
-        #print("getColumnType")
+        # print("getColumnType")
         colname = self.getColumnName(columnIndex)
         coltype = self.columntypes[colname]
         return coltype
 
     def getColumnCount(self):
          """Returns the number of columns in the data model."""
-         #print("getColumnCount")
+         # print("getColumnCount")
          return len(self.columnNames)
 
     def getColumnName(self, columnIndex):
          """Returns the name of the given column by columnIndex."""
-         #print("getColumnName")
+         # print("getColumnName")
          return self.columnNames[columnIndex]
 
     def getColumnLabel(self, columnIndex):
         """Returns the label for this column"""
-        #print("getColumnLabel")
+        # print("getColumnLabel")
         colname = self.getColumnName(columnIndex)
         return self.columnlabels[colname]
 
     def getColumnIndex(self, columnName):
         """Returns the column index for this column"""
-        #print("getColumnIndex")
+        # print("getColumnIndex")
         colindex = self.columnNames.index(columnName)
         return colindex
 
     def getColumnData(self, columnIndex=None, columnName=None, filters=None):
         """Return the data in a list for this col,
             filters is a tuple of the form (key,value,operator,bool)"""
-        #print("getColumnData")
+        # print("getColumnData")
         if columnIndex != None and columnIndex < len(self.columnNames):
             columnName = self.getColumnName(columnIndex)
         names = Filtering.doFiltering(searchfunc=self.filterBy,
@@ -931,7 +588,7 @@ class TableModel(object):
             allowempty: boolean if false means rows with empty vals for any
             required fields are not returned
             returns: lists of column data"""
-        #print("getColumns")
+        # print("getColumns")
         def evaluate(l):
             for i in l:
                 if i == '' or i == None:
@@ -948,7 +605,7 @@ class TableModel(object):
 
     def getDict(self, colnames, filters=None):
         """Get the model data as a dict for given columns with filter options"""
-        #print("getDict")
+        # print("getDict")
         data={}
         names = self.reclist
         cols = self.getColumns(colnames, filters)
@@ -962,8 +619,7 @@ class TableModel(object):
         """The searching function that we apply to the model data.
            This is used in Filtering.doFiltering to find the required recs
            according to column, value and an operator"""
-        #print("filterBy")
-
+        # print("filterBy")
         funcs = Filtering.operatornames
         floatops = ['=','>','<']
         func = funcs[op]
@@ -993,19 +649,19 @@ class TableModel(object):
 
     def getRowCount(self):
          """Returns the number of rows in the table model."""
-         #print("getRowCount")
+         # print("getRowCount")
          return len(self.reclist)
 
     def getValueAt(self, rowIndex, columnIndex):
          """Returns the cell value at location specified
              by columnIndex and rowIndex."""
-         #print("getValueAt")
+         # print("getValueAt")
          value = self.getRecordAttributeAtColumn(rowIndex, columnIndex)
          return value
 
     def setValueAt(self, value, rowIndex, columnIndex):
         """Changed the dictionary when cell is updated by user"""
-        #print("setValueAt")
+        # print("setValueAt")
         name = self.getRecName(rowIndex)
         colname = self.getColumnName(columnIndex)
         coltype = self.columntypes[colname]
@@ -1023,7 +679,7 @@ class TableModel(object):
 
     def setFormulaAt(self, f, rowIndex, columnIndex):
         """Set a formula at cell given"""
-        #print("setFormulaAt")
+        # print("setFormulaAt")
         name = self.getRecName(rowIndex)
         colname = self.getColumnName(columnIndex)
         coltype = self.columntypes[colname]
@@ -1034,7 +690,7 @@ class TableModel(object):
 
     def getColorAt(self, rowIndex, columnIndex, key='bg'):
         """Return color of that record field for the table"""
-        #print("getColorAt")
+        # print("getColorAt")
         name = self.getRecName(rowIndex)
         colname = self.getColumnName(columnIndex)
         if name in self.colors[key] and colname in self.colors[key][name]:
@@ -1044,7 +700,7 @@ class TableModel(object):
 
     def setColorAt(self, rowIndex, columnIndex, color, key='bg'):
         """Set color"""
-        #print("setColorAt")
+        # print("setColorAt")
         name = self.getRecName(rowIndex)
         colname = self.getColumnName(columnIndex)
         if not name in self.colors[key]:
@@ -1054,7 +710,7 @@ class TableModel(object):
 
     def resetcolors(self):
         """Remove all color formatting"""
-        #print("resetcolors")
+        # print("resetcolors")
         self.colors={}
         self.colors['fg']={}
         self.colors['bg']={}
@@ -1062,7 +718,7 @@ class TableModel(object):
 
     def getRecColNames(self, rowIndex, ColIndex):
         """Returns the rec and col name as a tuple"""
-        #print("getRecColNames")
+        # print("getRecColNames")
         recname = self.getRecName(rowIndex)
         colname = self.getColumnName(ColIndex)
         return (recname, colname)
@@ -1070,7 +726,7 @@ class TableModel(object):
     def getRecAtRow(self, recname, colname, offset=1, dim='y'):
         """Get the record name at a specified offset in the current
            table from the record given, by using the current sort order"""
-        #print("getRecAtRow")
+        # print("getRecAtRow")
         thisrow = self.getRecordIndex(recname)
         thiscol = self.getColumnIndex(colname)
         #table goto next row
@@ -1082,26 +738,24 @@ class TableModel(object):
             ncol = thiscol + offset
 
         newrecname, newcolname = self.getRecColNames(nrow, ncol)
-        print ('recname, colname', recname, colname)
-        print ('thisrow, col', thisrow, thiscol)
         return newrecname, newcolname
 
     def appendtoFormula(self, formula, rowIndex, colIndex):
         """Add the input cell to the formula"""
-        #print("appendtoFormula")
+        # print("appendtoFormula")
         cellRec = getRecColNames(rowIndex, colIndex)
         formula.append(cellRec)
         return
 
     def doFormula(self, cellformula):
         """Evaluate the formula for a cell and return the result"""
-        #print("doFormula")
+        # print("doFormula")
         value = Formula.doFormula(cellformula, self.data)
         return value
 
     def copyFormula(self, cellval, row, col, offset=1, dim='y'):
         """Copy a formula down or across, using the provided offset"""
-        #print("copyFormula")
+        # print("copyFormula")
         import re
         frmla = Formula.getFormula(cellval)
         #print 'formula', frmla
@@ -1110,7 +764,6 @@ class TableModel(object):
         cells, ops = Formula.readExpression(frmla)
 
         for c in cells:
-            print (c)
             if type(c) is not ListType:
                 nc = c
             else:
@@ -1125,7 +778,7 @@ class TableModel(object):
         """Merge another table model with this one based on a key field,
            we only add records from the new model where the key is present
            in both models"""
-        #print("merge")
+        # print("merge")
         if fields == None: fields = model.columnNames
         for rec in self.reclist:
             if not key in self.data[rec]:
@@ -1145,7 +798,7 @@ class TableModel(object):
 
     def save(self, filename=None):
         """Save model to file"""
-        #print("save")
+        # print("save")
         if filename == None:
             return
         data = self.getData()
@@ -1156,7 +809,7 @@ class TableModel(object):
 
     def load(self, filename):
         """Load model from pickle file"""
-        #print("load")
+        # print("load")
         fd=open(filename,'rb')
         data = pickle.load(fd)
         self.setupModel(data)
@@ -1164,45 +817,11 @@ class TableModel(object):
 
     def copy(self):
         """Return a copy of this model"""
-        #print("copy")
+        # print("copy")
         M = TableModel()
         data = self.getData()
         M.setupModel(data)
         return M
-
-
-
-    '''
-    # added by me ******************************************************************************************************
-
-    class IntVar(Variable):
-        """Value holder for integer variables."""
-        _default = 0
-
-        def __init__(self, master=None, value=None, name=None):
-            """Construct an integer variable.
-
-            MASTER can be given as master widget.
-            VALUE is an optional value (defaults to 0)
-            NAME is an optional Tcl name (defaults to PY_VARnum).
-
-            If NAME matches an existing variable and VALUE is omitted
-            then the existing value is retained.
-            """
-            Variable.__init__(self, master, value, name)
-            self._tk = None
-
-        def get(self):
-            """Return the value of the variable as an integer."""
-            value = self._tk.globalgetvar(self._name)
-            try:
-                return self._tk.getint(value)
-            except (TypeError, TclError):
-                return int(self._tk.getdouble(value))
-
-    # ******************************************************************************************************************
-    '''
-
 
 
     def __repr__(self):

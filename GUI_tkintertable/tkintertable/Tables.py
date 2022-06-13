@@ -52,29 +52,14 @@ import copy
 import platform
 
 
-# added by me **********************************************************************************************************
-'''
-from tkinter import *
-from tkinter.ttk import *
-from main import MyTable
-from tkintertable.TableModels import TableModel
-from tkintertable.Tables_IO import TableImporter
-from tkintertable.Prefs import Preferences
-'''
 import json
 import my_globals
 from tkinter import simpledialog
 from tkinter import filedialog
 
-#dictcolObservableEvents = {'event1':1, 'event2':1, 'event3':1, 'event4':1}
-#dictcolControllableEvents = {'event1':1, 'event2':1, 'event3':1, 'event4':1}
-#dictcolFaultyEvents = {'event1':0, 'event2':0, 'event3':0, 'event4':0}
-
-# **********************************************************************************************************************
-
 
 def get_event_suffix(event_string):
-    '''returns a dict with bool infos about isObservable, isControllable and isFault and the suffix-clean name of the event'''
+    '''returns a dict with bool infos about isObservable, isControllable and isFault, and the name without suffix of the event'''
 
     dict_event_properties = {}
     if event_string.endswith("_uc_f_uo") or event_string.endswith("_uc_uo_f") or event_string.endswith(
@@ -103,11 +88,11 @@ def get_event_suffix(event_string):
     elif event_string.endswith("_uo_f"):
         event_string = event_string.replace("_uo_f", "")
         event_string.replace(" ", "")
-        dict_event_properties.update({"name": event_string, "isObservable": 0, "isControllable": 0, "isFault": 1})
+        dict_event_properties.update({"name": event_string, "isObservable": 0, "isControllable": 1, "isFault": 1})
     elif event_string.endswith("_f_uo"):
         event_string = event_string.replace("_f_uo", "")
         event_string.replace(" ", "")
-        dict_event_properties.update({"name": event_string, "isObservable": 0, "isControllable": 0, "isFault": 1})
+        dict_event_properties.update({"name": event_string, "isObservable": 0, "isControllable": 1, "isFault": 1})
     elif event_string.endswith("_uc"):
         event_string = event_string.replace("_uc", "")
         event_string.replace(" ", "")
@@ -136,6 +121,7 @@ class TableCanvas(Canvas):
                          width=width, height=height,
                          relief=GROOVE,
                          scrollregion=(0,0,300,200))
+        # print("TableCanvas__init__")
         self.parentframe = parent
         #get platform into a variable
         self.ostyp = self.checkOSType()
@@ -190,7 +176,7 @@ class TableCanvas(Canvas):
 
     def set_defaults(self):
         """Set default settings"""
-        #print("set_defaults")
+        # print("set_defaults")
         self.cellwidth=150
         self.maxcellwidth=200
         self.rowheight=20
@@ -217,14 +203,15 @@ class TableCanvas(Canvas):
     def setFontSize(self):
         """Set font size to match font, we need to get rid of fontsize as
             a separate variable?"""
-        #print("setFontSize")
+        # print("setFontSize")
         if hasattr(self, 'thefont') and type(self.thefont) is tuple:
             self.fontsize = self.thefont[1]
         return
 
     def mouse_wheel(self, event):
         """Handle mouse wheel scroll for windows"""
-        #print("mouse_wheel")
+        # print("mouse_wheel")
+        
         if event.num == 5 or event.delta == -120:
             event.widget.yview_scroll(1, UNITS)
             self.tablerowheader.yview_scroll(1, UNITS)
@@ -238,7 +225,7 @@ class TableCanvas(Canvas):
 
     def do_bindings(self):
         """Bind keys and mouse clicks, this can be overriden"""
-        #print("do_bindings")
+        # print("do_bindings")
         self.bind("<Button-1>",self.handle_left_click)
         self.bind("<Double-Button-1>",self.handle_double_click)
         self.bind("<Control-Button-1>", self.handle_left_ctrl_click)
@@ -279,18 +266,18 @@ class TableCanvas(Canvas):
 
     def getModel(self):
         """Get the current table model"""
-        #print("getModel")
+        # print("getModel")
         return self.model
 
     def setModel(self, model):
         """Set a new model - requires redraw to reflect changes"""
-        #print("setModel")
+        # print("setModel")
         self.model = model
         return
 
     def createfromDict(self, data):
         """Attempt to create a new model/table from a dict"""
-        #print("createfromDict")
+        # print("createfromDict")
         try:
             namefield=self.namefield
         except:
@@ -301,7 +288,7 @@ class TableCanvas(Canvas):
         return
 
     def createTableFrame(self, callback=None):
-        #print("createTableFrame")
+        # print("createTableFrame")
         self.show(callback)
         return
 
@@ -309,7 +296,7 @@ class TableCanvas(Canvas):
         """Adds column header and scrollbars and combines them with
            the current table adding all to the master frame provided in constructor.
            Table is then redrawn."""
-        #print("show")
+        # print("show")
         #Add the table and header to the frame
         self.tablerowheader = RowHeader(self.parentframe, self, width=self.rowheaderwidth)
         self.tablecolheader = ColumnHeader(self.parentframe, self)
@@ -337,7 +324,7 @@ class TableCanvas(Canvas):
 
     def getVisibleRegion(self):
         """Get visible region of table to display"""
-        #print("getVisibleRegion")
+        # print("getVisibleRegion")
         x1, y1 = self.canvasx(0), self.canvasy(0)
         #w, h = self.winfo_width(), self.winfo_height()
         w,h= self.master.winfo_width(), self.master.winfo_height()
@@ -348,7 +335,7 @@ class TableCanvas(Canvas):
 
     def getRowPosition(self, y):
         """Get current row from canvas position"""
-        #print("getRowPosition")
+        # print("getRowPosition")
         h = self.rowheight
         y_start = self.y_start
         row = (int(y)-y_start)/h
@@ -360,7 +347,7 @@ class TableCanvas(Canvas):
 
     def getColPosition(self, x):
         """Get current col from canvas position"""
-        #print("getColPosition")
+        # print("getColPosition")
         x_start = self.x_start
         w = self.cellwidth
         i=0
@@ -374,7 +361,7 @@ class TableCanvas(Canvas):
 
     def getVisibleRows(self, y1, y2):
         """Get the visible row range"""
-        #print("getVisibleRows")
+        # print("getVisibleRows")
         start = int(self.getRowPosition(y1))
         end = int(self.getRowPosition(y2))+1
         if end > self.rows:
@@ -383,7 +370,7 @@ class TableCanvas(Canvas):
 
     def getVisibleCols(self, x1, x2):
         """Get the visible column range"""
-        #print("getVisibleCols")
+        # print("getVisibleCols")
         start = self.getColPosition(x1)
         end = self.getColPosition(x2)+1
         if end > self.cols:
@@ -392,7 +379,7 @@ class TableCanvas(Canvas):
 
     def redrawVisible(self, event=None, callback=None):
         """Redraw the visible portion of the canvas"""
-        #print("redrawVisible")
+        # print("redrawVisible")
         model = self.model
         self.rows = self.model.getRowCount()
         self.cols = self.model.getColumnCount()
@@ -454,18 +441,18 @@ class TableCanvas(Canvas):
         return
 
     def redrawTable(self, event=None, callback=None):
-        #print("redrawTable")
+        # print("redrawTable")
         self.redrawVisible(event, callback)
         return
 
     def redraw(self, event=None, callback=None):
-        #print("redraw")
+        # print("redraw")
         self.redrawVisible(event, callback)
         return
 
     def redrawCell(self, row=None, col=None, recname=None, colname=None):
         """Redraw a specific cell only"""
-        #print("redrawCell")
+        # print("redrawCell")
         if row == None and recname != None:
             row = self.model.getRecordIndex(recname)
         if col == None and colname != None:
@@ -481,7 +468,7 @@ class TableCanvas(Canvas):
     def adjustColumnWidths(self):
         """Optimally adjust col widths to accomodate the longest entry
             in each column - usually only called  on first redraw"""
-        #print("adjustColumnWidths")
+        # print("adjustColumnWidths")
         #self.cols = self.model.getColumnCount()
         try:
             fontsize = self.thefont[1]
@@ -506,14 +493,14 @@ class TableCanvas(Canvas):
 
     def autoResizeColumns(self):
         """Automatically set nice column widths and draw"""
-        #print("autoResizeColumns")
+        # print("autoResizeColumns")
         self.adjustColumnWidths()
         self.redrawTable()
         return
 
     def setColPositions(self):
         """Determine current column grid positions"""
-        #print("setColPositions")
+        # print("setColPositions")
         self.col_positions=[]
         w=self.cellwidth
         x_pos=self.x_start
@@ -530,14 +517,14 @@ class TableCanvas(Canvas):
 
     def sortTable(self, columnIndex=0, columnName=None, reverse=0):
         """Set up sort order dict based on currently selected field"""
-        #print("sortTable")
+        # print("sortTable")
         self.model.setSortOrder(columnIndex, columnName, reverse)
         self.redrawTable()
         return
 
     def set_xviews(self,*args):
         """Set the xview of table and col header"""
-        #print("set_xviews")
+        # print("set_xviews")
         self.xview(*args)
         self.tablecolheader.xview(*args)
         self.redrawVisible()
@@ -545,7 +532,7 @@ class TableCanvas(Canvas):
 
     def set_yviews(self,*args):
         """Set the xview of table and row header"""
-        #print("set_yviews")
+        # print("set_yviews")
         self.yview(*args)
         self.tablerowheader.yview(*args)
         self.redrawVisible()
@@ -553,7 +540,7 @@ class TableCanvas(Canvas):
 
     def addRow(self, key=None, **kwargs):
         """Add new row"""
-        #print("addRow")
+        # print("addRow")
         key = self.model.addRow(key, **kwargs)
         self.redrawTable()
         self.setSelectedRow(self.model.getRecordIndex(key))
@@ -561,7 +548,7 @@ class TableCanvas(Canvas):
 
     def addRows(self, num=None):
         """Add new rows"""
-        #print("addRows")
+        # print("addRows")
         if num == None:
             num = simpledialog.askinteger("Now many rows?",
                                             "Number of rows:",initialvalue=1,
@@ -575,7 +562,7 @@ class TableCanvas(Canvas):
 
     def addColumn(self, newname=None):
         """Add a new column"""
-        #print("addColumn")
+        # print("addColumn")
         if newname == None:
 
             coltypes = self.getModel().getDefaultTypes()
@@ -640,11 +627,9 @@ class TableCanvas(Canvas):
 
         return
 
-
-
     def deleteRow(self):
         """Delete a row"""
-        #print("deleteRow")
+        # print("deleteRow")
         if len(self.multiplerowlist)>1:
             n = messagebox.askyesno("Delete",
                                       "Delete Selected Records?",
@@ -667,16 +652,9 @@ class TableCanvas(Canvas):
                 self.redrawTable()
         return
 
-
-
-
-
-
-
-    # added by me ******************************************************************************************************
     def setCurrentEventAsUnobservable(self):
         """Set the event as Unobservable - can be used in a table header"""
-        #print("setCurrentEventAsUnobservable")
+        # print("setCurrentEventAsUnobservable")
 
         n = messagebox.askyesno("Setting",
                                 "Unobservable Event?",
@@ -702,20 +680,9 @@ class TableCanvas(Canvas):
             self.model.relabel_Column(current_col_index, event_name+suffix)
             self.redraw()
 
-
-
-            #current_col_name = self.getSelectedColumn()
-            #print(current_col_index)
-            #print(str(self.model.getColumnLabel(current_col_index)))
-            #print("Observable events:", my_globals.dictcolObservableEvents)
-
-    # ******************************************************************************************************************
-
-    # added by me ******************************************************************************************************
     def setCurrentEventAsObservable(self):
         """Set the event as Observable - can be used in a table header"""
-        #print("setCurrentEventAsObservable")
-
+        # print("setCurrentEventAsObservable")
 
         n = messagebox.askyesno("Setting",
                                 "Observable Event?",
@@ -739,18 +706,9 @@ class TableCanvas(Canvas):
             self.model.relabel_Column(current_col_index, event_name+suffix)
             self.redraw()
 
-            #print(current_col_index)
-            #print(str(self.model.getColumnLabel(current_col_index)))
-            #print("Observable events:", my_globals.dictcolObservableEvents)
-
-
-    # ******************************************************************************************************************
-
-    # added by me ******************************************************************************************************
     def setCurrentEventAsUncontrollable(self):
         """Set the event as Uncontrollable - can be used in a table header"""
-        #print("setCurrentEventAsUncontrollable")
-
+        # print("setCurrentEventAsUncontrollable")
 
         n = messagebox.askyesno("Setting",
                                 "Uncontrollable Event?",
@@ -774,18 +732,9 @@ class TableCanvas(Canvas):
             self.model.relabel_Column(current_col_index, event_name+suffix)
             self.redraw()
 
-
-            #print(current_col_index)
-            #print(str(self.model.getColumnLabel(current_col_index)))
-            #print("Controllable events:", my_globals.dictcolControllableEvents)
-
-    # ******************************************************************************************************************
-
-    # added by me ******************************************************************************************************
     def setCurrentEventAsControllable(self):
         """Set the event as Controllable - can be used in a table header"""
-        #print("setCurrentEventAsControllable")
-
+        # print("setCurrentEventAsControllable")
 
         n = messagebox.askyesno("Setting",
                                 "Controllable Event?",
@@ -809,19 +758,9 @@ class TableCanvas(Canvas):
             self.model.relabel_Column(current_col_index, event_name+suffix)
             self.redraw()
 
-
-
-            #print(current_col_index)
-            #print(str(self.model.getColumnLabel(current_col_index)))
-            #print("Controllable events:", my_globals.dictcolControllableEvents)
-
-    # ******************************************************************************************************************
-
-
-    # added by me ******************************************************************************************************
     def setCurrentEventAsFaulty(self):
         """Set the event as Faulty - can be used in a table header"""
-        #print("setCurrentEventAsFaulty")
+        # print("setCurrentEventAsFaulty")
 
         n = messagebox.askyesno("Setting",
                                 "Faulty Event?",
@@ -846,18 +785,9 @@ class TableCanvas(Canvas):
             self.model.relabel_Column(current_col_index, event_name+suffix)
             self.redraw()
 
-
-
-            #print(current_col_index)
-            #print(str(self.model.getColumnLabel(current_col_index)))
-            #print("Faulty events:", my_globals.dictcolFaultyEvents)
-
-    # ******************************************************************************************************************
-
-    # added by me ******************************************************************************************************
     def setCurrentEventAsUnfaulty(self):
         """Set the event as Unfaulty - can be used in a table header"""
-        #print("setCurrentEventAsUnfaulty")
+        # print("setCurrentEventAsUnfaulty")
 
         n = messagebox.askyesno("Setting",
                                 "Observable Event?",
@@ -882,38 +812,18 @@ class TableCanvas(Canvas):
             self.model.relabel_Column(current_col_index, event_name+suffix)
             self.redraw()
 
-
-
-
-
-
-            #print(current_col_index)
-            #print(str(self.model.getColumnLabel(current_col_index)))
-            #print("Faulty events:", my_globals.dictcolFaultyEvents)
-
-
-    # ******************************************************************************************************************
-
-
-
-
     def deleteColumn(self):
         """Delete currently selected column"""
-        #print("deleteColumn")
+        # print("deleteColumn")
         n =  messagebox.askyesno("Delete",
                                    "Delete This Column?",
                                    parent=self.parentframe)
         if n:
             col = self.getSelectedColumn()
-            # added by me **********************************************************************************************
             previous_col_name = self.model.getColumnLabel(col)
-            #global dictcolObservableEvents
-            #global dictcolControllableEvents
-            #global dictcolFaultyEvents
             del my_globals.dictcolObservableEvents[str(previous_col_name)]
             del my_globals.dictcolControllableEvents[str(previous_col_name)]
             del my_globals.dictcolFaultyEvents[str(previous_col_name)]
-            # **********************************************************************************************************
             self.model.deleteColumn(col)
             self.currentcol = self.currentcol - 1
             self.redrawTable()
@@ -922,7 +832,7 @@ class TableCanvas(Canvas):
 
     def deleteCells(self, rows, cols):
         """Clear the cell contents"""
-        #print("deleteCells")
+        # print("deleteCells")
         n =  messagebox.askyesno("Clear Confirm",
                                    "Clear this data?",
                                    parent=self.parentframe)
@@ -937,7 +847,7 @@ class TableCanvas(Canvas):
 
     def clearData(self, evt=None):
         """Delete cells from gui event"""
-        #print("clearData")
+        # print("clearData")
         rows = self.multiplerowlist
         cols = self.multiplecollist
         self.deleteCells(rows, cols)
@@ -945,7 +855,7 @@ class TableCanvas(Canvas):
 
     def autoAddColumns(self, numcols=None):
         """Automatically add x number of cols"""
-        #print("autoAddColumns")
+        # print("autoAddColumns")
         if numcols == None:
             numcols = simpledialog.askinteger("Auto add rows.",
                                                 "How many empty columns?",
@@ -957,7 +867,7 @@ class TableCanvas(Canvas):
 
     def getRecordInfo(self, row):
         """Show the record for this row"""
-        #print("getRecordInfo")
+        # print("getRecordInfo")
         model = self.model
         #We need a custom dialog for allowing field entries here
         #absrow = self.get_AbsoluteRow(row)
@@ -967,7 +877,7 @@ class TableCanvas(Canvas):
 
     def findValue(self, searchstring=None, findagain=None):
         """Return the row/col for the input value"""
-        #print("findValue")
+        # print("findValue")
         if searchstring == None:
             searchstring = simpledialog.askstring("Search table.",
                                                "Enter search value",
@@ -1003,11 +913,11 @@ class TableCanvas(Canvas):
                         return row, col
         if found==0:
             self.delete('searchrect')
-            print ('nothing found')
+            print('nothing found')
             return None
 
     def showAll(self):
-        #print("showAll")
+        # print("showAll")
         self.model.filteredrecs = None
         self.filtered = False
         self.redrawTable()
@@ -1019,7 +929,7 @@ class TableCanvas(Canvas):
         class and that handles everything else.
         See filtering frame class for how searching is done.
         """
-        #print("doFilter")
+        # print("doFilter")
         if self.model==None:
             return
         names = self.filterframe.doFiltering(searchfunc=self.model.filterBy)
@@ -1031,7 +941,7 @@ class TableCanvas(Canvas):
 
     def createFilteringBar(self, parent=None, fields=None):
         """Add a filter frame"""
-        #print("createFilteringBar")
+        # print("createFilteringBar")
         if parent == None:
             parent = Toplevel()
             parent.title('Filter Records')
@@ -1046,7 +956,7 @@ class TableCanvas(Canvas):
         return parent
 
     def showFilteringBar(self):
-        #print("showFilteringBar")
+        # print("showFilteringBar")
         if not hasattr(self, 'filterwin') or self.filterwin == None:
             self.filterwin = self.createFilteringBar()
             self.filterwin.protocol("WM_DELETE_WINDOW", self.closeFilterFrame)
@@ -1056,7 +966,7 @@ class TableCanvas(Canvas):
 
     def closeFilterFrame(self):
         """Callback for closing filter frame"""
-        #print("closeFilterFrame")
+        # print("closeFilterFrame")
         self.filterwin.destroy()
         self.filterwin = None
         self.showAll()
@@ -1064,7 +974,7 @@ class TableCanvas(Canvas):
 
     def resizeColumn(self, col, width):
         """Resize a column by dragging"""
-        #print("resizeColumn")
+        # print("resizeColumn")
         #print 'resizing column', col
         #recalculate all col positions..
         colname=self.model.getColumnName(col)
@@ -1076,26 +986,26 @@ class TableCanvas(Canvas):
 
     def get_currentRecord(self):
         """Get the currently selected record"""
-        #print("get_currentRecord")
+        # print("get_currentRecord")
         rec = self.model.getRecordAtRow(self.currentrow)
         return rec
 
     def get_currentColName(self):
         """Get the currently selected record name"""
-        #print("get_currentColName")
-        #colname = self.mo(self.currentcol) # ORIGINAL *****************************************************************
-        colname = self.currentcol # added by me ************************************************************************
+        # print("get_currentColName")
+        #colname = self.mo(self.currentcol)
+        colname = self.currentcol
         return colname
 
     def get_currentRecordName(self):
         """Get the currently selected record name"""
-        #print("get_currentRecordName")
+        # print("get_currentRecordName")
         recname = self.model.getRecName(self.currentrow)
         return recname
 
     def get_selectedRecordNames(self):
         """Get a list of the current multiple selection, if any"""
-        #print("get_selectedRecordNames")
+        # print("get_selectedRecordNames")
         recnames=[]
         for row in self.multiplerowlist:
             recnames.append(self.model.getRecName(row))
@@ -1103,14 +1013,14 @@ class TableCanvas(Canvas):
 
     def get_currentRecCol(self):
         """Get the clicked rec and col names as a tuple"""
-        #print("get_currentRecCol")
+        # print("get_currentRecCol")
         recname = self.get_currentRecordName()
         colname = self.get_currentColName()
         return (recname, colname)
 
     def get_row_clicked(self, event):
         """get row where event on canvas occurs"""
-        #print("get_row_clicked")
+        # print("get_row_clicked")
         h=self.rowheight
         #get coord on canvas, not window, need this if scrolling
         y = int(self.canvasy(event.y))
@@ -1123,7 +1033,7 @@ class TableCanvas(Canvas):
 
     def get_col_clicked(self,event):
         """get col where event on canvas occurs"""
-        #print("get_col_clicked")
+        # print("get_col_clicked")
         w=self.cellwidth
         x = int(self.canvasx(event.x))
         x_start=self.x_start
@@ -1143,7 +1053,7 @@ class TableCanvas(Canvas):
 
     def setSelectedRow(self, row):
         """Set currently selected row and reset multiple row list"""
-        #print("setSelectedRow")
+        # print("setSelectedRow")
         self.currentrow = row
         self.multiplerowlist = []
         self.multiplerowlist.append(row)
@@ -1151,7 +1061,7 @@ class TableCanvas(Canvas):
 
     def setSelectedCol(self, col):
         """Set currently selected column"""
-        #print("setSelectedCol")
+        # print("setSelectedCol")
         self.currentcol = col
         self.multiplecollist = []
         self.multiplecollist.append(col)
@@ -1159,7 +1069,7 @@ class TableCanvas(Canvas):
 
     def setSelectedCells(self, startrow, endrow, startcol, endcol):
         """Set a block of cells selected"""
-        #print("setSelectedCells")
+        # print("setSelectedCells")
         self.currentrow = startrow
         self.currentcol = startcol
         if startrow < 0 or startcol < 0:
@@ -1174,17 +1084,17 @@ class TableCanvas(Canvas):
 
     def getSelectedRow(self):
         """Get currently selected row"""
-        #print("getSelectedRow")
+        # print("getSelectedRow")
         return self.currentrow
 
     def getSelectedColumn(self):
         """Get currently selected column"""
-        #print("getSelectedColumn")
+        # print("getSelectedColumn")
         return self.currentcol
 
     def select_All(self):
         """Select all rows and cells"""
-        #print("select_All")
+        # print("select_All")
         self.startrow = 0
         self.endrow = self.rows
         self.multiplerowlist = range(self.startrow,self.endrow)
@@ -1197,7 +1107,7 @@ class TableCanvas(Canvas):
 
     def getCellCoords(self, row, col):
         """Get x-y coordinates to drawing a cell in a given row/col"""
-        #print("getCellCoords")
+        # print("getCellCoords")
         colname=self.model.getColumnName(col)
         if colname in self.model.columnwidths:
             w=self.model.columnwidths[colname]
@@ -1217,7 +1127,7 @@ class TableCanvas(Canvas):
 
     def getCanvasPos(self, row, col):
         """Get the cell x-y coords as a fraction of canvas size"""
-        #print("getCanvasPos")
+        # print("getCanvasPos")
         if self.rows==0:
             return None, None
         x1,y1,x2,y2 = self.getCellCoords(row,col)
@@ -1227,7 +1137,7 @@ class TableCanvas(Canvas):
 
     def isInsideTable(self,x,y):
         """Returns true if x-y coord is inside table bounds"""
-        #print("isInsideTable")
+        # print("isInsideTable")
         if self.x_start < x < self.tablewidth and self.y_start < y < self.rows*self.rowheight:
             return 1
         else:
@@ -1236,12 +1146,12 @@ class TableCanvas(Canvas):
 
     def setRowHeight(self, h):
         """Set the row height"""
-        #print("setRowHeight")
+        # print("setRowHeight")
         self.rowheight = h
         return
 
     def clearSelected(self):
-        #print("clearSelected")
+        # print("clearSelected")
         self.delete('rect')
         self.delete('entry')
         self.delete('tooltip')
@@ -1254,7 +1164,7 @@ class TableCanvas(Canvas):
 
     def gotoprevRow(self):
         """Programmatically set previous row - eg. for button events"""
-        #print("gotoprevRow")
+        # print("gotoprevRow")
         self.clearSelected()
         current = self.getSelectedRow()
         self.setSelectedRow(current-1)
@@ -1272,7 +1182,7 @@ class TableCanvas(Canvas):
 
     def gotonextRow(self):
         """Programmatically set next row - eg. for button events"""
-        #print("gotonextRow")
+        # print("gotonextRow")
         self.clearSelected()
         current = self.getSelectedRow()
         self.setSelectedRow(current+1)
@@ -1290,7 +1200,7 @@ class TableCanvas(Canvas):
 
     def handle_left_click(self, event):
         """Respond to a single press"""
-        #print("handle_left_click")
+        # print("handle_left_click")
         #which row and column is the click inside?
         self.clearSelected()
         self.allrows = False
@@ -1331,13 +1241,13 @@ class TableCanvas(Canvas):
         return
 
     def handle_left_release(self,event):
-        #print("handle_left_release")
+        # print("handle_left_release")
         self.endrow = self.get_row_clicked(event)
         return
 
     def handle_left_ctrl_click(self, event):
         """Handle ctrl clicks for multiple row selections"""
-        #print("handle_left_ctrl_click")
+        # print("handle_left_ctrl_click")
         rowclicked = self.get_row_clicked(event)
         colclicked = self.get_col_clicked(event)
         if 0 <= rowclicked < self.rows and 0 <= colclicked < self.cols:
@@ -1354,14 +1264,14 @@ class TableCanvas(Canvas):
 
     def handle_left_shift_click(self, event):
         """Handle shift click, for selecting multiple rows"""
-        #print("handle_left_shift_click")
+        # print("handle_left_shift_click")
         #Has same effect as mouse drag, so just use same method
         self.handle_mouse_drag(event)
         return
 
     def handle_mouse_drag(self, event):
         """Handle mouse moved with button held down, multiple selections"""
-        #print("handle_mouse_drag")
+        # print("handle_mouse_drag")
         if hasattr(self, 'cellentry'):
             self.cellentry.destroy()
         rowover = self.get_row_clicked(event)
@@ -1407,7 +1317,7 @@ class TableCanvas(Canvas):
 
     def handle_arrow_keys(self, event):
         """Handle arrow keys press"""
-        #print("handle_arrow_keys")
+        # print("handle_arrow_keys")
         #print event.keysym
 
         row = self.get_row_clicked(event)
@@ -1461,12 +1371,12 @@ class TableCanvas(Canvas):
         cellvalue = model.getCellRecord(row, col)
         if Formula.isFormula(cellvalue):
             self.formula_Dialog(row, col, cellvalue)'''
-        #print("handle_double_click")
+        # print("handle_double_click")
         return
 
     def handle_right_click(self, event):
         """respond to a right click"""
-        #print("handle_right_click")
+        # print("handle_right_click")
         if self.read_only is True:
             return
         self.delete('tooltip')
@@ -1497,7 +1407,7 @@ class TableCanvas(Canvas):
 
     def handle_motion(self, event):
         """Handle mouse motion on table"""
-        #print("handle_motion")
+        # print("handle_motion")
         self.delete('tooltip')
         row = self.get_row_clicked(event)
         col = self.get_col_clicked(event)
@@ -1510,7 +1420,7 @@ class TableCanvas(Canvas):
 
     def gotonextCell(self, event):
         """Move highlighted cell to next cell in row or a new col"""
-        #print("gotonextCell")
+        # print("gotonextCell")
         #print 'next'
         if hasattr(self, 'cellentry'):
             self.cellentry.destroy()
@@ -1523,7 +1433,7 @@ class TableCanvas(Canvas):
 
     def movetoSelectedRow(self, row=None, recname=None):
         """Move to selected row, updating table"""
-        #print("movetoSelectedRow")
+        # print("movetoSelectedRow")
         row=self.model.getRecordIndex(recname)
         self.setSelectedRow(row)
         self.drawSelectedRow()
@@ -1534,7 +1444,7 @@ class TableCanvas(Canvas):
 
     def handleFormulaClick(self, row, col):
         """Do a dialog for cell formula entry"""
-        #print("handleFormulaClick")
+        # print("handleFormulaClick")
         model = self.getModel()
         cell = list(model.getRecColNames(row, col))
         #absrow = self.get_AbsoluteRow(row)
@@ -1545,7 +1455,7 @@ class TableCanvas(Canvas):
 
     def formula_Dialog(self, row, col, currformula=None):
         """Formula dialog"""
-        #print("formula_Dialog")
+        # print("formula_Dialog")
         self.mode = 'formula'
         print (self.mode)
         x1,y1,x2,y2 = self.getCellCoords(row,col)
@@ -1593,7 +1503,7 @@ class TableCanvas(Canvas):
 
     def convertFormulae(self, rows, cols=None):
         """Convert the formulas in the cells to their result values"""
-        #print("convertFormulae")
+        # print("convertFormulae")
         if len(self.multiplerowlist) == 0 or len(self.multiplecollist) == 0:
             return None
 
@@ -1609,13 +1519,13 @@ class TableCanvas(Canvas):
 
     def paste(self, event=None):
         """Copy from clipboard"""
-        #print("paste")
+        # print("paste")
         print (self.parentframe.clipboard_get())
         return
 
     def copyCell(self, rows, cols=None):
         """Copy cell contents to a temp internal clipboard"""
-        #print("copyCell")
+        # print("copyCell")
         row = rows[0]; col = cols[0]
         #absrow = self.get_AbsoluteRow(row)
         self.clipboard = copy.deepcopy(self.model.getCellRecord(row, col))
@@ -1623,7 +1533,7 @@ class TableCanvas(Canvas):
 
     def pasteCell(self, rows, cols=None):
         """Paste cell from internal clipboard"""
-        #print("pasteCell")
+        # print("pasteCell")
         row = rows[0]; col = cols[0]
         #absrow = self.get_AbsoluteRow(row)
         val = self.clipboard
@@ -1633,7 +1543,7 @@ class TableCanvas(Canvas):
 
     def copyColumns(self):
         """Copy current selected cols"""
-        #print("copyColumns")
+        # print("copyColumns")
         M = self.model
         coldata = {}
         for col in self.multiplecollist:
@@ -1643,7 +1553,7 @@ class TableCanvas(Canvas):
 
     def pasteColumns(self, coldata):
         """Paste new cols, overwrites existing names"""
-        #print("pasteColumns")
+        # print("pasteColumns")
         M = self.model
         for name in coldata:
             if name not in M.columnNames:
@@ -1661,7 +1571,7 @@ class TableCanvas(Canvas):
 
     def setcellColor(self, rows, cols=None, newColor=None, key=None, redraw=True):
         """Set the cell color for one or more cells and save it in the model color"""
-        #print("setcellColor")
+        # print("setcellColor")
         model = self.getModel()
         if newColor == None:
             ctuple, newColor = tkColorChooser.askcolor(title='pick a color')
@@ -1689,7 +1599,7 @@ class TableCanvas(Canvas):
     def popupMenu(self, event, rows=None, cols=None, outside=None):
         """Add left and right click behaviour for canvas, should not have to override
             this function, it will take its values from defined dicts in constructor"""
-        #print("popupMenu")
+        # print("popupMenu")
         defaultactions = {"Set Fill Color" : lambda : self.setcellColor(rows,cols,key='bg'),
                         "Set Text Color" : lambda : self.setcellColor(rows,cols,key='fg'),
                         "Copy" : lambda : self.copyCell(rows, cols),
@@ -1721,7 +1631,7 @@ class TableCanvas(Canvas):
         plotcommands = ['Plot Selected','Plot Options']
 
         def createSubMenu(parent, label, commands):
-            #print("createSubMenu")
+            # print("createSubMenu")
             menu = Menu(parent, tearoff = 0)
             popupmenu.add_cascade(label=label,menu=menu)
             for action in commands:
@@ -1730,7 +1640,7 @@ class TableCanvas(Canvas):
 
         def add_commands(fieldtype):
             """Add commands to popup menu for column type and specific cell"""
-            #print("add_commands")
+            # print("add_commands")
             functions = self.columnactions[fieldtype]
             for f in functions.keys():
                 func = getattr(self, functions[f])
@@ -1739,7 +1649,7 @@ class TableCanvas(Canvas):
 
         popupmenu = Menu(self, tearoff = 0)
         def popupFocusOut(event):
-            #print("popupFocusOut")
+            # print("popupFocusOut")
             popupmenu.unpost()
 
         if outside == None:
@@ -1777,7 +1687,7 @@ class TableCanvas(Canvas):
 
     def fillDown(self, rowlist, collist):
         """Fill down a column, or multiple columns"""
-        #print("fillDown")
+        # print("fillDown")
         model = self.model
         #absrow  = self.get_AbsoluteRow(rowlist[0])
         #remove first element as we don't want to overwrite it
@@ -1803,7 +1713,7 @@ class TableCanvas(Canvas):
 
     def fillAcross(self, collist, rowlist):
         """Fill across a row, or multiple rows"""
-        #print("fillAcross")
+        # print("fillAcross")
         model = self.model
         #row = self.currentrow
         #absrow  = self.get_AbsoluteRow(collist[0])
@@ -1827,7 +1737,7 @@ class TableCanvas(Canvas):
 
     def getSelectionValues(self):
         """Get values for current multiple cell selection"""
-        #print("getSelectionValues")
+        # print("getSelectionValues")
         if len(self.multiplerowlist) == 0 or len(self.multiplecollist) == 0:
             return None
         rows = self.multiplerowlist
@@ -1853,7 +1763,7 @@ class TableCanvas(Canvas):
 
     def plotSelected(self, graphtype='XY'):
         """Plot the selected data using pylab - if possible"""
-        #print("plotSelected")
+        # print("plotSelected")
         from .Plot import pylabPlotter
         if not hasattr(self, 'pyplot'):
             self.pyplot = pylabPlotter()
@@ -1880,7 +1790,7 @@ class TableCanvas(Canvas):
     def plotSetup(self):
         """Call pylab plot dialog setup, send data if we haven't already
             plotted"""
-        #print("plotSetup")
+        # print("plotSetup")
         from PylabPlot import pylabPlotter
         if not hasattr(self, 'pyplot'):
             self.pyplot = pylabPlotter()
@@ -1897,7 +1807,7 @@ class TableCanvas(Canvas):
 
     def getplotlabels(self):
         """Get labels for plot series from col labels"""
-        #print("getplotlabels")
+        # print("getplotlabels")
         pltlabels = []
         for col in self.multiplecollist:
             pltlabels.append(self.model.getColumnLabel(col))
@@ -1907,7 +1817,7 @@ class TableCanvas(Canvas):
 
     def drawGrid(self, startrow, endrow):
         """Draw the table grid lines"""
-        #print("drawGrid")
+        # print("drawGrid")
         self.delete('gridline','text')
         rows=len(self.rowrange)
         cols=self.cols
@@ -1931,7 +1841,7 @@ class TableCanvas(Canvas):
 
     def drawRowHeader(self):
         """User has clicked to select a cell"""
-        #print("drawRowHeader")
+        # print("drawRowHeader")
         self.delete('rowheader')
         x_start=self.x_start
         y_start=self.y_start
@@ -1954,7 +1864,7 @@ class TableCanvas(Canvas):
 
     def drawSelectedRect(self, row, col, color=None):
         """User has clicked to select a cell"""
-        #print("drawSelectedRect")
+        # print("drawSelectedRect")
         if col >= self.cols:
             return
         self.delete('currentrect')
@@ -1976,7 +1886,7 @@ class TableCanvas(Canvas):
 
     def drawRect(self, row, col, color=None, tag=None, delete=1):
         """Cell is colored"""
-        #print("drawRect")
+        # print("drawRect")
         if delete==1:
             self.delete('cellbg'+str(row)+str(col))
         if color==None or color==self.bgcolor:
@@ -1999,7 +1909,7 @@ class TableCanvas(Canvas):
 
     def drawCellEntry(self, row, col, text=None):
         """When the user single/double clicks on a text/number cell, bring up entry window"""
-        #print("drawCellEntry")
+        # print("drawCellEntry")
         if self.read_only == True:
             return
         #absrow = self.get_AbsoluteRow(row)
@@ -2061,7 +1971,7 @@ class TableCanvas(Canvas):
 
     def checkDataEntry(self,event=None):
         """do validation checks on data entry in a widget"""
-        #print("checkDataEntry")
+        # print("checkDataEntry")
         #if user enters commas, change to points
         import re
         value=event.widget.get()
@@ -2079,7 +1989,7 @@ class TableCanvas(Canvas):
 
     def drawText(self, row, col, celltxt, fgcolor=None, align=None):
         """Draw the text inside a cell area"""
-        #print("drawText")
+        # print("drawText")
         self.delete('celltext'+str(col)+'_'+str(row))
         h=self.rowheight
         x1,y1,x2,y2 = self.getCellCoords(row,col)
@@ -2153,7 +2063,7 @@ class TableCanvas(Canvas):
 
     def isLink(self, cell):
         """Checks if cell is a hyperlink, without using isinstance"""
-        #print("isLink")
+        # print("isLink")
         try:
             if 'link' in cell and type(cell) is dict:
                 return True
@@ -2162,7 +2072,7 @@ class TableCanvas(Canvas):
 
     def drawSelectedRow(self):
         """Draw the highlight rect for the currently selected row"""
-        #print("drawSelectedRow")
+        # print("drawSelectedRow")
         self.delete('rowrect')
         row = self.currentrow
         x1,y1,x2,y2 = self.getCellCoords(row,0)
@@ -2178,7 +2088,7 @@ class TableCanvas(Canvas):
 
     def drawSelectedCol(self, col=None, delete=1):
         """Draw an outline rect fot the current column selection"""
-        #print("drawSelectedCol")
+        # print("drawSelectedCol")
         if delete == 1:
             self.delete('colrect')
         if col == None:
@@ -2193,7 +2103,7 @@ class TableCanvas(Canvas):
 
     def drawMultipleRows(self, rowlist):
         """Draw more than one row selection"""
-        #print("drawMultipleRows")
+        # print("drawMultipleRows")
         self.delete('multiplesel')
         for r in rowlist:
             if r not in self.visiblerows or r > self.rows-1:
@@ -2210,7 +2120,7 @@ class TableCanvas(Canvas):
 
     def drawMultipleCells(self):
         """Draw an outline box for multiple cell selection"""
-        #print("drawMultipleCells")
+        # print("drawMultipleCells")
         self.delete('multicellrect')
         rows = self.multiplerowlist
         cols = self.multiplecollist
@@ -2225,7 +2135,7 @@ class TableCanvas(Canvas):
 
     def drawTooltip(self, row, col):
         """Draw a tooltip showing contents of cell"""
-        #print("drawTooltip")
+        # print("drawTooltip")
         x1,y1,x2,y2 = self.getCellCoords(row,col)
         w=x2-x1
         text = self.model.getValueAt(row,col)
@@ -2256,14 +2166,14 @@ class TableCanvas(Canvas):
         return
 
     def setbgcolor(self):
-        #print("setbgcolor")
+        # print("setbgcolor")
         clr = self.getaColor(self.bgcolor)
         if clr != None:
             self.bgcolor = clr
         return
 
     def setgrid_color(self):
-        #print("setgrid_color")
+        # print("setgrid_color")
         clr = self.getaColor(self.grid_color)
         if clr != None:
             self.grid_color = clr
@@ -2271,14 +2181,14 @@ class TableCanvas(Canvas):
         return
 
     def setrowselectedcolor(self):
-        #print("setrowselectedcolor")
+        # print("setrowselectedcolor")
         clr = self.getaColor(self.rowselectedcolor)
         if clr != None:
             self.rowselectedcolor = clr
         return
 
     def getaColor(self, oldcolor):
-        #print("getaColor")
+        # print("getaColor")
         ctuple, newcolor = tkColorChooser.askcolor(title='pick a color', initialcolor=oldcolor,
                                                    parent=self.parentframe)
         if ctuple == None:
@@ -2289,7 +2199,7 @@ class TableCanvas(Canvas):
 
     def showtablePrefs(self, prefs=None):
         """Show table options dialog using an instance of prefs"""
-        #print("showtablePrefs")
+        # print("showtablePrefs")
         #self.prefs = prefs
         if self.prefs == None:
             self.loadPrefs()
@@ -2418,7 +2328,7 @@ class TableCanvas(Canvas):
         return self.prefswindow
 
     def getFonts(self):
-        #print("getFonts")
+        # print("getFonts")
         fonts = set(list(font.families()))
         fonts = sorted(list(fonts))
         return fonts
@@ -2426,14 +2336,14 @@ class TableCanvas(Canvas):
     def loadPrefs(self, prefs=None):
         """Load table specific prefs from the prefs instance used
            if they are not present, create them."""
-        #print("loadPrefs")
+        # print("loadPrefs")
         if prefs == None:
             prefs=Preferences('Table',{'check_for_update':1})
         self.prefs = prefs
         defaultprefs = {'horizlines':self.horizlines, 'vertlines':self.vertlines,
                         'alternaterows':self.alternaterows,
                         'rowheight':self.rowheight,
-                        'cellwidth':100,
+                        'cellwidth':120,
                         'autoresizecols': 0,
                         'align': 'w',
                         'celltextsize':11, 'celltextfont':'Arial',
@@ -2483,7 +2393,7 @@ class TableCanvas(Canvas):
 
     def savePrefs(self):
         """Save and set the prefs"""
-        #print("savePrefs")
+        # print("savePrefs")
         try:
             self.prefs.set('horizlines', self.horizlinesvar.get())
             self.horizlines = self.horizlinesvar.get()
@@ -2517,13 +2427,13 @@ class TableCanvas(Canvas):
 
     def applyPrefs(self):
         """Apply prefs to the table by redrawing"""
-        #print("applyPrefs")
+        # print("applyPrefs")
         self.savePrefs()
         self.redrawTable()
         return
 
     def AskForColorButton(self, frame, text, func):
-        #print("AskForColorButton")
+        # print("AskForColorButton")
         def SetColor():
             ctuple, variable = tkColorChooser.askcolor(title='pick a color',
                                                        initialcolor=self.bgcolor)
@@ -2534,7 +2444,7 @@ class TableCanvas(Canvas):
 
     def check_hyperlink(self,event=None):
         """Check if a hyperlink was clicked"""
-        #print("check_hyperlink")
+        # print("check_hyperlink")
         row = self.get_row_clicked(event)
         col = self.get_col_clicked(event)
         #absrow = self.get_AbsoluteRow(row)
@@ -2549,7 +2459,7 @@ class TableCanvas(Canvas):
 
     def show_progressbar(self,message=None):
         """Show progress bar window for loading of data"""
-        #print("show_progressbar")
+        # print("show_progressbar")
         progress_win=Toplevel() # Open a new window
         progress_win.title("Please Wait")
         #progress_win.geometry('+%d+%d' %(self.parentframe.rootx+200,self.parentframe.rooty+200))
@@ -2571,7 +2481,7 @@ class TableCanvas(Canvas):
 
     def updateModel(self, model):
         """Call this method to update the table model"""
-        #print("updateModel")
+        # print("updateModel")
         self.model = model
         self.rows = self.model.getRowCount()
         self.cols = self.model.getColumnCount()
@@ -2583,7 +2493,7 @@ class TableCanvas(Canvas):
 
     def new(self):
         """Clears all the data and makes a new table"""
-        #print("new")
+        # print("new")
         mpDlg = MultipleValDialog(title='Create new table',
                                     initialvalues=(10, 4),
                                     labels=('rows','columns'),
@@ -2599,7 +2509,7 @@ class TableCanvas(Canvas):
 
     def load(self, filename=None):
         """load from a file"""
-        #print("load")
+        # print("load")
         if filename == None:
             filename = filedialog.askopenfilename(parent=self.master,
                                                       defaultextension='.table',
@@ -2616,7 +2526,7 @@ class TableCanvas(Canvas):
 
     def save(self, filename=None):
         """Save model to pickle file"""
-        #print("save")
+        # print("save")
         if filename == None:
             filename = filedialog.asksaveasfilename(parent=self.master,
                                                         defaultextension='.table',
@@ -2628,12 +2538,12 @@ class TableCanvas(Canvas):
         return
 
     def importTable(self):
-        #print("importTable")
+        # print("importTable")
         self.importCSV()
 
     def importCSV(self, filename=None, sep=','):
         """Import from csv file"""
-        #print("importCSV")
+        # print("importCSV")
         if filename is None:
             from .Tables_IO import TableImporter
             importer = TableImporter()
@@ -2649,7 +2559,7 @@ class TableCanvas(Canvas):
 
     def exportTable(self, filename=None):
         """Do a simple export of the cell contents to csv"""
-        #print("exportTable")
+        # print("exportTable")
         from .Tables_IO import TableExporter
         exporter = TableExporter()
         exporter.ExportTableData(self)
@@ -2658,7 +2568,7 @@ class TableCanvas(Canvas):
     @classmethod
     def checkOSType(cls):
         """Check the OS we are in"""
-        #print("checkOSType")
+        # print("checkOSType")
         ostyp=''
         var_s=['OSTYPE','OS']
         for var in var_s:
@@ -2688,7 +2598,7 @@ class TableCanvas(Canvas):
 
     def getGeometry(self, frame):
         """Get frame geometry"""
-        #print("getGeometry")
+        # print("getGeometry")
         return frame.winfo_rootx(), frame.winfo_rooty(), frame.winfo_width(), frame.winfo_height()
 
 class ColumnHeader(Canvas):
@@ -2696,7 +2606,7 @@ class ColumnHeader(Canvas):
         and column names from the table model."""
 
     def __init__(self, parent=None, table=None):
-        #print("ColumnHeader__init__")
+        # print("ColumnHeader__init__")
         Canvas.__init__(self, parent, bg='gray25', width=500, height=20)
         self.thefont='Arial 14'
         if table != None:
@@ -2721,7 +2631,7 @@ class ColumnHeader(Canvas):
         return
 
     def redraw(self):
-        #print("redraw")
+        # print("redraw")
         cols = self.model.getColumnCount()
         self.tablewidth=self.table.tablewidth
         self.configure(scrollregion=(0,0, self.table.tablewidth+self.table.x_start, self.height))
@@ -2767,7 +2677,7 @@ class ColumnHeader(Canvas):
 
     def handle_left_click(self,event):
         """Does cell selection when mouse is clicked on canvas"""
-        #print("handle_left_click")
+        # print("handle_left_click")
         self.delete('rect')
         self.table.delete('entry')
         self.table.delete('multicellrect')
@@ -2793,7 +2703,7 @@ class ColumnHeader(Canvas):
 
     def handle_left_release(self,event):
         """When mouse released implement resize or col move"""
-        #print("handle_left_release")
+        # print("handle_left_release")
         self.delete('dragrect')
         if self.atdivider == 1:
             #col = self.table.get_col_clicked(event)
@@ -2821,7 +2731,7 @@ class ColumnHeader(Canvas):
 
     def handle_mouse_drag(self, event):
         """Handle column drag, will be either to move cols or resize"""
-        #print("handle_mouse_drag")
+        # print("handle_mouse_drag")
         x=int(self.canvasx(event.x))
         if self.atdivider == 1:
             self.table.delete('resizeline')
@@ -2844,7 +2754,7 @@ class ColumnHeader(Canvas):
     def within(self, val, l, d):
         """Utility funtion to see if val is within d of any
             items in the list l"""
-        #print("within")
+        # print("within")
         for v in l:
             if abs(val-v) <= d:
                 return 1
@@ -2852,7 +2762,7 @@ class ColumnHeader(Canvas):
 
     def handle_mouse_move(self, event):
         """Handle mouse moved in header, if near divider draw resize symbol"""
-        #print("handle_mouse_move")
+        # print("handle_mouse_move")
         self.delete('resizesymbol')
         w=self.table.cellwidth
         h=self.height
@@ -2874,20 +2784,20 @@ class ColumnHeader(Canvas):
 
     def handle_right_click(self, event):
         """respond to a right click"""
-        #print("handle_right_click")
+        # print("handle_right_click")
         self.handle_left_click(event)
         if self.table.read_only == False:
             self.rightmenu = self.popupMenu(event)
         return
 
     def handle_right_release(self, event):
-        #print("handle_right_release")
+        # print("handle_right_release")
         self.rightmenu.destroy()
         return
 
     def handle_left_shift_click(self, event):
         """Handle shift click, for selecting multiple cols"""
-        #print("handle_left_shift_click")
+        # print("handle_left_shift_click")
         self.table.delete('colrect')
         self.delete('rect')
         currcol = self.table.currentcol
@@ -2907,7 +2817,7 @@ class ColumnHeader(Canvas):
 
     def popupMenu(self, event):
         """Add left and right click behaviour for column header"""
-        #print("popupMenu")
+        # print("popupMenu")
         colname = self.model.columnNames[self.table.currentcol]
         collabel = self.model.columnlabels[colname]
         currcol = self.table.currentcol
@@ -2961,14 +2871,14 @@ class ColumnHeader(Canvas):
         else:
             previous_col_name.replace(" ", "")
 
-        print("previous_col_name: ", previous_col_name)
+        # print("previous_col_name: ", previous_col_name)
 
         current_observable_value = my_globals.dictcolObservableEvents.get(str(previous_col_name))
         current_controllable_value = my_globals.dictcolControllableEvents.get(str(previous_col_name))
         current_faulty_value = my_globals.dictcolFaultyEvents.get(str(previous_col_name))
-        print("current_observable_value: ", current_observable_value)
-        print("current_controllable_value: ", current_controllable_value)
-        print("current_faulty_value: ", current_faulty_value)
+        # print("current_observable_value: ", current_observable_value)
+        # print("current_controllable_value: ", current_controllable_value)
+        # print("current_faulty_value: ", current_faulty_value)
         label_Obs = ""
         label_Unobs = ""
         label_Contr = ""
@@ -3007,57 +2917,6 @@ class ColumnHeader(Canvas):
         popupmenu.add_command(label="Set as Uncontrollable"+label_Uncontr, command=lambda: self.table.setCurrentEventAsUncontrollable())
         popupmenu.add_command(label="Set as Faulty"+label_Faulty, command=lambda: self.table.setCurrentEventAsFaulty())
         popupmenu.add_command(label="Set as Unfaulty"+label_Unfaulty, command=lambda: self.table.setCurrentEventAsUnfaulty())
-        '''
-        popupmenu.add_command(label="Set as Observable"+label_Obs, command=lambda: my_globals.setCurrentEventAsObservable(self.table))
-        popupmenu.add_command(label="Set as Unobservable"+label_Unobs, command=lambda: my_globals.setCurrentEventAsUnobservable(self.table))
-        popupmenu.add_command(label="Set as Controllable"+label_Contr, command=lambda: my_globals.setCurrentEventAsControllable(self.table))
-        popupmenu.add_command(label="Set as Uncontrollable"+label_Uncontr, command=lambda: my_globals.setCurrentEventAsUncontrollable(self.table))
-        popupmenu.add_command(label="Set as Faulty"+label_Faulty, command=lambda: my_globals.setCurrentEventAsFaulty(self.table))
-        popupmenu.add_command(label="Set as Unfaulty"+label_Unfaulty, command=lambda: my_globals.setCurrentEventAsUnfaulty(self.table))
-        '''
-        # added by me **************************************************************************************************
-        # dictcolObservableEvents
-        #global dictcolControllableEvents
-        #global dictcolFaultyEvents
-        ''' 
-        col = self.table.currentcol
-        previous_col_name = self.model.getColumnLabel(col)
-        current_observable_value = my_globals.dictcolObservableEvents.get(str(previous_col_name))
-        current_controllable_value = my_globals.dictcolControllableEvents.get(str(previous_col_name))
-        current_faulty_value = my_globals.dictcolFaultyEvents.get(str(previous_col_name))
-        label_Obs = ""
-        label_Unobs = ""
-        label_Contr = ""
-        label_Uncontr = ""
-        label_Faulty = ""
-        label_Unfaulty = ""
-        if(current_observable_value==1):
-            label_Obs = "(It is)"
-            label_Unobs = "(It's not)"
-        else:
-            label_Obs = "(It's not)"
-            label_Unobs = "(It is)"
-        if(current_controllable_value==1):
-            label_Contr = "(It is)"
-            label_Uncontr = "(It's not)"
-        else:
-            label_Contr = "(It's not)"
-            label_Uncontr = "(It is)"
-        if(current_faulty_value==1):
-            label_Faulty = "(It is)"
-            label_Unfaulty = "(It's not)"
-        else:
-            label_Faulty = "(It's not)"
-            label_Unfaulty = "(It is)"
-
-        popupmenu.add_command(label="Set as Observable"+label_Obs, command=lambda: my_globals.setCurrentEventAsObservable(self.table))
-        popupmenu.add_command(label="Set as Unobservable"+label_Unobs, command=lambda: my_globals.setCurrentEventAsUnobservable(self.table))
-        popupmenu.add_command(label="Set as Controllable"+label_Contr, command=lambda: my_globals.setCurrentEventAsControllable(self.table))
-        popupmenu.add_command(label="Set as Uncontrollable"+label_Uncontr, command=lambda: my_globals.setCurrentEventAsUncontrollable(self.table))
-        popupmenu.add_command(label="Set as Faulty"+label_Faulty, command=lambda: my_globals.setCurrentEventAsFaulty(self.table))
-        popupmenu.add_command(label="Set as Unfaulty"+label_Unfaulty, command=lambda: my_globals.setCurrentEventAsUnfaulty(self.table))
-        '''
-        # **************************************************************************************************************
 
         popupmenu.bind("<FocusOut>", popupFocusOut)
         #self.bind("<Button-3>", popupFocusOut)
@@ -3065,52 +2924,10 @@ class ColumnHeader(Canvas):
         popupmenu.post(event.x_root, event.y_root)
         return popupmenu
 
-
-    '''
     def relabel_Column(self):
-        #print("relabel_Column")
-        col=self.table.currentcol
-        # added by me **************************************************************************************************
-        #global dictcolObservableEvents
-        #global dictcolControllableEvents
-        #global dictcolFaultyEvents
-        previous_col_name = self.model.getColumnLabel(col)
-        current_observable_value = my_globals.dictcolObservableEvents.get(str(previous_col_name))
-        current_controllable_value = my_globals.dictcolControllableEvents.get(str(previous_col_name))
-        current_faulty_value = my_globals.dictcolFaultyEvents.get(str(previous_col_name))
-
-        ##print("previous_col_name", previous_col_name)
-        # **************************************************************************************************************
-
-        ans = simpledialog.askstring("New column name?", "Enter new name:")
-        if ans !=None:
-            if ans == '':
-                messagebox.showwarning("Error", "Name should not be blank.")
-                return
-            else:
-                self.model.relabel_Column(col, ans)
-                self.redraw()
-
-        # added by me **************************************************************************************************
-        my_globals.dictcolObservableEvents.update({str(ans): current_observable_value})
-        my_globals.dictcolControllableEvents.update({str(ans): current_controllable_value})
-        my_globals.dictcolFaultyEvents.update({str(ans): current_faulty_value})
-        del my_globals.dictcolObservableEvents[str(previous_col_name)]
-        del my_globals.dictcolControllableEvents[str(previous_col_name)]
-        del my_globals.dictcolFaultyEvents[str(previous_col_name)]
-        # **************************************************************************************************************
-        
-
-        return
-    '''
-    
-    
-
-    def relabel_Column(self):
-        #print("relabel_Column")
+        # print("relabel_Column")
         col=self.table.currentcol
         previous_col_name = self.model.getColumnLabel(col)
-        # added by me **************************************************************************************************
 
         ans = simpledialog.askstring("New column name?", "Enter new name:")
         if ans !=None:
@@ -3192,19 +3009,15 @@ class ColumnHeader(Canvas):
                 my_globals.dictcolFaultyEvents.update({dict_ans_properties[ans]: dict_ans_properties["properties"]["isFault"]})
 
 
-                print("my_globals.dictcolObservableEvents: ", my_globals.dictcolObservableEvents)
-                print("my_globals.dictcolControllableEvents: ", my_globals.dictcolControllableEvents)
-                print("my_globals.dictcolFaultyEvents: ", my_globals.dictcolFaultyEvents)
+                # print("my_globals.dictcolObservableEvents: ", my_globals.dictcolObservableEvents)
+                # print("my_globals.dictcolControllableEvents: ", my_globals.dictcolControllableEvents)
+                # print("my_globals.dictcolFaultyEvents: ", my_globals.dictcolFaultyEvents)
 
                 return
 
-
-
-
-
     def draw_resize_symbol(self, col):
         """Draw a symbol to show that col can be resized when mouse here"""
-        #print("draw_resize_symbol")
+        # print("draw_resize_symbol")
         self.delete('resizesymbol')
         w=self.table.cellwidth
         h=self.height
@@ -3222,7 +3035,7 @@ class ColumnHeader(Canvas):
 
     def drawRect(self,col, tag=None, color=None, outline=None, delete=1):
         """User has clicked to select a col"""
-        #print("drawRect")
+        # print("drawRect")
         if tag==None:
             tag='rect'
         if color==None:
@@ -3250,7 +3063,7 @@ class RowHeader(Canvas):
 
     def __init__(self, parent=None, table=None, width=40):
         Canvas.__init__(self, parent, bg='gray75', width=width, height=None)
-        #print("RowHeader__init__")
+        # print("RowHeader__init__")
         if table != None:
             self.table = table
             self.width = width
@@ -3269,7 +3082,7 @@ class RowHeader(Canvas):
 
     def redraw(self, align='w', showkeys=False):
         """Redraw row header"""
-        #print("redraw")
+        # print("redraw")
         self.height = self.table.rowheight * self.table.rows+10
         self.configure(scrollregion=(0,0, self.width, self.height))
         self.delete('rowheader','text')
@@ -3301,18 +3114,18 @@ class RowHeader(Canvas):
 
     def setWidth(self, w):
         """Set width"""
-        #print("setWidth")
+        # print("setWidth")
         self.width = w
         self.redraw()
         return
 
     def clearSelected(self):
-        #print("clearSelected")
+        # print("clearSelected")
         self.delete('rect')
         return
 
     def handle_left_click(self, event):
-        #print("handle_left_click")
+        # print("handle_left_click")
         rowclicked = self.table.get_row_clicked(event)
         self.startrow = rowclicked
         if 0 <= rowclicked < self.table.rows:
@@ -3326,12 +3139,12 @@ class RowHeader(Canvas):
         return
 
     def handle_left_release(self,event):
-        #print("handle_left_release")
+        # print("handle_left_release")
         return
 
     def handle_left_ctrl_click(self, event):
         """Handle ctrl clicks - for multiple row selections"""
-        #print("handle_left_ctrl_click")
+        # print("handle_left_ctrl_click")
         rowclicked = self.table.get_row_clicked(event)
         multirowlist = self.table.multiplerowlist
         if 0 <= rowclicked < self.table.rows:
@@ -3344,7 +3157,7 @@ class RowHeader(Canvas):
         return
 
     def handle_right_click(self,event):
-        #print("handle_right_click")
+        # print("handle_right_click")
         return
 
     '''def handle_mouse_drag(self, event):
@@ -3356,7 +3169,7 @@ class RowHeader(Canvas):
 
     def handle_mouse_drag(self, event):
         """Handle mouse moved with button held down, multiple selections"""
-        #print("handle_mouse_drag")
+        # print("handle_mouse_drag")
         if hasattr(self, 'cellentry'):
             self.cellentry.destroy()
         rowover = self.table.get_row_clicked(event)
@@ -3385,7 +3198,7 @@ class RowHeader(Canvas):
 
     def drawSelectedRows(self, rows=None):
         """Draw selected rows, accepts a list or integer"""
-        #print("drawSelectedRows")
+        # print("drawSelectedRows")
         self.delete('rect')
         if type(rows) is not list:
             rowlist=[]
@@ -3400,7 +3213,7 @@ class RowHeader(Canvas):
 
     def drawRect(self, row=None, tag=None, color=None, outline=None, delete=1):
         """Draw a rect representing row selection"""
-        #print("drawRect")
+        # print("drawRect")
         if tag==None:
             tag='rect'
         if color==None:
@@ -3425,7 +3238,7 @@ class AutoScrollbar(Scrollbar):
        works if you use the grid geometry manager."""
 
     def set(self, lo, hi):
-        #print("set")
+        # print("set")
         if float(lo) <= 0.0 and float(hi) >= 1.0:
             # grid_remove is currently missing from Tkinter!
             self.tk.call("grid", "remove", self)

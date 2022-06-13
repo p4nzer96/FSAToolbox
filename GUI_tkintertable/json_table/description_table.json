@@ -1,0 +1,223 @@
+{
+    "X": {
+        "x0": {
+            "isInitial": 1,
+            "isFinal": 0,
+            "isForbidden": 0
+        },
+        "x1": {
+            "isInitial": 0,
+            "isFinal": 0,
+            "isForbidden": 0
+        },
+        "x2": {
+            "isInitial": 0,
+            "isFinal": 0,
+            "isForbidden": 0
+        },
+        "x3": {
+            "isInitial": 0,
+            "isFinal": 0,
+            "isForbidden": 0
+        },
+        "x4": {
+            "isInitial": 0,
+            "isFinal": 0,
+            "isForbidden": 1
+        },
+        "x5": {
+            "isInitial": 0,
+            "isFinal": 0,
+            "isForbidden": 1
+        },
+        "x6": {
+            "isInitial": 0,
+            "isFinal": 0,
+            "isForbidden": 0
+        },
+        "x7": {
+            "isInitial": 0,
+            "isFinal": 1,
+            "isForbidden": 0
+        },
+        "x8": {
+            "isInitial": 0,
+            "isFinal": 0,
+            "isForbidden": 0
+        },
+        "x9": {
+            "isInitial": 0,
+            "isFinal": 0,
+            "isForbidden": 0
+        },
+        "x10": {
+            "isInitial": 0,
+            "isFinal": 1,
+            "isForbidden": 0
+        },
+        "x11": {
+            "isInitial": 0,
+            "isFinal": 0,
+            "isForbidden": 0
+        },
+        "x12": {
+            "isInitial": 0,
+            "isFinal": 0,
+            "isForbidden": 0
+        }
+    },
+    "E": {
+        "eps": {
+            "isObservable": 1,
+            "isControllable": 1,
+            "isFault": 0
+        },
+        "b": {
+            "isObservable": 1,
+            "isControllable": 1,
+            "isFault": 1
+        },
+        "a": {
+            "isObservable": 0,
+            "isControllable": 1,
+            "isFault": 0
+        },
+        "c": {
+            "isObservable": 0,
+            "isControllable": 0,
+            "isFault": 1
+        },
+        "d": {
+            "isObservable": 0,
+            "isControllable": 0,
+            "isFault": 0
+        }
+    },
+    "delta": {
+        "0": {
+            "start": "x0",
+            "name": "eps",
+            "ends": "x1"
+        },
+        "1": {
+            "start": "x0",
+            "name": "eps",
+            "ends": "x2"
+        },
+        "2": {
+            "start": "x0",
+            "name": "b",
+            "ends": "x0"
+        },
+        "3": {
+            "start": "x1",
+            "name": "a",
+            "ends": "x4"
+        },
+        "4": {
+            "start": "x1",
+            "name": "a",
+            "ends": "x2"
+        },
+        "5": {
+            "start": "x1",
+            "name": "b",
+            "ends": "x3"
+        },
+        "6": {
+            "start": "x2",
+            "name": "b",
+            "ends": "x5"
+        },
+        "7": {
+            "start": "x2",
+            "name": "b",
+            "ends": "x4"
+        },
+        "8": {
+            "start": "x3",
+            "name": "eps",
+            "ends": "x7"
+        },
+        "9": {
+            "start": "x3",
+            "name": "eps",
+            "ends": "x3"
+        },
+        "10": {
+            "start": "x3",
+            "name": "c",
+            "ends": "x4"
+        },
+        "11": {
+            "start": "x4",
+            "name": "c",
+            "ends": "x8"
+        },
+        "12": {
+            "start": "x5",
+            "name": "a",
+            "ends": "x12"
+        },
+        "13": {
+            "start": "x5",
+            "name": "a",
+            "ends": "x2"
+        },
+        "14": {
+            "start": "x5",
+            "name": "a",
+            "ends": "x5"
+        },
+        "15": {
+            "start": "x5",
+            "name": "a",
+            "ends": "x0"
+        },
+        "16": {
+            "start": "x6",
+            "name": "a",
+            "ends": "x7"
+        },
+        "17": {
+            "start": "x6",
+            "name": "a",
+            "ends": "x0"
+        },
+        "18": {
+            "start": "x7",
+            "name": "d",
+            "ends": "x7"
+        },
+        "19": {
+            "start": "x8",
+            "name": "b",
+            "ends": "x11"
+        },
+        "20": {
+            "start": "x8",
+            "name": "c",
+            "ends": "x9"
+        },
+        "21": {
+            "start": "x10",
+            "name": "a",
+            "ends": "x9"
+        },
+        "22": {
+            "start": "x10",
+            "name": "a",
+            "ends": "x10"
+        },
+        "23": {
+            "start": "x11",
+            "name": "c",
+            "ends": "x10"
+        },
+        "24": {
+            "start": "x12",
+            "name": "a",
+            "ends": "x5"
+        }
+    }
+}
