@@ -67,7 +67,7 @@ def addevent(args,eventslst,fsalst,path):
 def rmevent(args,eventslst,fsalst,path):
     if('-h' in args):
         print("This functions removes an event to a fsa")
-        print("Usage:\n     rmevent fsa_name event_name (ex: rmevent G0 x0)")
+        print("Usage:\n     rmevent fsa_name event_name (ex: rmevent G0 a)")
         return
 
     if(len(args)<2):
@@ -109,7 +109,7 @@ def rmtrans(args,eventslst,fsalst,path):
         return
 
     if(len(args)<2):
-        print("Not enough arguments provided, type \"rmevent -h\" to help")
+        print("Not enough arguments provided, type \"rmtrans -h\" to help")
         return
     
     if(args[0] not in fsalst):

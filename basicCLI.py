@@ -1,5 +1,6 @@
 import shlex
 import os
+import colorama
 from fsatoolbox import *
 
 from basic_CLI.checkevents import checkevents, updateevents
@@ -14,6 +15,7 @@ from basic_CLI.observer import observer
 from basic_CLI.super import supervisor
 from basic_CLI.exth import exth
 from termcolor import colored
+
 
 from basic_CLI.analysis import reachability, coreachability, blocking, trim, dead, reverse
 
@@ -180,6 +182,7 @@ def editevent(args, eventslst, fsalst, path):
 
     updateevents(eventslst, fsalst)
 
+colorama.init() #fix for colored text with old cmd
 
 # list of loaded FSA
 fsalst = dict()
@@ -225,13 +228,24 @@ path = home + '/Documents/FsaToolbox'
 if not os.path.exists(path):
     os.makedirs(path)
 
+#splashscreen
+forg_color='green'
+back_color='cyan'
+back1_color='on_grey'
+splash=[" ███████╗███████╗ █████╗ ████████╗ ██████╗  ██████╗ ██╗     ██████╗  ██████╗ ██╗  ██╗",
+        " ██╔════╝██╔════╝██╔══██╗╚══██╔══╝██╔═══██╗██╔═══██╗██║     ██╔══██╗██╔═══██╗╚██╗██╔╝",
+        " █████╗  ███████╗███████║   ██║   ██║   ██║██║   ██║██║     ██████╔╝██║   ██║ ╚███╔╝ ",
+        " ██╔══╝  ╚════██║██╔══██║   ██║   ██║   ██║██║   ██║██║     ██╔══██╗██║   ██║ ██╔██╗ ",
+        " ██║     ███████║██║  ██║   ██║   ╚██████╔╝╚██████╔╝███████╗██████╔╝╚██████╔╝██╔╝ ██╗",
+        " ╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝  ╚═════╝ ╚══════╝╚═════╝  ╚═════╝ ╚═╝  ╚═╝"]
 print("")
-print(" ███████╗███████╗ █████╗ ████████╗ ██████╗  ██████╗ ██╗     ██████╗  ██████╗ ██╗  ██╗")
-print(" ██╔════╝██╔════╝██╔══██╗╚══██╔══╝██╔═══██╗██╔═══██╗██║     ██╔══██╗██╔═══██╗╚██╗██╔╝")
-print(" █████╗  ███████╗███████║   ██║   ██║   ██║██║   ██║██║     ██████╔╝██║   ██║ ╚███╔╝ ")
-print(" ██╔══╝  ╚════██║██╔══██║   ██║   ██║   ██║██║   ██║██║     ██╔══██╗██║   ██║ ██╔██╗ ")
-print(" ██║     ███████║██║  ██║   ██║   ╚██████╔╝╚██████╔╝███████╗██████╔╝╚██████╔╝██╔╝ ██╗")
-print(" ╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝  ╚═════╝ ╚══════╝╚═════╝  ╚═════╝ ╚═╝  ╚═╝")
+for row in splash:
+    for char in row:
+        if(char=='█'):
+            print(colored(char,forg_color),end='')
+        else:
+            print(colored(char,back_color,back1_color),end='')
+    print("")
 
 print("Note: this is still in development")
 print("Type \"help\" to see the list of commands")
@@ -253,4 +267,4 @@ while 1:
     if cmd[0] in commands:
         commands[cmd[0]](args, eventslst, fsalst, path)
     else:
-        print(colored("Uanrecognized command", "red"))
+        print(colored("Unrecognized command", "red"))
