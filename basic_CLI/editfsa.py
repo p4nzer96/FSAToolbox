@@ -120,3 +120,30 @@ def rmtrans(args,eventslst,fsalst,path):
     except Exception as e:
         print("There was an error while removing the event:")
         print(e)
+
+def editstate(args,eventslst,fsalst,path):
+    if('-h' in args):
+        print("This functions is used to modify a state inside a fsa")
+        print("Usage:\n     editstate fsa_name state_name -options (ex: editstate G0 x0 -i)")
+        print("-i set the state as initial")
+        print("-f set the state as final")
+        print("-fb set the state as forbidden")
+        return
+
+    if(len(args)<2):
+        print("Not enough arguments provided, type \"editstate -h\" to help")
+        return
+    
+    if(args[0] not in fsalst):
+        print("Error, fsa doesn't exists")
+        return
+    try:
+        props={
+            'isInitial' : ('-i' in args),
+            'isFinal'   : ('f' in args),
+            'isForbidden':('fb' in args)
+        }
+        fsalst[args[0]].change_state_props(args[1], **props)
+    except Exception as e:
+        print("There was an error while adding the event:")
+        print(e)

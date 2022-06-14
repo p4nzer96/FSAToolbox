@@ -7,7 +7,7 @@ from basic_CLI.checkevents import checkevents, updateevents
 from basic_CLI.loadfsa import loadfsa
 from basic_CLI.savefsa import savefsa
 from basic_CLI.fsabuilder import fsabuilder
-from basic_CLI.editfsa import addstate, rmstate, addevent, rmevent, addtrans, rmtrans
+from basic_CLI.editfsa import addstate, editstate, rmstate, addevent, rmevent, addtrans, rmtrans, editstate
 from basic_CLI.conccomp import conccomp
 from basic_CLI.faultmon import faultmon
 from basic_CLI.diagnoser import diagnoser
@@ -41,6 +41,7 @@ def help(args, eventslst, fsalst, path):
 
     print("-> " + colored("addstate", "yellow") + ":\tAdds a state to a FSA")
     print("-> " + colored("rmstate", "yellow") + ": \tRemoves a state from a FSA")
+    print("-> " + colored("editstate", "yellow") + ": \tEdits state proprieties")
     print("-> " + colored("addevent", "yellow") + ":\tAdds an event to a FSA")
     print("-> " + colored("rmevent", "yellow") + ": \tRemoves an event from a FSA")
     print("-> " + colored("elist", "yellow") + ":   \tLists all events of a FSA")
@@ -212,6 +213,7 @@ commands = {
     'list': listfsa,
     'elist': listevents,
     'editevent': editevent,
+    'editstate' :editstate,
     'cc': conccomp,
     'fm': faultmon,
     'diag': diagnoser,
