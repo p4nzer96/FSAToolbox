@@ -7,6 +7,150 @@ from tkinter import Canvas, NW
 
 
 from tkinter import Canvas, NW
+import numpy as np
+import pandas as pd
+from tabulate import tabulate
+from fsatoolbox import event, state, fsa
+
+import os   # **********************************************************************************************************
+from loadfsa import * # **********************************************************************************************************
+
+
+
+class fsa_GUI(fsa):
+    """Inherit the class fsatoolbox.fsa """
+
+    def __init__(self, X=None, E=None, delta=None, x0=None, Xm=None):
+        super().__init__(X, E, delta, x0, Xm)
+
+    def from_file_GUI(self, filename, **kwargs):
+
+        # Load from file
+
+        X = []  # States
+        E = []  # Alphabet
+        x0 = []  # Initial states
+        Xm = []  # Final states
+
+        # File opening
+        # **************************************************************************************************************
+        jsonObject = {}
+        if os.path.isfile(filename):
+            extension = os.path.splitext(filename)
+            # print("extension: ", extension)
+            if ".txt" in extension or ".fsa" in extension:
+                # jsonObject = load_txt_or_fsa(filename)
+                jsonObject = load_txt_or_fsa_GUI(filename)  # ***********************************************************
+            elif ".csv" in extension:
+                # jsonObject = load_csv(filename)
+                jsonObject = load_csv_GUI(filename)  # ******************************************************************
+            elif ".json" in extension:
+                with open(filename) as file:
+                    jsonObject = json.load(file)
+
+        # print("jsonObject: ", jsonObject)
+
+        # Reading states and properties
+        if jsonObject is None:
+            raise TypeError
+
+        # Reading states and properties
+
+        state_properties = {"isInitial": None, "isFinal": None, "isForbidden": None}
+
+        for state_name in jsonObject['X']:
+            for prop in state_properties.keys():
+
+                if prop in jsonObject['X'][state_name]:
+                    state_properties[prop] = jsonObject['X'][state_name][prop]
+
+            # Creating the state
+            State = state(state_name,
+                          state_properties["isInitial"],
+                          state_properties["isFinal"],
+                          state_properties["isForbidden"])
+
+            if state_properties["isInitial"]:  # If the state is initial, add it to initial states
+                x0.append(State)
+
+            if state_properties["isFinal"]:  # If the state is final, add it to final states
+                Xm.append(State)
+
+            # Add the state to X
+            X.append(State)
+
+        event_properties = {"isObservable": None, "isControllable": None, "isFault": None}
+
+        # Reading events and properties
+
+        for event_name in jsonObject['E']:
+            for prop in event_properties.keys():
+                if prop in jsonObject['E'][event_name]:
+                    event_properties[prop] = jsonObject['E'][event_name][prop]  # Is observable?
+
+            # Creating the event
+            Event = event(event_name,
+                          event_properties["isObservable"],
+                          event_properties["isControllable"],
+                          event_properties["isFault"])
+
+            E.append(Event)
+
+        data = []
+
+        # Reading delta
+
+        for key in jsonObject['delta']:
+
+            start_state = jsonObject['delta'][key]['start']  # Start state
+
+            if start_state not in [s.label for s in X]:  # Check if start state is in X
+                raise ValueError("Invalid start state")
+
+            else:
+
+                idx = [x.label for x in X].index(str(start_state))
+                i_state = X[idx]
+
+            transition = jsonObject['delta'][key]['name']  # Transition
+
+            if transition not in [e.label for e in E]:  # Check if transition is in E
+                raise ValueError("Invalid event")
+
+            else:
+
+                idx = [x.label for x in E].index(str(transition))
+                trans = E[idx]
+
+            end_state = jsonObject['delta'][key]['ends']
+
+            if end_state not in [s.label for s in X]:  # Check if end state is in X
+                raise ValueError("Invalid end state")
+
+            else:
+
+                idx = [x.label for x in X].index(str(end_state))
+                f_state = X[idx]
+
+            data.append([i_state, trans, f_state])
+
+        delta = pd.DataFrame(data, columns=["start", "transition", "end"])
+
+        self._X = X
+        self._x0 = x0
+        self._Xm = Xm
+        self._delta = delta
+        self._E = E
+
+        '''
+        if kwargs.get("name"):
+            fsa_name = kwargs.get("name")
+            return cls(X, E, delta, x0, Xm, name=fsa_name)
+
+        return cls(X, E, delta, x0, Xm)
+        '''
+
+
 
 def open_popup_errors_on_txt_file():
     """Open popup if some errors are present on the .txt file describing the fsa"""
