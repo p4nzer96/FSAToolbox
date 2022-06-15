@@ -16,7 +16,6 @@ from basic_CLI.super import supervisor
 from basic_CLI.exth import exth
 from termcolor import colored
 
-
 from basic_CLI.analysis import reachability, coreachability, blocking, trim, dead, reverse
 
 
@@ -28,8 +27,9 @@ def help(args, eventslst, fsalst, path):
     print(colored("-------------------------- Basic Commands  --------------------------", "green"))
     print("Commands used to load / save an FSA from / to file\n")
 
-    print("-> " + colored("changepath", "yellow") + ":\tChanges the current working directory")
-    print("-> " + colored("path", "yellow") + ":     \tShows the current working directory")
+    print("-> " + colored("chdir", "yellow") + ":\tChanges the current working directory")
+    print("-> " + colored("showdir", "yellow") + ":     \tShows the current working directory")
+    print("-> " + colored("ldir", "yellow") + ":     \tShows the current files into working directory")
     print("-> " + colored("load", "yellow") + ":     \tLoads a FSA from a file")
     print("-> " + colored("save", "yellow") + ":     \tSaves a FSA to a file")
     print("-> " + colored("build", "yellow") + ":     \tCalls a wizard to build the FSA")
@@ -62,33 +62,78 @@ def help(args, eventslst, fsalst, path):
     print("Functions for analyze a FSA\n")
 
     print("-> " + colored("reach", "yellow") + ":\tComputes the reachability of a FSA")
-    print("-> " + colored("coreach", "yellow")+ ":\tComputes the co-reachability of a FSA")
-    print("-> " + colored("blocking", "yellow")+ ":\tComputes if a FSA is blocking")
-    print("-> " + colored("trim", "yellow")+ ":\tComputes if a FSA is trim")
-    print("-> " + colored("dead", "yellow")+ ":\tComputes the dead states of a FSA")
-    print("-> " + colored("reverse", "yellow")+ ":\tComputes if a FSA is reversbible")
+    print("-> " + colored("coreach", "yellow") + ":\tComputes the co-reachability of a FSA")
+    print("-> " + colored("blocking", "yellow") + ":\tComputes if a FSA is blocking")
+    print("-> " + colored("trim", "yellow") + ":\tComputes if a FSA is trim")
+    print("-> " + colored("dead", "yellow") + ":\tComputes the dead states of a FSA")
+    print("-> " + colored("reverse", "yellow") + ":\tComputes if a FSA is reversbible")
 
     print(colored("\n[CTRL+C or exit to quit the program]\n", "red"))
 
 
 def changepath(args, path):
     if '-h' in args:
-        print(colored("\nchangepath: ", "yellow", attrs=["bold"]) + "This functions changes the default path\n")
-        print(colored("Usage:", attrs=["bold"]) + "\n\tchangepath newpath")
-        print(colored("Example:", attrs=["bold"]) + "\n\tchangepath C:\\\\Automi")
+        print(colored("\nchdir: ", "yellow", attrs=["bold"]) + "This functions changes the default path\n")
+        print(colored("Usage:", attrs=["bold"]) + "\n\tchdir newpath")
+        print(colored("Example:", attrs=["bold"]) + "\n\tchdir C:\\\\Automi")
         print(colored("Notes: ", attrs=["bold"]) + "\n\t * In windows use \\\\ instead of \\ (ex. C:\\\\Automi) or "
                                                    "put the path in brackets (ex. \"C:\\Automi\\\")")
         return path
 
     if len(args) < 1:
-        print(colored("Not enough arguments provided, type \"changepath -h\" to help", "red"))
+        print(colored("Not enough arguments provided, type \"chdir -h\" to help", "red"))
         return path
 
-    if os.path.isdir(args[0]):
-        return args[0]
+    # Path is absolute
+
+    if os.path.isabs(os.path.normpath(args[0])):
+        if os.path.isdir(os.path.normpath(args[0])):
+            return os.path.normpath(args[0])
+        else:
+            print(colored("Invalid path", "red"))
+            return path
+
+        # Path is not absolute
+
     else:
-        print(colored("Invalid path", "red"))
-        return path
+        tail = os.path.normpath(args[0])
+        head = path
+        # Parsing the path
+        parsed_path = os.path.split(tail)
+
+        # ".." Escape character
+        if ".." in parsed_path:
+            if parsed_path == ("", ".."):
+                new_path = os.path.split(head)[0]
+            elif parsed_path[0] == ".." and parsed_path[1] != "":
+                head = os.path.split(path)[0]
+                tail = parsed_path[1]
+                new_path = os.path.join(head, tail)
+            else:
+                print(colored("Invalid path", "red"))
+                return head
+
+        # "." Escape character
+        elif "." in parsed_path:
+            if parsed_path == ("", "."):
+                new_path = head
+            elif parsed_path[0] == "." and parsed_path[1] != "":
+                tail = parsed_path[1]
+                new_path = os.path.join(path, tail)
+            else:
+                print(colored("Invalid path", "red"))
+                return head
+
+        # No escape character
+        else:
+            new_path = os.path.join(head, tail)
+
+        # Checking if new_path exists
+        if os.path.isdir(new_path):
+            return new_path
+        else:
+            print(colored("Invalid path", "red"))
+            return head
 
 
 def removefsa(args, eventslst, fsalst, path):
@@ -111,13 +156,12 @@ def removefsa(args, eventslst, fsalst, path):
 
 def currpath(args, eventslst, fsalst, path):
     if '-h' in args:
-        print(colored("path:", "yellow") + "Prints the current working directory")
+        print(colored("showdir:", "yellow") + "Prints the current working directory")
     else:
         print(path)
 
 
 def showfsa(args, eventslst, fsalst, path):
-
     if '-h' in args:
         print(colored("\nshow: ", "yellow", attrs=["bold"]) + "Prints the structure of the FSA\n")
         print(colored("Usage:", attrs=["bold"]) + "\n\tshow fsa_name")
@@ -183,15 +227,16 @@ def editevent(args, eventslst, fsalst, path):
 
     updateevents(eventslst, fsalst)
 
-colorama.init() #fix for colored text with old cmd
+
+colorama.init()  # fix for colored text with old cmd
 
 # list of loaded FSA
 fsalst = dict()
 eventslst = []
 
 commands = {
-    'changepath': changepath,
-    'path': currpath,
+    'chdir': changepath, #TODO: da cambiare nella doc
+    'showdir': currpath,
     'load': loadfsa,
     'remove': removefsa,
     'save': savefsa,
@@ -209,11 +254,11 @@ commands = {
     'trim': trim,
     'dead': dead,
     'reverse': reverse,
-    'lst': lst,
+    'ldir': lst,
     'list': listfsa,
     'elist': listevents,
     'editevent': editevent,
-    'editstate' :editstate,
+    'editstate': editstate,
     'cc': conccomp,
     'fm': faultmon,
     'diag': diagnoser,
@@ -230,23 +275,23 @@ path = home + '/Documents/FsaToolbox'
 if not os.path.exists(path):
     os.makedirs(path)
 
-#splashscreen
-forg_color='green'
-back_color='cyan'
-back1_color='on_grey'
-splash=[" ███████╗███████╗ █████╗ ████████╗ ██████╗  ██████╗ ██╗     ██████╗  ██████╗ ██╗  ██╗",
-        " ██╔════╝██╔════╝██╔══██╗╚══██╔══╝██╔═══██╗██╔═══██╗██║     ██╔══██╗██╔═══██╗╚██╗██╔╝",
-        " █████╗  ███████╗███████║   ██║   ██║   ██║██║   ██║██║     ██████╔╝██║   ██║ ╚███╔╝ ",
-        " ██╔══╝  ╚════██║██╔══██║   ██║   ██║   ██║██║   ██║██║     ██╔══██╗██║   ██║ ██╔██╗ ",
-        " ██║     ███████║██║  ██║   ██║   ╚██████╔╝╚██████╔╝███████╗██████╔╝╚██████╔╝██╔╝ ██╗",
-        " ╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝  ╚═════╝ ╚══════╝╚═════╝  ╚═════╝ ╚═╝  ╚═╝"]
+# splashscreen
+forg_color = 'green'
+back_color = 'cyan'
+back1_color = 'on_grey'
+splash = [" ███████╗███████╗ █████╗ ████████╗ ██████╗  ██████╗ ██╗     ██████╗  ██████╗ ██╗  ██╗",
+          " ██╔════╝██╔════╝██╔══██╗╚══██╔══╝██╔═══██╗██╔═══██╗██║     ██╔══██╗██╔═══██╗╚██╗██╔╝",
+          " █████╗  ███████╗███████║   ██║   ██║   ██║██║   ██║██║     ██████╔╝██║   ██║ ╚███╔╝ ",
+          " ██╔══╝  ╚════██║██╔══██║   ██║   ██║   ██║██║   ██║██║     ██╔══██╗██║   ██║ ██╔██╗ ",
+          " ██║     ███████║██║  ██║   ██║   ╚██████╔╝╚██████╔╝███████╗██████╔╝╚██████╔╝██╔╝ ██╗",
+          " ╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝  ╚═════╝ ╚══════╝╚═════╝  ╚═════╝ ╚═╝  ╚═╝"]
 print("")
 for row in splash:
     for char in row:
-        if(char=='█'):
-            print(colored(char,forg_color),end='')
+        if char == '█':
+            print(colored(char, forg_color), end='')
         else:
-            print(colored(char,back_color,back1_color),end='')
+            print(colored(char, back_color, back1_color), end='')
     print("")
 
 print("Note: this is still in development")
@@ -256,17 +301,20 @@ print(path)
 print("")
 
 while 1:
-    cmd = shlex.split(input(">>"))
-    if not cmd:
-        continue
-    args = cmd[1:]  # extract arguments
+    try:
+        cmd = shlex.split(input(">>"))
+        if not cmd:
+            continue
+        args = cmd[1:]  # extract arguments
 
-    if cmd[0] == 'changepath':
-        path = changepath(args, path)
-        continue
-    if cmd[0] == 'exit':
-        break
-    if cmd[0] in commands:
-        commands[cmd[0]](args, eventslst, fsalst, path)
-    else:
-        print(colored("Unrecognized command", "red"))
+        if cmd[0] == 'chdir':
+            path = changepath(args, path)
+            continue
+        if cmd[0] == 'exit':
+            break
+        if cmd[0] in commands:
+            commands[cmd[0]](args, eventslst, fsalst, path)
+        else:
+            print(colored("Unrecognized command", "red"))
+    except KeyboardInterrupt:
+        exit()
