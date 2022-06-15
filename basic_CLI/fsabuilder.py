@@ -8,8 +8,7 @@ from termcolor import colored
 
 def fsabuilder(args, eventslst, fsalst, path):
     prompt_col = 'green'
-    warn_col='yellow'
-
+    warn_col = 'yellow'
 
     if len(args) < 1:
         print("Not enough arguments provided, type \"build -h\" to help")
@@ -24,31 +23,31 @@ def fsabuilder(args, eventslst, fsalst, path):
         print("Name already in use")
         return
 
-    G = fsa()
+    G = fsa(name=args[0])
 
     # states
     while True:
-        inp = input(colored("Insert the states, separated by a space [!q to abort]: ", prompt_col)).split(' ')
+        inp = input(colored("Insert the states, separated by a space [!q to abort]:\n", prompt_col)).split(' ')
         if inp == ['!q']:
+            print(colored("Build of fsa aborted", warn_col))
             return
 
         while "" in inp:  # remove empty strings or double spaces
             inp.remove("")
 
         if len(inp) != len(set(inp)):
-            print(colored("Warning, there are duplicates states",warn_col))
-            print(colored("States: ",prompt_col),end='')
+            print(colored("Warning, there are duplicates states", warn_col))
+            print(colored("States: ", prompt_col), end='')
             print(set(inp))
-            q = input(colored("Do you want to input the states again? [Y/n]: ",prompt_col))
+            q = input(colored("Do you want to input the states again? [Y/n]:\n", prompt_col))
             if q.lower() != 'n':
                 continue
             inp = set(inp)
-        break            
+        break
     X = []
     for x in inp:
         X.append(state(x))
     states = inp
-
 
     state_prop = {  # name (for the prompt) and attribute name
         'initial': 'isInitial',
@@ -60,9 +59,11 @@ def fsabuilder(args, eventslst, fsalst, path):
 
     for name, attr in state_prop.items():
         while True:
-            inp = input(colored("Insert the " + name + " states, separated by a space [- to skip, !q to abort]: ",prompt_col)).split(' ')
-            
+            inp = input(colored("Insert the " + name + " states, separated by a space [- to skip, !q to abort]:\n",
+                                prompt_col)).split(' ')
+
             if inp == ['!q']:
+                print(colored("Build of fsa aborted", warn_col))
                 return
 
             if inp == ['-']:
@@ -70,7 +71,7 @@ def fsabuilder(args, eventslst, fsalst, path):
 
             for el in inp:
                 if el not in states:
-                    print(colored("The state: "+el+" is not in the fsa, try again",warn_col))
+                    print(colored("The state: " + el + " is not in the fsa, try again", warn_col))
                     break
             else:
                 break
@@ -91,24 +92,25 @@ def fsabuilder(args, eventslst, fsalst, path):
 
     # events
     while True:
-        inp = input(colored("Insert the events, separated by a space [!q to abort]: ",prompt_col)).split(' ')
+        inp = input(colored("Insert the events, separated by a space [!q to abort]:\n", prompt_col)).split(' ')
 
         if inp == ['!q']:
+            print(colored("Build of fsa aborted", warn_col))
             return
 
         while "" in inp:  # remove empty strings or double spaces
             inp.remove("")
 
         if len(inp) != len(set(inp)):
-            print(colored("Warning, there are duplicates events",warn_col))
-            print(colored("Events: ",prompt_col),end='')
+            print(colored("Warning, there are duplicates events", warn_col))
+            print(colored("Events: ", prompt_col), end='')
             print(set(inp))
-            q = input(colored("Do you want to input the events again? [Y/n]: ",prompt_col))
+            q = input(colored("Do you want to input the events again? [Y/n]:\n", prompt_col))
             if q.lower() != 'n':
                 continue
             inp = set(inp)
-        break       
-    
+        break
+
     E = []
     for e in inp:
         E.append(event(e))
@@ -124,21 +126,22 @@ def fsabuilder(args, eventslst, fsalst, path):
 
     for name, attr in event_prop.items():
         while True:
-            inp = input(colored("Insert the " + name + " events, separated by a space [- to skip, !q to abort]: ",prompt_col)).split(' ')
+            inp = input(colored("Insert the " + name + " events, separated by a space [- to skip, !q to abort]:\n",
+                                prompt_col)).split(' ')
             if inp == ['!q']:
+                print(colored("Build of fsa aborted", warn_col))
                 return
 
             if inp == ['-']:
                 break
-            
+
             for el in inp:
                 if el not in events:
-                    print(colored("The event: "+el+" is not in the fsa, try again",warn_col))
+                    print(colored("The event: " + el + " is not in the fsa, try again", warn_col))
                     break
             else:
                 break
             continue
-
 
         for e in E:
             setattr(e, attr, False)
@@ -155,19 +158,21 @@ def fsabuilder(args, eventslst, fsalst, path):
 
     # transitions
     while True:
-        inp = input(colored("Insert a transition (in the format x0 a x1) [!q to abort, - to end]: ",prompt_col)).split(' ')
+        inp = input(colored("Insert a transition (in the format x0 a x1) [!q to abort, - to end]:\n", prompt_col)).split(
+            ' ')
         if inp[0] == '!q':
+            print(colored("Build of fsa aborted", warn_col))
             return
         if inp[0] == '-':
             break
         if not len(inp) == 3:
-            print(colored("Incorrect transition format",warn_col))
+            print(colored("Incorrect transition format", warn_col))
             continue
         else:
             try:
                 G.add_transition(inp[0], inp[1], inp[2])
-            except:
-                pass
+            except Exception:
+                continue
 
     checkevents(G, eventslst, fsalst)
 

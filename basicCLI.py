@@ -27,8 +27,8 @@ def help(args, eventslst, fsalst, path):
     print(colored("-------------------------- Basic Commands  --------------------------", "green"))
     print("Commands used to load / save an FSA from / to file\n")
 
-    print("-> " + colored("chdir", "yellow") + ":\tChanges the current working directory")
-    print("-> " + colored("showdir", "yellow") + ":     \tShows the current working directory")
+    print("-> " + colored("chdir", "yellow") + ":     \tChanges the current working directory")
+    print("-> " + colored("showdir", "yellow") + ":  \tShows the current working directory")
     print("-> " + colored("ldir", "yellow") + ":     \tShows the current files into working directory")
     print("-> " + colored("load", "yellow") + ":     \tLoads a FSA from a file")
     print("-> " + colored("save", "yellow") + ":     \tSaves a FSA to a file")
@@ -61,12 +61,12 @@ def help(args, eventslst, fsalst, path):
     print(colored("\n-------------------------- FSA Analysis --------------------------", "green"))
     print("Functions for analyze a FSA\n")
 
-    print("-> " + colored("reach", "yellow") + ":\tComputes the reachability of a FSA")
-    print("-> " + colored("coreach", "yellow") + ":\tComputes the co-reachability of a FSA")
+    print("-> " + colored("reach", "yellow") + ":    \tComputes the reachability of a FSA")
+    print("-> " + colored("coreach", "yellow") + ":    \tComputes the co-reachability of a FSA")
     print("-> " + colored("blocking", "yellow") + ":\tComputes if a FSA is blocking")
-    print("-> " + colored("trim", "yellow") + ":\tComputes if a FSA is trim")
-    print("-> " + colored("dead", "yellow") + ":\tComputes the dead states of a FSA")
-    print("-> " + colored("reverse", "yellow") + ":\tComputes if a FSA is reversbible")
+    print("-> " + colored("trim", "yellow") + ":    \tComputes if a FSA is trim")
+    print("-> " + colored("dead", "yellow") + ":    \tComputes the dead states of a FSA")
+    print("-> " + colored("reverse", "yellow") + ":   \tComputes if a FSA is reversbible")
 
     print(colored("\n[CTRL+C or exit to quit the program]\n", "red"))
 
@@ -179,7 +179,7 @@ def showfsa(args, eventslst, fsalst, path):
 
 
 def lst(args, eventslst, fsalst, path):
-    print("Elements in: " + path + "\\")
+    print("Elements in: " + path + "\\\n")
     l = os.listdir(path + "\\")  # files only
     for el in l:
         print(el)
@@ -235,7 +235,7 @@ fsalst = dict()
 eventslst = []
 
 commands = {
-    'chdir': changepath, #TODO: da cambiare nella doc
+    'chdir': changepath,  # TODO: da cambiare nella doc
     'showdir': currpath,
     'load': loadfsa,
     'remove': removefsa,
@@ -302,7 +302,7 @@ print("")
 
 while 1:
     try:
-        cmd = shlex.split(input(">>"))
+        cmd = shlex.split(input(">>"), posix=False)
         if not cmd:
             continue
         args = cmd[1:]  # extract arguments

@@ -53,7 +53,7 @@ class fsa:
 
     def __repr__(self):
 
-        rep = self._name + "\n" + self.showfsa()
+        rep = "\nFSA: " + self._name + "\n" + self.showfsa()
         return rep
 
     @property

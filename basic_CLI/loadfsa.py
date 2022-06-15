@@ -24,19 +24,23 @@ def loadfsa(args, eventslst, fsalst, path):
         name = ntpath.split(args[0])[1]
         name = name.split('.')[0]
         filepath = args[0]
-    if len(args) == 2:  # two arguments mode
+    elif len(args) == 2:  # two arguments mode
         name = args[0]
         filepath = args[1]
+    else:
+        print(colored("Invalid number of arguments provided, type \"load -h\" to help", "red"))
+        return
 
     if name in fsalst:
         inp = input(colored("Warning, fsa already exists, do you want to overwrite it? [y/N]: ", "yellow"))
         if inp.lower() == 'n' or inp == '':
             return
 
-    abspath = os.path.abspath(filepath)
+    if not os.path.isabs(filepath):
+        filename = os.path.join(path, filepath)
 
-    if os.path.isfile(abspath):
-        G = fsa.from_file(abspath)
+    if os.path.isfile(filename):
+        G = fsa.from_file(filename)
 
     else:
         print(colored("Error: file does not exists", "red"))
