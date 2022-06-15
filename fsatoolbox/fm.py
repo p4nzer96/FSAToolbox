@@ -26,10 +26,10 @@ def fm(G, verbose=False):
     for el in FM.E:
         if el.isFault is None:
             raise ValueError("The event " + el.label + " is not initialized properly: Fault state not set")
-        elif el.isFault == True:
+        elif el.isFault:
             FM.add_transition(N, el, F)
             FM.add_transition(F, el, F)
-        elif el.isFault == False:
+        elif not el.isFault:
             FM.add_transition(N, el, N)
             FM.add_transition(F, el, F)
     return FM

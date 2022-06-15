@@ -30,7 +30,14 @@ def cc(G0, G1, verbose=False, name_style=0):
         if x not in CC.E:
             CC.E.append(x)
 
+    if len(G0.x0) == 0 or len(G1.x0) == 0:
+        raise TypeError("Initial states not set")
+
+    if len(G0.Xm) == 0 or len(G1.Xm) == 0:
+        raise TypeError("Final state not set")
+
     # The initial state is obtained by the cartesian product of the two initial states
+
     Xnew = [[G0.x0[0], G1.x0[0]]]  # TODO multiple starting states?
 
     while len(Xnew) > 0:
@@ -120,16 +127,10 @@ def cc(G0, G1, verbose=False, name_style=0):
 
         # Final States
 
-        if None in (x[0].isFinal, x[1].isFinal):
-            raise TypeError("Final state not set")
-
         if x[0].isFinal and x[1].isFinal:
             new_state.isFinal = True
 
         # Initial States
-
-        if None in (x[0].isInitial, x[1].isInitial):
-            raise TypeError("Initial state not set")
 
         if x[0].isInitial and x[1].isInitial:
             new_state.isInitial = True

@@ -26,21 +26,18 @@ class fsa:
         the alphabet of the automaton
     delta : DataFrame
         the transition relation / function of the automaton
-    x0 : list of State objects
-        the initial states of the automaton (all elements of x0 must be contained in X)
-    Xm : list of State objects
-        the final states of the automaton (all elements of Xm must be contained in X)
-
     """
 
-    def __init__(self, X=None, E=None, delta=pd.DataFrame(columns=["start", "transition", "end"]), x0=None, Xm=None,
+    def __init__(self, X=None, E=None, delta=pd.DataFrame(columns=["start", "transition", "end"]),
                  **kwargs) -> None:
 
         self._X = X if X else []  # States
         self._E = E if E else []  # Alphabet
         self._delta = delta  # Delta relation
-        self._x0 = x0 if x0 else []  # Initial states
-        self._Xm = Xm if Xm else []  # Final states
+        self._x0 = []  # Initial states
+        self._Xm = []  # Final states
+
+        self._update_fsa()  # Init fsa (set final and initial states)
 
         # Optional: Name of the FSA
 
@@ -212,9 +209,9 @@ class fsa:
 
         if kwargs.get("name"):
             fsa_name = kwargs.get("name")
-            return cls(X, E, delta, x0, Xm, name=fsa_name)
+            return cls(X, E, delta, name=fsa_name)
 
-        return cls(X, E, delta, x0, Xm)
+        return cls(X, E, delta)
 
     def to_file(self, filename):
 
@@ -418,7 +415,7 @@ class fsa:
             isForbidden(bool, optional): determines if the state is forbidden
         """
 
-        self._refresh_fsa()
+        self._update_fsa()
 
         if isinstance(new_state, state):  # if state is an instance of state
 
@@ -460,7 +457,7 @@ class fsa:
             raise ValueError
 
     def remove_state(self, state):
-        self._refresh_fsa()
+        self._update_fsa()
         state = self._state_parser(state)
 
         for x in self._X:
@@ -473,8 +470,10 @@ class fsa:
 
     def change_state_props(self, state, **kwargs):
 
+        state = self._state_parser(state)
+
         if state not in self._X:
-            raise StateNotFoundError(Exception)
+            raise StateNotFoundExc(Exception)
 
         for prop in kwargs.keys():
             setattr(state, prop, kwargs[prop])
@@ -523,9 +522,9 @@ class fsa:
             event (state):
         """
 
-        self._refresh_fsa()
+        self._update_fsa()
 
-        self._refresh_fsa()
+        self._update_fsa()
         event = self._event_parser(event)
 
         for e in self._E:
@@ -536,6 +535,8 @@ class fsa:
             self._delta.drop(self.delta[(self._delta.transition == event)], inplace=True)
 
     def change_event_props(self, event, **kwargs):
+
+        event = self._event_parser(event)
 
         if event not in self._E:
             raise EventNotFoundExc(Exception)
@@ -605,7 +606,7 @@ class fsa:
         temp_df = pd.DataFrame([[i_state, transition, e_state]], columns=["start", "transition", "end"])
         self.delta = pd.concat([self.delta, temp_df], axis=0, ignore_index=True)
 
-        self._refresh_fsa()
+        self._update_fsa()
 
     def remove_transition(self, start, event, end):
 
@@ -617,7 +618,7 @@ class fsa:
                                      (self._delta.transition == event) &
                                      (self._delta.end == end))].index, inplace=True)
 
-        self._refresh_fsa()
+        self._update_fsa()
 
     # Internal Methods -------------------------------------------------------------
 
@@ -667,7 +668,7 @@ class fsa:
         else:
             raise TypeError
 
-    def _refresh_fsa(self):
+    def _update_fsa(self):
 
         for x in self._X:
             if x.isInitial is True and x not in self._x0:
