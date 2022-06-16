@@ -33,8 +33,6 @@ def cc(G0, G1, verbose=False, name_style=0):
     if len(G0.x0) == 0 or len(G1.x0) == 0:
         raise TypeError("Initial states not set")
 
-    if len(G0.Xm) == 0 or len(G1.Xm) == 0:
-        raise TypeError("Final state not set")
 
     # The initial state is obtained by the cartesian product of the two initial states
 
