@@ -34,6 +34,7 @@ def help(args, eventslst, fsalst, path):
     print("-> " + colored("build", "yellow") + ":     \tCalls a wizard to build the FSA")
     print("-> " + colored("show", "yellow") + ":     \tShow a FSA")
     print("-> " + colored("list", "yellow") + ":     \tLists all FSAs")
+    print("-> " + colored("remove", "yellow") + ":     \tRemoves a FSA")
 
     print(colored("\n-------------------------- Edit FSA --------------------------", "green"))
     print("Commands used to edit a FSA\n")
