@@ -461,15 +461,13 @@ class fsa:
             raise ValueError
 
     def remove_state(self, state):
-        self._update_fsa()
 
-        try:
-            state = self._state_parser(state)
-        except AttributeError:
-            raise StateNotFoundExc("Error: event not in alphabet")
+        state = self._state_parser(state)
 
-        if state not in self.X:
+        if state is None or state not in self.X:
             raise StateNotFoundExc("Error: state not in X")
+
+        self._update_fsa()
 
         for x in self._X:
             if x == state:
@@ -533,15 +531,12 @@ class fsa:
             event (state):
         """
 
+        event = self._event_parser(event)
+
+        if event is None or event not in self.E:
+            raise EventNotFoundExc("Error: event not in alphabet")
+
         self._update_fsa()
-
-        try:
-            event = self._event_parser(event)
-        except AttributeError:
-            raise EventNotFoundExc("Error: event not in alphabet")
-
-        if state not in self.X:
-            raise EventNotFoundExc("Error: event not in alphabet")
 
         for e in self._E:
             if e == event:
@@ -620,7 +615,7 @@ class fsa:
             return
 
         temp_df = pd.DataFrame([[i_state, transition, e_state]], columns=["start", "transition", "end"])
-        self.delta = pd.concat([self.delta, temp_df], axis=0, ignore_index=True)\
+        self.delta = pd.concat([self.delta, temp_df], axis=0, ignore_index=True) \
             .drop_duplicates().reset_index(drop=True)
 
         self._update_fsa()
