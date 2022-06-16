@@ -14,6 +14,10 @@ class EventNotFoundExc(Exception):
     pass
 
 
+class TransitionNotFoundExc(Exception):
+    pass
+
+
 class fsa:
     """
     Class used to represent a Finite State Automaton (FSA)
@@ -460,6 +464,9 @@ class fsa:
         self._update_fsa()
         state = self._state_parser(state)
 
+        if state not in self.X:
+            raise StateNotFoundExc("Error: state not in X")
+
         for x in self._X:
             if x == state:
                 self._X.remove(x)
@@ -524,8 +531,10 @@ class fsa:
 
         self._update_fsa()
 
-        self._update_fsa()
         event = self._event_parser(event)
+
+        if state not in self.X:
+            raise EventNotFoundExc("Error: event not in alphabet")
 
         for e in self._E:
             if e == event:
@@ -604,7 +613,8 @@ class fsa:
             return
 
         temp_df = pd.DataFrame([[i_state, transition, e_state]], columns=["start", "transition", "end"])
-        self.delta = pd.concat([self.delta, temp_df], axis=0, ignore_index=True)
+        self.delta = pd.concat([self.delta, temp_df], axis=0, ignore_index=True)\
+            .drop_duplicates().reset_index(drop=True)
 
         self._update_fsa()
 
@@ -614,9 +624,14 @@ class fsa:
         event = self._event_parser(event)
         end = self._state_parser(end)
 
-        self._delta.drop(self.delta[((self._delta.start == start) &
-                                     (self._delta.transition == event) &
-                                     (self._delta.end == end))].index, inplace=True)
+        transition = self.delta[((self._delta.start == start) &
+                                 (self._delta.transition == event) &
+                                 (self._delta.end == end))]
+
+        if transition.empty():
+            raise TransitionNotFoundExc("Error: transition not in delta")
+
+        self._delta.drop(transition.index, inplace=True)
 
         self._update_fsa()
 
