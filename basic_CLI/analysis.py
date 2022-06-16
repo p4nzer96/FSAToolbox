@@ -58,6 +58,8 @@ def coreachability(args, eventslst, fsalst, path):
             print(coreachable_states)
         else:
             print("The fsa is not co-reachable")
+            print("Co-reachable states:", end=' -> ')
+            print(coreachable_states)
 
     except Exception as e:
         print("There was an error while computing the reachability:")
