@@ -20,8 +20,9 @@ def fsabuilder(args, eventslst, fsalst, path):
         return
 
     if args[0] in fsalst:
-        print("Name already in use")
-        return
+        inp = input("Error, fsa already exists, do you want to overwrite it? [y/N]: ")
+        if inp == 'N' or inp == 'n' or inp == '':
+            return
 
     G = fsa(name=args[0])
 
@@ -69,6 +70,9 @@ def fsabuilder(args, eventslst, fsalst, path):
             if inp == ['-']:
                 break
 
+            if inp == ['']:
+                break
+
             for el in inp:
                 if el not in states:
                     print(colored("The state: " + el + " is not in the fsa, try again", warn_col))
@@ -100,6 +104,9 @@ def fsabuilder(args, eventslst, fsalst, path):
 
         while "" in inp:  # remove empty strings or double spaces
             inp.remove("")
+
+        if inp == ['']:
+            break
 
         if len(inp) != len(set(inp)):
             print(colored("Warning, there are duplicates events", warn_col))

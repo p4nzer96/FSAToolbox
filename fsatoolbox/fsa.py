@@ -462,7 +462,11 @@ class fsa:
 
     def remove_state(self, state):
         self._update_fsa()
-        state = self._state_parser(state)
+
+        try:
+            state = self._state_parser(state)
+        except AttributeError:
+            raise StateNotFoundExc("Error: event not in alphabet")
 
         if state not in self.X:
             raise StateNotFoundExc("Error: state not in X")
@@ -531,7 +535,10 @@ class fsa:
 
         self._update_fsa()
 
-        event = self._event_parser(event)
+        try:
+            event = self._event_parser(event)
+        except AttributeError:
+            raise EventNotFoundExc("Error: event not in alphabet")
 
         if state not in self.X:
             raise EventNotFoundExc("Error: event not in alphabet")

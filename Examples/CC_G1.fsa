@@ -1,0 +1,58 @@
+{
+    "X": {
+        "x0''": {
+            "label": "x0''",
+            "isInitial": true,
+            "isFinal": true,
+            "isForbidden": false
+        },
+        "x1''": {
+            "label": "x1''",
+            "isInitial": false,
+            "isFinal": false,
+            "isForbidden": false
+        },
+        "x2''": {
+            "label": "x2''",
+            "isInitial": false,
+            "isFinal": false,
+            "isForbidden": false
+        }
+    },
+    "E": {
+        "b": {
+            "label": "b",
+            "isObservable": true,
+            "isControllable": false,
+            "isFault": false
+        },
+        "c": {
+            "label": "c",
+            "isObservable": true,
+            "isControllable": false,
+            "isFault": false
+        }
+    },
+    "delta": {
+        "0": {
+            "start": "x0''",
+            "event": "b",
+            "end": "x1''"
+        },
+        "1": {
+            "start": "x1''",
+            "event": "c",
+            "end": "x0''"
+        },
+        "2": {
+            "start": "x1''",
+            "event": "b",
+            "end": "x2''"
+        },
+        "3": {
+            "start": "x2''",
+            "event": "c",
+            "end": "x1''"
+        }
+    }
+}
