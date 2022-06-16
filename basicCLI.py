@@ -1,22 +1,21 @@
-import shlex
 import os
-import colorama
-from fsatoolbox import *
+import shlex
 
-from basic_CLI.checkevents import checkevents, updateevents
-from basic_CLI.loadfsa import loadfsa
-from basic_CLI.savefsa import savefsa
-from basic_CLI.fsabuilder import fsabuilder
-from basic_CLI.editfsa import addstate, editstate, rmstate, addevent, rmevent, addtrans, rmtrans, editstate
-from basic_CLI.conccomp import conccomp
-from basic_CLI.faultmon import faultmon
-from basic_CLI.diagnoser import diagnoser
-from basic_CLI.observer import observer
-from basic_CLI.super import supervisor
-from basic_CLI.exth import exth
+import colorama
 from termcolor import colored
 
 from basic_CLI.analysis import reachability, coreachability, blocking, trim, dead, reverse
+from basic_CLI.checkevents import updateevents
+from basic_CLI.conccomp import conccomp
+from basic_CLI.diagnoser import diagnoser
+from basic_CLI.editfsa import addstate, rmstate, addevent, rmevent, addtrans, rmtrans, editstate
+from basic_CLI.exth import exth
+from basic_CLI.faultmon import faultmon
+from basic_CLI.fsabuilder import fsabuilder
+from basic_CLI.loadfsa import loadfsa
+from basic_CLI.observer import observer
+from basic_CLI.savefsa import savefsa
+from basic_CLI.super import supervisor
 
 
 # commands
@@ -235,7 +234,7 @@ fsalst = dict()
 eventslst = []
 
 commands = {
-    'chdir': changepath,  # TODO: da cambiare nella doc
+    'chdir': changepath,
     'showdir': currpath,
     'load': loadfsa,
     'remove': removefsa,

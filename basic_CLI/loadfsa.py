@@ -43,7 +43,10 @@ def loadfsa(args, eventslst, fsalst, path):
         G = fsa.from_file(filename)
 
     else:
-        print(colored("Error: file does not exists", "red"))
+        if filename[-4:] == ".fsa" or filename[-4:] == ".txt":
+            print(colored("Error: file does not exists", "red"))
+        else:
+            print(colored("Error: file does not exists (did you forget the extension?)", "red"))
         return
 
     checkevents(G, eventslst, fsalst)

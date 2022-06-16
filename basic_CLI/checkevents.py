@@ -22,10 +22,10 @@ def checkevents(G, eventslst, fsalst):
             eventslst.append(e)
         else:
             ex_e = [i for i in eventslst if i.label == e.label][0]
-            if (
-                    e.isObservable != ex_e.isObservable or e.isControllable != ex_e.isControllable or e.isFault != ex_e.isFault):
-                print(
-                    "Two events with the label \"" + e.label + "\" have different proprieties, which one do you want to keep?")
+            if e.isObservable != ex_e.isObservable or e.isControllable != ex_e.isControllable \
+                    or e.isFault != ex_e.isFault:
+                print("Two events with the label \"" + e.label + "\" have different proprieties, which one do you want "
+                                                                 "to keep?")
                 print("1) Observable: " + str(e.isObservable) + ", Controllable: " + str(
                     e.isControllable) + ", Fault: " + str(e.isFault))
                 print("2) Observable: " + str(ex_e.isObservable) + ", Controllable: " + str(
