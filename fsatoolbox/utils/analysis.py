@@ -173,7 +173,7 @@ def get_co_reachability_to_x0_info(fsa_obj):
     co_reachable_to_x0_states = []  # List of co-reachable states
     final_states = []
 
-    for x in fsa_obj.X0:
+    for x in fsa_obj.x0:
         final_states.append(x)
         co_reachable_to_x0_states.append(x)  # All final states are co-reachable
     end_algorithm_flag = 0
@@ -220,6 +220,7 @@ def get_co_reachability_to_x0_info(fsa_obj):
 
         else:
             x_state.is_co_Reachable_to_x0 = False
+
 
 def get_reversibility_info(fsa_obj, set_fsa=True):
     if fsa_obj.is_Reachable is None:
