@@ -128,8 +128,10 @@ def nfa2dfa(G, iterationsLimit=100, verbose=False, name_style=0):
         for el in x:
             if name_style == 0:
                 name = name + el.label
-            final = el.isFinal
-            initial = el.isInitial
+            if el.isFinal:
+                final = True
+            if el.isInitial:
+                initial = True
         DFA.add_state(name, isInitial=initial, isFinal=final)
 
     # Add transitions to the DFA
