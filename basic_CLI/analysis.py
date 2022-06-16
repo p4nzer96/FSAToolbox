@@ -116,6 +116,8 @@ def trim(args, eventslst, fsalst, path):
         is_trim = get_trim_info(fsalst[args[0]])
         if is_trim:
             print("The fsa is trim")
+        else:
+            print("The fsa is not trim")
 
     except Exception as e:
         print("There was an error while computing the reachability:")
