@@ -1,7 +1,7 @@
 import fsatoolbox
 from fsatoolbox import *
 from fsatoolbox.utils.analysis import get_blockingness_info, get_deadness_info, get_reachability_info, \
-    get_reversibility_info, get_trim_info
+    get_reversibility_info, get_trim_info, get_co_reachability_info
 
 
 def reachability(args, eventslst, fsalst, path):
@@ -51,13 +51,13 @@ def coreachability(args, eventslst, fsalst, path):
         return
 
     try:
-        is_coreachable, coreachable_states = get_reachability_info(fsalst[args[0]])
+        is_coreachable, coreachable_states = get_co_reachability_info(fsalst[args[0]])
         if is_coreachable:
             print("The fsa is co-reachable")
             print("Co-reachable states:", end=' -> ')
             print(coreachable_states)
         else:
-            print("The fsa is not reachable")
+            print("The fsa is not co-reachable")
 
     except Exception as e:
         print("There was an error while computing the reachability:")
