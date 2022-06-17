@@ -24,7 +24,7 @@ def help(args, eventslst, fsalst, path):
     print("This is only a test version: available commands:\n")
 
     print(colored("-------------------------- Basic Commands  --------------------------", "green"))
-    print("Commands used to load / save an FSA from / to file\n")
+    print("Commands used to create / delete a FSA\n")
 
     print("-> " + colored("chdir", "yellow") + ":     \tChanges the current working directory")
     print("-> " + colored("showdir", "yellow") + ":  \tShows the current working directory")
@@ -33,7 +33,7 @@ def help(args, eventslst, fsalst, path):
     print("-> " + colored("save", "yellow") + ":     \tSaves a FSA to a file")
     print("-> " + colored("build", "yellow") + ":     \tCalls a wizard to build the FSA")
     print("-> " + colored("show", "yellow") + ":     \tShow a FSA")
-    print("-> " + colored("list", "yellow") + ":     \tLists all FSAs")
+    print("-> " + colored("list", "yellow") + ":     \tLists all FSA")
     print("-> " + colored("remove", "yellow") + ":     \tRemoves a FSA")
 
     print(colored("\n-------------------------- Edit FSA --------------------------", "green"))
@@ -50,9 +50,9 @@ def help(args, eventslst, fsalst, path):
     print("-> " + colored("rmtrans", "yellow") + ": \tRemoves a transition to a FSA")
 
     print(colored("\n-------------------------- FSA Functions --------------------------", "green"))
-    print("Commands used to call functions on FSAs\n")
+    print("Commands used to call functions on FSA\n")
 
-    print("-> " + colored("cc", "yellow") + ":       \tComputes the concurrent composition between two FSAs")
+    print("-> " + colored("cc", "yellow") + ":       \tComputes the concurrent composition between two FSA")
     print("-> " + colored("fm", "yellow") + ":       \tComputes the Fault Monitor of a FSA")
     print("-> " + colored("diag", "yellow") + ":     \tComputes the diagnoser of a FSA")
     print("-> " + colored("nfa2dfa", "yellow") + ":    \tConverts a NFA into a DFA")
@@ -188,7 +188,7 @@ def lst(args, eventslst, fsalst, path):
 def listfsa(args, eventslst, fsalst, path):  # TODO add some stats?
 
     if '-h' in args:
-        print(colored("\nload: ", "yellow", attrs=["bold"]) + "Prints the FSAs currently loaded\n")
+        print(colored("\nload: ", "yellow", attrs=["bold"]) + "Prints the FSA currently loaded\n")
         print(colored("Usage:", attrs=["bold"]) + "\n\tlist")
 
     for key, value in fsalst.items():
