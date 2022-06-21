@@ -8,12 +8,13 @@ from fsatoolbox import *
 
 def loadfsa(args, eventslst, fsalst, path):
     if '-h' in args:
-        print(colored("\nload:", "yellow", attrs=["bold"]) + " This functions loads a fsa from a file\n")
-        print(colored("Usage:\n\t", attrs=["bold"]) + "load fsa_name path_to_file")
-        print(colored("Example:\n\t", attrs=["bold"]) + "load C:\\\\Automi\\\\Examples\\\\G0.fsa")
-        print(colored("Notes: ", attrs=["bold"]) + "\n\t * In windows use \\\\ instead of \\ (ex. C:\\\\Automi) or "
-                                                   "put the path in brackets (ex. \"C:\\Automi\\\")")
+        print(colored("\nload:", "yellow", attrs=["bold"]) + " This functions loads a fsa from a file")
+        print(colored("\nUsage:\n\t", attrs=["bold"]) + "load fsa_name path_to_file")
+        print(colored("\nExample:\n\t", attrs=["bold"]) + "load C:\\\\Automi\\\\Examples\\\\G0.fsa")
+        print(colored("\nNotes: ", attrs=["bold"]) + "\n\t * In windows use \\\\ instead of \\ (ex. C:\\\\Automi) or "
+                                                     "put the path in brackets (ex. \"C:\\Automi\\\")")
         print("\t * This function will load .fsa and .txt files")
+        print("")
         return
 
     if len(args) < 1:
@@ -28,7 +29,7 @@ def loadfsa(args, eventslst, fsalst, path):
         name = args[0]
         filepath = args[1]
     else:
-        print(colored("Invalid number of arguments provided, type \"load -h\" to help", "red"))
+        print(colored("Invalid number of arguments provided, type \"load -h\" to help", "yellow"))
         return
 
     if name in fsalst:

@@ -11,16 +11,19 @@ def fsabuilder(args, eventslst, fsalst, path):
     warn_col = 'yellow'
 
     if len(args) < 1:
-        print("Not enough arguments provided, type \"build -h\" to help")
+        print(colored("Not enough arguments provided, type \"build -h\" to help", warn_col))
         return
 
     if '-h' in args:
-        print("This functions starts an interactive program to build an fsa")
-        print("Usage:\n     build name (ex: build G0)")
+        print(colored("\nbuild: ", "yellow", attrs=["bold"]) + "This functions starts an interactive program to build "
+                                                               "a FSA")
+        print(colored("\nUsage:", attrs=["bold"]) + "\n\tbuild fsa_name (ex: build G0)")
+        print(colored("\nExample:", attrs=["bold"]) + "\n\tbuild G0")
+        print("")
         return
 
     if args[0] in fsalst:
-        inp = input("Error, fsa already exists, do you want to overwrite it? [y/N]: ")
+        inp = input(colored("Error, fsa already exists, do you want to overwrite it? [y/N]: ", warn_col))
         if inp == 'N' or inp == 'n' or inp == '':
             return
 
@@ -165,7 +168,8 @@ def fsabuilder(args, eventslst, fsalst, path):
 
     # transitions
     while True:
-        inp = input(colored("Insert a transition (in the format x0 a x1) [!q to abort, - to end]:\n", prompt_col)).split(
+        inp = input(
+            colored("Insert a transition (in the format x0 a x1) [!q to abort, - to end]:\n", prompt_col)).split(
             ' ')
         if inp[0] == '!q':
             print(colored("Build of fsa aborted", warn_col))

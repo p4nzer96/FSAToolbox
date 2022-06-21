@@ -55,7 +55,8 @@ def help(args, eventslst, fsalst, path):
     print("-> " + colored("cc", "yellow") + ":       \tComputes the concurrent composition between two FSA")
     print("-> " + colored("fm", "yellow") + ":       \tComputes the Fault Monitor of a FSA")
     print("-> " + colored("diag", "yellow") + ":     \tComputes the diagnoser of a FSA")
-    print("-> " + colored("nfa2dfa", "yellow") + ":    \tConverts a NFA into a DFA")
+    print("-> " + colored("obs", "yellow") + ":       \tConverts a NFA into a DFA")
+    print("-> " + colored("exth", "yellow") + ":      \tComputes the extended specification automaton")
     print("-> " + colored("supervisor", "yellow") + ":\tComputes the supervisor of a FSA")
 
     print(colored("\n-------------------------- FSA Analysis --------------------------", "green"))
@@ -73,15 +74,16 @@ def help(args, eventslst, fsalst, path):
 
 def changepath(args, path):
     if '-h' in args:
-        print(colored("\nchdir: ", "yellow", attrs=["bold"]) + "This functions changes the default path\n")
-        print(colored("Usage:", attrs=["bold"]) + "\n\tchdir newpath")
-        print(colored("Example:", attrs=["bold"]) + "\n\tchdir C:\\\\Automi")
-        print(colored("Notes: ", attrs=["bold"]) + "\n\t * In windows use \\\\ instead of \\ (ex. C:\\\\Automi) or "
-                                                   "put the path in brackets (ex. \"C:\\Automi\\\")")
+        print(colored("\nchdir: ", "yellow", attrs=["bold"]) + "This functions changes the default path")
+        print(colored("\nUsage:", attrs=["bold"]) + "\n\tchdir newpath")
+        print(colored("\nExample:", attrs=["bold"]) + "\n\tchdir C:\\\\Automi")
+        print(colored("\nNotes: ", attrs=["bold"]) + "\n\t * In windows use \\\\ instead of \\ (ex. C:\\\\Automi) or "
+                                                     "put the path in brackets (ex. \"C:\\Automi\\\")")
+        print("")
         return path
 
     if len(args) < 1:
-        print(colored("Not enough arguments provided, type \"chdir -h\" to help", "red"))
+        print(colored("Not enough arguments provided, type \"chdir -h\" to help", "yellow"))
         return path
 
     # Path is absolute
@@ -138,13 +140,14 @@ def changepath(args, path):
 
 def removefsa(args, eventslst, fsalst, path):
     if '-h' in args:
-        print(colored("\nremove:", "yellow", attrs=["bold"]) + " Removes a FSA\n")
-        print(colored("Usage:\n\t", attrs=["bold"]) + "remove fsa_name")
-        print(colored("Example:\n\t", attrs=["bold"]) + "remove G0")
+        print(colored("\nremove:", "yellow", attrs=["bold"]) + " Removes a FSA")
+        print(colored("\nUsage:", attrs=["bold"]) + "\n\tremove fsa_name")
+        print(colored("\nExample:", attrs=["bold"]) + "\n\tremove G0")
+        print("")
         return
 
     if len(args) < 1:
-        print("Not enough arguments provided, type \"rm -h\" to help")
+        print(colored("Not enough arguments provided, type \"remove -h\" to help", "yellow"))
         return
 
     if args[0] not in fsalst:
@@ -156,16 +159,18 @@ def removefsa(args, eventslst, fsalst, path):
 
 def currpath(args, eventslst, fsalst, path):
     if '-h' in args:
-        print(colored("showdir:", "yellow") + "Prints the current working directory")
+        print(colored("\nshowdir: ", "yellow", attrs=["bold"]) + "Prints the current working directory\n")
     else:
         print(path)
 
 
 def showfsa(args, eventslst, fsalst, path):
     if '-h' in args:
-        print(colored("\nshow: ", "yellow", attrs=["bold"]) + "Prints the structure of the FSA\n")
-        print(colored("Usage:", attrs=["bold"]) + "\n\tshow fsa_name")
-        print(colored("Example:", attrs=["bold"]) + "\n\tshow G0")
+        print(colored("\nshow: ", "yellow", attrs=["bold"]) + "Prints the structure of the FSA")
+        print(colored("\nUsage:", attrs=["bold"]) + "\n\tshow fsa_name")
+        print(colored("\nExample:", attrs=["bold"]) + "\n\tshow G0")
+        print("")
+        return
 
     if len(args) < 1:
         print(colored("Not enough arguments provided", "red"))
@@ -179,6 +184,12 @@ def showfsa(args, eventslst, fsalst, path):
 
 
 def lst(args, eventslst, fsalst, path):
+    if '-h' in args:
+        print(colored("\nldir: ", "yellow", attrs=["bold"]) + "Show files/dirs inside current working folder")
+        print(colored("\nUsage:", attrs=["bold"]) + "\n\tldir")
+        print("")
+        return
+
     print("Elements in: " + path + "\\\n")
     l = os.listdir(path + "\\")  # files only
     for el in l:
@@ -188,14 +199,22 @@ def lst(args, eventslst, fsalst, path):
 def listfsa(args, eventslst, fsalst, path):  # TODO add some stats?
 
     if '-h' in args:
-        print(colored("\nload: ", "yellow", attrs=["bold"]) + "Prints the FSA currently loaded\n")
-        print(colored("Usage:", attrs=["bold"]) + "\n\tlist")
+        print(colored("\nlist: ", "yellow", attrs=["bold"]) + "Prints the FSA currently loaded")
+        print(colored("\nUsage:", attrs=["bold"]) + "\n\tlist")
+        print("")
 
     for key, value in fsalst.items():
         print(key)
 
 
 def listevents(args, eventslst, fsalst, path):
+
+    if '-h' in args:
+        print(colored("\nelist: ", "yellow", attrs=["bold"]) + "List the events currently loaded")
+        print(colored("\nUsage:", attrs=["bold"]) + "\n\telist")
+        print("")
+        return
+
     for e in eventslst:
         print("- " + e.label + ":  Observable: " + str(e.isObservable) + ", Controllable: " + str(
             e.isControllable) + ", Fault: " + str(e.isFault))
@@ -203,18 +222,22 @@ def listevents(args, eventslst, fsalst, path):
 
 def editevent(args, eventslst, fsalst, path):
     if '-h' in args:
-        print("This function is used to edit an event that is loaded in the event list")
-        print("Usage:\n->editevent event-name -options")
-        print("-o set the event as observable")
-        print("-c set the event as controllable")
-        print("-f set the event as a fault event")
+        print(colored("\neditevent: ", "yellow",
+                      attrs=["bold"]) + "This function is used to edit an event that is loaded in the event list")
+        print(colored("\nUsage:", attrs=["bold"]) + "\n\teditevent event-name -options")
+        print(colored("\nOptions:", attrs=["bold"]) +
+              "\n\t-o set the event as observable" +
+              "\n\t-c set the event as controllable" +
+              "\n\t-f set the event as a fault event")
+        print(colored("\nExample:", attrs=["bold"]) + "\n\teditevent a -o")
+        print("")
         return
     if len(args) < 1:
-        print("Not enough arguments provided, type \"editevent -h\" to help")
+        print(colored("Not enough arguments provided, type \"editevent -h\" to help", "yellow"))
         return
 
     if not (any(e.label == args[0] for e in eventslst)):
-        print("Error, event not found in the event list")
+        print(colored("Error, event not found in the event list", "red"))
         return
 
     e = [i for i in eventslst if i.label == args[0]][0]
@@ -262,7 +285,6 @@ commands = {
     'cc': conccomp,
     'fm': faultmon,
     'diag': diagnoser,
-    'nfa2dfa': observer,
     'obs': observer,
     'supervisor': supervisor,
     'exth': exth,

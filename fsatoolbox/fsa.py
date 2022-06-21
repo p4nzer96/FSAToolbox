@@ -681,7 +681,7 @@ class fsa:
                 if events == fsa_e.label:
                     return fsa_e
         elif isinstance(events, event):
-            return event
+            return events
         else:
             raise TypeError
 

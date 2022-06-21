@@ -2,22 +2,25 @@ import fsatoolbox
 from fsatoolbox import *
 from fsatoolbox.utils.analysis import get_blockingness_info, get_deadness_info, get_reachability_info, \
     get_reversibility_info, get_trim_info, get_co_reachability_info
+from termcolor import colored
 
 
 def reachability(args, eventslst, fsalst, path):
     if '-h' in args:
-        print("This functions computes the reachability of a fsa")
-        print("Usage:\n     reach fsa_name (Ex: reach G0)")
+        print(colored("\nreach: ", "yellow", attrs=["bold"]) + "This functions computes the reachability of a fsa\n")
+        print(colored("Usage:", attrs=["bold"]) + "\n\treach fsa_name\n")
+        print(colored("Example:", attrs=["bold"]) + "\n\treach G0")
+        print("")
         # print("Optional arguments:")
         # print("-v verbose output, this will print the steps of the algorithm")
         return
 
     if len(args) < 1:
-        print("Not enough arguments provided, type \"reach -h\" to help")
+        print(colored("Not enough arguments provided, type \"reach -h\" to help", "yellow"))
         return
 
     if args[0] not in fsalst:
-        print("Error, fsa doesn't exists")
+        print(colored("Error, fsa doesn't exists", "red"))
         return
 
     try:
@@ -30,24 +33,26 @@ def reachability(args, eventslst, fsalst, path):
             print("The fsa is not reachable")
 
     except Exception as e:
-        print("There was an error while computing the reachability:")
+        print(colored("There was an error while computing the reachability:", "red"))
         print(e)
 
 
 def coreachability(args, eventslst, fsalst, path):
     if '-h' in args:
-        print("This functions computes the co-reachability of a fsa")
-        print("Usage:\n     coreach fsa_name (Ex: coreach G0)")
+        print(colored("\ncoreach: ", "yellow", attrs=["bold"]) + "This functions computes the co-reachability of a fsa\n")
+        print(colored("Usage:", attrs=["bold"]) + "\n\tcoreach fsa_name\n")
+        print(colored("Example:", attrs=["bold"]) + "\n\tcoreach G0")
+        print("")
         # print("Optional arguments:")
         # print("-v verbose output, this will print the steps of the algorithm")
         return
 
     if len(args) < 1:
-        print("Not enough arguments provided, type \"coreach -h\" to help")
+        print(colored("Not enough arguments provided, type \"coreach -h\" to help", "yellow"))
         return
 
     if args[0] not in fsalst:
-        print("Error, fsa doesn't exists")
+        print(colored("Error, fsa doesn't exists", "red"))
         return
 
     try:
@@ -62,24 +67,26 @@ def coreachability(args, eventslst, fsalst, path):
             print(coreachable_states)
 
     except Exception as e:
-        print("There was an error while computing the reachability:")
+        print(colored("There was an error while computing the reachability:", "red"))
         print(e)
 
 
 def blocking(args, eventslst, fsalst, path):
     if '-h' in args:
-        print("This functions computes if the fsa is blocking")
-        print("Usage:\n     blocking fsa_name (Ex: blocking G0)")
+        print(colored("\nblocking: ", "yellow", attrs=["bold"]) + "This functions computes if the fsa is blocking\n")
+        print(colored("Usage:", attrs=["bold"]) + "\n\tblocking fsa_name\n")
+        print(colored("Example:", attrs=["bold"]) + "\n\tblocking G0")
+        print("")
         # print("Optional arguments:")
         # print("-v verbose output, this will print the steps of the algorithm")
         return
 
     if len(args) < 1:
-        print("Not enough arguments provided, type \"blocking -h\" to help")
+        print(colored("Not enough arguments provided, type \"blocking -h\" to help", "yellow"))
         return
 
     if args[0] not in fsalst:
-        print("Error, fsa doesn't exists")
+        print(colored("Error, fsa doesn't exists", "red"))
         return
 
     try:
@@ -92,24 +99,26 @@ def blocking(args, eventslst, fsalst, path):
             print("The fsa is not blocking")
 
     except Exception as e:
-        print("There was an error while computing the reachability:")
+        print(colored("There was an error while computing the reachability:", "red"))
         print(e)
 
 
 def trim(args, eventslst, fsalst, path):
     if '-h' in args:
-        print("This functions computes if the fsa is trim")
-        print("Usage:\n     trim fsa_name (Ex: trim G0)")
+        print(colored("\ntrim: ", "yellow", attrs=["bold"]) + "This functions computes if the fsa is trim\n")
+        print(colored("Usage:", attrs=["bold"]) + "\n\ttrim fsa_name\n")
+        print(colored("Example:", attrs=["bold"]) + "\n\ttrim G0")
+        print("")
         # print("Optional arguments:")
         # print("-v verbose output, this will print the steps of the algorithm")
         return
 
     if len(args) < 1:
-        print("Not enough arguments provided, type \"trim -h\" to help")
+        print(colored("Not enough arguments provided, type \"trim -h\" to help", "yellow"))
         return
 
     if args[0] not in fsalst:
-        print("Error, fsa doesn't exists")
+        print(colored("Error, fsa doesn't exists", "red"))
         return
 
     try:
@@ -120,24 +129,26 @@ def trim(args, eventslst, fsalst, path):
             print("The fsa is not trim")
 
     except Exception as e:
-        print("There was an error while computing the reachability:")
+        print(colored("There was an error while computing the reachability:", "red"))
         print(e)
 
 
 def dead(args, eventslst, fsalst, path):
     if '-h' in args:
-        print("This functions computes if the fsa is dead")
-        print("Usage:\n     dead fsa_name (Ex: dead G0)")
+        print(colored("\ndead: ", "yellow", attrs=["bold"]) + "This functions computes if a fsa has dead states\n")
+        print(colored("Usage:", attrs=["bold"]) +"\n\tdead fsa_name\n")
+        print(colored("Example:", attrs=["bold"]) + "\n\tdead G0")
+        print("")
         # print("Optional arguments:")
         # print("-v verbose output, this will print the steps of the algorithm")
         return
 
     if len(args) < 1:
-        print("Not enough arguments provided, type \"dead -h\" to help")
+        print(colored("Not enough arguments provided, type \"dead -h\" to help", "yellow"))
         return
 
     if args[0] not in fsalst:
-        print("Error, fsa doesn't exists")
+        print(colored("Error, fsa doesn't exists", "red"))
         return
 
     try:
@@ -149,24 +160,26 @@ def dead(args, eventslst, fsalst, path):
             print(dead)
 
     except Exception as e:
-        print("There was an error while computing the reachability:")
+        print(colored("There was an error while computing the reachability:", "red"))
         print(e)
 
 
 def reverse(args, eventslst, fsalst, path):
     if '-h' in args:
-        print("This functions computes if the fsa is reversible")
-        print("Usage:\n     reverse fsa_name (Ex: reverse G0)")
+        print(colored("\nreverse: ", "yellow", attrs=["bold"]) + "This functions computes if the fsa is reversible\n")
+        print(colored("Usage:", attrs=["bold"]) + "\n\treverse fsa_name\n")
+        print(colored("Example:", attrs=["bold"]) + " \n\treverse G0")
+        print("")
         # print("Optional arguments:")
         # print("-v verbose output, this will print the steps of the algorithm")
         return
 
     if len(args) < 1:
-        print("Not enough arguments provided, type \"reverse -h\" to help")
+        print(colored("Not enough arguments provided, type \"reverse -h\" to help", "yellow"))
         return
 
     if args[0] not in fsalst:
-        print("Error, fsa doesn't exists")
+        print(colored("Error, fsa doesn't exists", "red"))
         return
 
     try:
@@ -177,5 +190,5 @@ def reverse(args, eventslst, fsalst, path):
             print("The fsa is not reversible")
 
     except Exception as e:
-        print("There was an error while computing the reachability:")
+        print(colored("There was an error while computing the reachability:\n", "red"))
         print(e)
