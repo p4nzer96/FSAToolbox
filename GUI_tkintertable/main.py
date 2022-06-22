@@ -22,8 +22,9 @@ from tkintertable.Prefs import Preferences
 
 from tkinter import ttk
 import json
-import my_globals
+import GUI_Utils
 from loadfsa import *
+from loadfsa_GUI import *
 
 try:
     from tkinter import *
@@ -316,13 +317,16 @@ class TablesApp(Frame):
                                                              ("json files","*.json"),
                                                              ("All files","*.*")],
                                                   parent=self.tablesapp_win)
-        from fsatoolbox.fsa import fsa
+        # from fsatoolbox.fsa import fsa
+        # from loadfsa_GUI import fsa_GUI
         import analysis
         from tkinter import Button, Text, BOTH, StringVar
         from tkinter.ttk import Frame
-        from my_globals import TablesApp
+        from GUI_Utils import TablesApp
 
-        f = fsa.from_file(filename)
+        f = fsa_GUI()
+        f.from_file_GUI(filename)
+
         X = f.X
         E = f.E
         x0 = f.x0
@@ -330,7 +334,7 @@ class TablesApp(Frame):
         delta = f.delta
 
         num_chars_per_line = 50
-        text_content = "FSA name: " + my_globals.last_sheet + "\n"
+        text_content = "FSA name: " + GUI_Utils.last_sheet + "\n"
         text_content += "______________________________________\n"
 
         if x0:
@@ -771,7 +775,7 @@ class TablesApp(Frame):
             text_content += text_undead + "\n"
 
             # Trim
-            is_trim = f.get_trim_info()
+            is_trim = analysis.get_trim_info(f)
             text_content += "______________________________________"
             text_content += "\nTRIM\n"
             if is_trim == 1:
@@ -969,9 +973,9 @@ class TablesApp(Frame):
 
         self.currenttable.model.columnNames.clear()
         self.currenttable.model.columnlabels.clear()
-        my_globals.dictcolControllableEvents.clear()
-        my_globals.dictcolObservableEvents.clear()
-        my_globals.dictcolFaultyEvents.clear()
+        GUI_Utils.dictcolControllableEvents.clear()
+        GUI_Utils.dictcolObservableEvents.clear()
+        GUI_Utils.dictcolFaultyEvents.clear()
         self.currenttable.model.addColumn("State")
 
         dict_event_suffixes = {}
@@ -982,30 +986,30 @@ class TablesApp(Frame):
             suffix_event = ""
             if "isObservable" in dict_events[list_events[i - 1]]:
                 if dict_events[list_events[i - 1]]["isObservable"] == "o":
-                    my_globals.setEventAsObservable(self.currenttable, list_events[i - 1])
+                    GUI_Utils.setEventAsObservable(self.currenttable, list_events[i - 1])
                 elif dict_events[list_events[i - 1]]["isObservable"] == "uo":
                     suffix_event += "_uo"
-                    my_globals.setEventAsUnobservable(self.currenttable, list_events[i - 1])
+                    GUI_Utils.setEventAsUnobservable(self.currenttable, list_events[i - 1])
             else:
-                my_globals.setEventAsObservable(self.currenttable, list_events[i - 1])
+                GUI_Utils.setEventAsObservable(self.currenttable, list_events[i - 1])
 
             if "isControllable" in dict_events[list_events[i - 1]]:
                 if dict_events[list_events[i - 1]]["isControllable"] == "c":
-                    my_globals.setEventAsControllable(self.currenttable, list_events[i - 1])
+                    GUI_Utils.setEventAsControllable(self.currenttable, list_events[i - 1])
                 elif dict_events[list_events[i - 1]]["isControllable"] == "uc":
                     suffix_event += "_uc"
-                    my_globals.setEventAsUncontrollable(self.currenttable, list_events[i - 1])
+                    GUI_Utils.setEventAsUncontrollable(self.currenttable, list_events[i - 1])
             else:
-                my_globals.setEventAsControllable(self.currenttable, list_events[i - 1])
+                GUI_Utils.setEventAsControllable(self.currenttable, list_events[i - 1])
 
             if "isFault" in dict_events[list_events[i - 1]]:
                 if dict_events[list_events[i - 1]]["isFault"] == "f":
                     suffix_event += "_f"
-                    my_globals.setEventAsFaulty(self.currenttable, list_events[i - 1])
+                    GUI_Utils.setEventAsFaulty(self.currenttable, list_events[i - 1])
                 elif dict_events[list_events[i - 1]]["isFault"] == "uf":
-                    my_globals.setEventAsUnfaulty(self.currenttable, list_events[i - 1])
+                    GUI_Utils.setEventAsUnfaulty(self.currenttable, list_events[i - 1])
             else:
-                my_globals.setEventAsUnfaulty(self.currenttable, list_events[i - 1])
+                GUI_Utils.setEventAsUnfaulty(self.currenttable, list_events[i - 1])
 
             dict_event_suffixes.update({list_events[i - 1]: suffix_event})
             self.currenttable.model.addColumn(list_events[i - 1]+suffix_event)
@@ -1176,9 +1180,9 @@ class TablesApp(Frame):
 
         self.currenttable.model.columnNames.clear()
         self.currenttable.model.columnlabels.clear()
-        my_globals.dictcolControllableEvents.clear()
-        my_globals.dictcolObservableEvents.clear()
-        my_globals.dictcolFaultyEvents.clear()
+        GUI_Utils.dictcolControllableEvents.clear()
+        GUI_Utils.dictcolObservableEvents.clear()
+        GUI_Utils.dictcolFaultyEvents.clear()
         self.currenttable.model.addColumn("State")
         i = 1
 
@@ -1190,30 +1194,30 @@ class TablesApp(Frame):
             suffix_event = ""
             if "isObservable" in dict_events[list_events[i - 1]]:
                 if dict_events[list_events[i - 1]]["isObservable"] == "1" or dict_events[list_events[i - 1]]["isObservable"] == 1:
-                    my_globals.setEventAsObservable(self.currenttable, list_events[i - 1])
+                    GUI_Utils.setEventAsObservable(self.currenttable, list_events[i - 1])
                 elif dict_events[list_events[i - 1]]["isObservable"] == "0" or dict_events[list_events[i - 1]]["isObservable"] == 0:
                     suffix_event += "_uo"
-                    my_globals.setEventAsUnobservable(self.currenttable, list_events[i - 1])
+                    GUI_Utils.setEventAsUnobservable(self.currenttable, list_events[i - 1])
             else:
-                my_globals.setEventAsObservable(self.currenttable, list_events[i - 1])
+                GUI_Utils.setEventAsObservable(self.currenttable, list_events[i - 1])
 
             if "isControllable" in dict_events[list_events[i - 1]]:
                 if dict_events[list_events[i - 1]]["isControllable"] == "1" or dict_events[list_events[i - 1]]["isControllable"] == 1:
-                    my_globals.setEventAsControllable(self.currenttable, list_events[i - 1])
+                    GUI_Utils.setEventAsControllable(self.currenttable, list_events[i - 1])
                 elif dict_events[list_events[i - 1]]["isControllable"] == "0" or dict_events[list_events[i - 1]]["isControllable"] == 0:
                     suffix_event += "_uc"
-                    my_globals.setEventAsUncontrollable(self.currenttable, list_events[i - 1])
+                    GUI_Utils.setEventAsUncontrollable(self.currenttable, list_events[i - 1])
             else:
-                my_globals.setEventAsControllable(self.currenttable, list_events[i - 1])
+                GUI_Utils.setEventAsControllable(self.currenttable, list_events[i - 1])
 
             if "isFault" in dict_events[list_events[i - 1]]:
                 if dict_events[list_events[i - 1]]["isFault"] == "1" or dict_events[list_events[i - 1]]["isFault"] == 1:
                     suffix_event += "_f"
-                    my_globals.setEventAsFaulty(self.currenttable, list_events[i - 1])
+                    GUI_Utils.setEventAsFaulty(self.currenttable, list_events[i - 1])
                 elif dict_events[list_events[i - 1]]["isFault"] == "0" or dict_events[list_events[i - 1]]["isFault"] == 0:
-                    my_globals.setEventAsUnfaulty(self.currenttable, list_events[i - 1])
+                    GUI_Utils.setEventAsUnfaulty(self.currenttable, list_events[i - 1])
             else:
-                my_globals.setEventAsUnfaulty(self.currenttable, list_events[i - 1])
+                GUI_Utils.setEventAsUnfaulty(self.currenttable, list_events[i - 1])
 
             dict_event_suffixes.update({list_events[i - 1]: suffix_event})
             num_chars = len(list_events[i - 1] + suffix_event)
@@ -1349,9 +1353,9 @@ class TablesApp(Frame):
 
         self.currenttable.model.columnNames.clear()
         self.currenttable.model.columnlabels.clear()
-        my_globals.dictcolControllableEvents.clear()
-        my_globals.dictcolObservableEvents.clear()
-        my_globals.dictcolFaultyEvents.clear()
+        GUI_Utils.dictcolControllableEvents.clear()
+        GUI_Utils.dictcolObservableEvents.clear()
+        GUI_Utils.dictcolFaultyEvents.clear()
         self.currenttable.model.addColumn("State")
 
         dict_event_properties = {}
@@ -1413,30 +1417,30 @@ class TablesApp(Frame):
                 suffix_event = ""
                 if "isObservable" in dict_event_properties[current_event]:
                     if dict_event_properties[current_event]["isObservable"] == 1:
-                        my_globals.setEventAsObservable(self.currenttable, current_event)
+                        GUI_Utils.setEventAsObservable(self.currenttable, current_event)
                     elif dict_event_properties[current_event]["isObservable"] == 0:
                         suffix_event += "_uo"
-                        my_globals.setEventAsUnobservable(self.currenttable, current_event)
+                        GUI_Utils.setEventAsUnobservable(self.currenttable, current_event)
                 else:
-                    my_globals.setEventAsUnobservable(self.currenttable, current_event)
+                    GUI_Utils.setEventAsUnobservable(self.currenttable, current_event)
 
                 if "isControllable" in dict_event_properties[current_event]:
                     if dict_event_properties[current_event]["isControllable"] == 1:
-                        my_globals.setEventAsControllable(self.currenttable, current_event)
+                        GUI_Utils.setEventAsControllable(self.currenttable, current_event)
                     elif dict_event_properties[current_event]["isControllable"] == 0:
                         suffix_event += "_uc"
-                        my_globals.setEventAsUncontrollable(self.currenttable, current_event)
+                        GUI_Utils.setEventAsUncontrollable(self.currenttable, current_event)
                 else:
-                    my_globals.setEventAsUncontrollable(self.currenttable, current_event)
+                    GUI_Utils.setEventAsUncontrollable(self.currenttable, current_event)
 
                 if "isFault" in dict_event_properties[current_event]:
                     if dict_event_properties[current_event]["isFault"] == 1:
                         suffix_event += "_f"
-                        my_globals.setEventAsFaulty(self.currenttable, current_event)
+                        GUI_Utils.setEventAsFaulty(self.currenttable, current_event)
                     elif dict_event_properties[current_event]["isFault"] == 0:
-                        my_globals.setEventAsUnfaulty(self.currenttable, current_event)
+                        GUI_Utils.setEventAsUnfaulty(self.currenttable, current_event)
                 else:
-                    my_globals.setEventAsUnfaulty(self.currenttable, current_event)
+                    GUI_Utils.setEventAsUnfaulty(self.currenttable, current_event)
 
                 dict_event_suffixes.update({current_event: suffix_event})
                 self.currenttable.model.addColumn(current_event + suffix_event)
@@ -1615,7 +1619,7 @@ class TablesApp(Frame):
                                                 initialvalue=s)
         if newname == None:
             return
-        my_globals.last_sheet = newname
+        GUI_Utils.last_sheet = newname
         self.copy_Sheet(newname)
         self.delete_Sheet()
         return
@@ -1662,14 +1666,14 @@ class TablesApp(Frame):
     def from_Table_To_Json(self):
         """Convert the current table content into an FSA Json file description"""
         # print("from_Table_To_Json")
-        my_globals.fromTableToJson(self.currenttable)
+        GUI_Utils.fromTableToJson(self.currenttable)
         self.saved = 0
         return
 
     def analyze_FSA(self):
         """Convert the current table content into a Json file"""
         # print("analyze_FSA")
-        my_globals.analyzeFsa(self.currenttable)
+        GUI_Utils.analyzeFsa(self.currenttable)
         self.saved = 0
         return
 
@@ -1860,9 +1864,9 @@ class ToolBar(Frame):
         self.add_button('Plot Prefs', self.parentapp.plotSetup, img)
         '''
 
-        img = my_globals.from_table_to_json()
+        img = GUI_Utils.from_table_to_json()
         self.add_button('From table to json', self.parentapp.from_Table_To_Json, img)
-        img = my_globals.analyze_fsa()
+        img = GUI_Utils.analyze_fsa()
         self.add_button('Analyze FSA', self.parentapp.analyze_FSA, img)
         return
 
@@ -1903,6 +1907,6 @@ def main():
     return
 
 if __name__ == '__main__':
-    # my_globals.initialize()
+    # GUI_Utils.initialize()
     main()
 
