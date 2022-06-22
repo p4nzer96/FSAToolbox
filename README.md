@@ -23,5 +23,8 @@ pip install "fullPathTo_whl"
 To use the simple CLI interface:
 - Download the lastest build from the "Release" page
 - unzip the folder
-- run "simpleCLI.exe"
-Note that this doesn't require to have python installed.
+- run "simpleCLI.exe"  
+Note that this doesn't require to have python installed.  
+
+For a guide, some examples and a list of commands check out the wiki:  
+https://github.com/p4nzer96/Automi/wiki
