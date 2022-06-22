@@ -154,7 +154,7 @@ class fsa_GUI(fsa):
 
 def open_popup_errors_on_txt_file():
     """Open popup if some errors are present on the .txt file describing the fsa"""
-    from my_globals import TablesApp
+    from GUI_Utils import TablesApp
     TablesApp.example_win = Toplevel()
     # Set the geometry of tkinter frame
     TablesApp.example_win.geometry("1020x670")
@@ -176,7 +176,7 @@ def open_popup_errors_on_txt_file():
 
 def open_popup_errors_on_csv_file():
     """Open popup if some errors are present on the .csv file describing the fsa"""
-    from my_globals import TablesApp
+    from GUI_Utils import TablesApp
     # Create an instance of tkinter frame
     TablesApp.example_win = Toplevel()
     # Set the geometry of tkinter frame
