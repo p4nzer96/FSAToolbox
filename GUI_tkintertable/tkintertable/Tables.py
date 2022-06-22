@@ -53,7 +53,7 @@ import platform
 
 
 import json
-import my_globals
+import GUI_Utils
 from tkinter import simpledialog
 from tkinter import filedialog
 
@@ -582,9 +582,9 @@ class TableCanvas(Canvas):
             # global dictcolObservableEvents
             # global dictcolControllableEvents
             # global dictcolFaultyEvents
-            my_globals.dictcolObservableEvents.update({newname: 1})
-            my_globals.dictcolControllableEvents.update({newname: 1})
-            my_globals.dictcolFaultyEvents.update({newname: 0})
+            GUI_Utils.dictcolObservableEvents.update({newname: 1})
+            GUI_Utils.dictcolControllableEvents.update({newname: 1})
+            GUI_Utils.dictcolFaultyEvents.update({newname: 0})
             # **********************************************************************************************************
 
 
@@ -603,19 +603,19 @@ class TableCanvas(Canvas):
                 event_name = dict_event_properties["name"]
 
                 if dict_event_properties["isObservable"] == 0:
-                    my_globals.dictcolObservableEvents[event_name] = 0
+                    GUI_Utils.dictcolObservableEvents[event_name] = 0
                 else:
-                    my_globals.dictcolObservableEvents[event_name] = 1
+                    GUI_Utils.dictcolObservableEvents[event_name] = 1
 
                 if dict_event_properties["isControllable"] == 0:
-                    my_globals.dictcolControllableEvents[event_name] = 0
+                    GUI_Utils.dictcolControllableEvents[event_name] = 0
                 else:
-                    my_globals.dictcolControllableEvents[event_name] = 1
+                    GUI_Utils.dictcolControllableEvents[event_name] = 1
 
                 if dict_event_properties["isFault"] == 0:
-                    my_globals.dictcolFaultyEvents[event_name] = 0
+                    GUI_Utils.dictcolFaultyEvents[event_name] = 0
                 else:
-                    my_globals.dictcolFaultyEvents[event_name] = 1
+                    GUI_Utils.dictcolFaultyEvents[event_name] = 1
 
                 if len(newname) >= 10:
                     current_col_index = self.getSelectedColumn()
@@ -675,7 +675,7 @@ class TableCanvas(Canvas):
             if dict_event_properties["isFault"] == 1:
                 suffix += "_f"
 
-            my_globals.dictcolObservableEvents[event_name] = 0
+            GUI_Utils.dictcolObservableEvents[event_name] = 0
 
             self.model.relabel_Column(current_col_index, event_name+suffix)
             self.redraw()
@@ -701,7 +701,7 @@ class TableCanvas(Canvas):
             if dict_event_properties["isFault"] == 1:
                 suffix += "_f"
 
-            my_globals.dictcolObservableEvents[event_name] = 1
+            GUI_Utils.dictcolObservableEvents[event_name] = 1
 
             self.model.relabel_Column(current_col_index, event_name+suffix)
             self.redraw()
@@ -727,7 +727,7 @@ class TableCanvas(Canvas):
             if dict_event_properties["isFault"] == 1:
                 suffix += "_f"
 
-            my_globals.dictcolControllableEvents[event_name] = 0
+            GUI_Utils.dictcolControllableEvents[event_name] = 0
 
             self.model.relabel_Column(current_col_index, event_name+suffix)
             self.redraw()
@@ -753,7 +753,7 @@ class TableCanvas(Canvas):
             if dict_event_properties["isFault"] == 1:
                 suffix += "_f"
 
-            my_globals.dictcolControllableEvents[event_name] = 1
+            GUI_Utils.dictcolControllableEvents[event_name] = 1
 
             self.model.relabel_Column(current_col_index, event_name+suffix)
             self.redraw()
@@ -780,7 +780,7 @@ class TableCanvas(Canvas):
             if dict_event_properties["isControllable"] == 0:
                 suffix += "_uc"
 
-            my_globals.dictcolFaultyEvents[event_name] = 1
+            GUI_Utils.dictcolFaultyEvents[event_name] = 1
 
             self.model.relabel_Column(current_col_index, event_name+suffix)
             self.redraw()
@@ -807,7 +807,7 @@ class TableCanvas(Canvas):
             if dict_event_properties["isControllable"] == 0:
                 suffix += "_uc"
 
-            my_globals.dictcolFaultyEvents[event_name] = 0
+            GUI_Utils.dictcolFaultyEvents[event_name] = 0
 
             self.model.relabel_Column(current_col_index, event_name+suffix)
             self.redraw()
@@ -821,9 +821,9 @@ class TableCanvas(Canvas):
         if n:
             col = self.getSelectedColumn()
             previous_col_name = self.model.getColumnLabel(col)
-            del my_globals.dictcolObservableEvents[str(previous_col_name)]
-            del my_globals.dictcolControllableEvents[str(previous_col_name)]
-            del my_globals.dictcolFaultyEvents[str(previous_col_name)]
+            del GUI_Utils.dictcolObservableEvents[str(previous_col_name)]
+            del GUI_Utils.dictcolControllableEvents[str(previous_col_name)]
+            del GUI_Utils.dictcolFaultyEvents[str(previous_col_name)]
             self.model.deleteColumn(col)
             self.currentcol = self.currentcol - 1
             self.redrawTable()
@@ -2873,9 +2873,9 @@ class ColumnHeader(Canvas):
 
         # print("previous_col_name: ", previous_col_name)
 
-        current_observable_value = my_globals.dictcolObservableEvents.get(str(previous_col_name))
-        current_controllable_value = my_globals.dictcolControllableEvents.get(str(previous_col_name))
-        current_faulty_value = my_globals.dictcolFaultyEvents.get(str(previous_col_name))
+        current_observable_value = GUI_Utils.dictcolObservableEvents.get(str(previous_col_name))
+        current_controllable_value = GUI_Utils.dictcolControllableEvents.get(str(previous_col_name))
+        current_faulty_value = GUI_Utils.dictcolFaultyEvents.get(str(previous_col_name))
         # print("current_observable_value: ", current_observable_value)
         # print("current_controllable_value: ", current_controllable_value)
         # print("current_faulty_value: ", current_faulty_value)
@@ -2997,21 +2997,21 @@ class ColumnHeader(Canvas):
                 dict_previous_col_name_properties = get_event_from_columnlabel(previous_col_name)
                 print(str(previous_col_name) + ":      dict_previous_col_name_properties: ", dict_previous_col_name_properties)
 
-                del my_globals.dictcolObservableEvents[dict_previous_col_name_properties[previous_col_name]]
-                del my_globals.dictcolControllableEvents[dict_previous_col_name_properties[previous_col_name]]
-                del my_globals.dictcolFaultyEvents[dict_previous_col_name_properties[previous_col_name]]
+                del GUI_Utils.dictcolObservableEvents[dict_previous_col_name_properties[previous_col_name]]
+                del GUI_Utils.dictcolControllableEvents[dict_previous_col_name_properties[previous_col_name]]
+                del GUI_Utils.dictcolFaultyEvents[dict_previous_col_name_properties[previous_col_name]]
 
                 dict_ans_properties = get_event_from_columnlabel(ans)
                 print(str(ans) + ":      dict_ans_properties: ", dict_ans_properties)
 
-                my_globals.dictcolObservableEvents.update({dict_ans_properties[ans]: dict_ans_properties["properties"]["isObservable"]})
-                my_globals.dictcolControllableEvents.update({dict_ans_properties[ans]: dict_ans_properties["properties"]["isControllable"]})
-                my_globals.dictcolFaultyEvents.update({dict_ans_properties[ans]: dict_ans_properties["properties"]["isFault"]})
+                GUI_Utils.dictcolObservableEvents.update({dict_ans_properties[ans]: dict_ans_properties["properties"]["isObservable"]})
+                GUI_Utils.dictcolControllableEvents.update({dict_ans_properties[ans]: dict_ans_properties["properties"]["isControllable"]})
+                GUI_Utils.dictcolFaultyEvents.update({dict_ans_properties[ans]: dict_ans_properties["properties"]["isFault"]})
 
 
-                # print("my_globals.dictcolObservableEvents: ", my_globals.dictcolObservableEvents)
-                # print("my_globals.dictcolControllableEvents: ", my_globals.dictcolControllableEvents)
-                # print("my_globals.dictcolFaultyEvents: ", my_globals.dictcolFaultyEvents)
+                # print("GUI_Utils.dictcolObservableEvents: ", GUI_Utils.dictcolObservableEvents)
+                # print("GUI_Utils.dictcolControllableEvents: ", GUI_Utils.dictcolControllableEvents)
+                # print("GUI_Utils.dictcolFaultyEvents: ", GUI_Utils.dictcolFaultyEvents)
 
                 return
 
