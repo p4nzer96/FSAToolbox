@@ -2,6 +2,9 @@ import fsatoolbox
 from fsatoolbox import *
 from basic_CLI.checkevents import checkevents
 from termcolor import colored
+import colorama
+
+colorama.init()
 
 
 # TODO add exit (abort) option in every input
@@ -58,8 +61,6 @@ def fsabuilder(args, eventslst, fsalst, path):
         'final': 'isFinal',
         'forbidden': 'isForbidden'
     }
-
-    # TODO: Gestire il problema dello stato inserito non esistente
 
     for name, attr in state_prop.items():
         while True:
@@ -131,8 +132,6 @@ def fsabuilder(args, eventslst, fsalst, path):
         'controllable': 'isControllable',
         'faulty': 'isFault'
     }
-
-    # TODO: Gestire il problema dell'evento inserito non esistente
 
     for name, attr in event_prop.items():
         while True:

@@ -104,6 +104,6 @@ def compute_supervisor(G, H):
 
             A.remove_state(x)
 
-    trim(A)
+    A = trim(A)
 
     return A

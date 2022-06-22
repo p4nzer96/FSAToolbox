@@ -1,5 +1,8 @@
 import fsatoolbox
 from fsatoolbox import *
+import colorama
+
+colorama.init()
 
 
 def updateevents(eventslst, fsalst):

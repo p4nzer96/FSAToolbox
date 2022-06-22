@@ -16,6 +16,9 @@ class state:
     is_Dead: bool = None
     is_co_Reachable_to_x0: bool = None
 
+    def __hash__(self):  # TODO: Improvement needed
+        return hash(self.label)
+
     def __repr__(self):
         return self.label
 

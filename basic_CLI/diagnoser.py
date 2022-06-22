@@ -1,6 +1,9 @@
 import fsatoolbox
 from fsatoolbox import *
 from termcolor import colored
+import colorama
+
+colorama.init()
 
 
 def diagnoser(args, eventslst, fsalst, path):

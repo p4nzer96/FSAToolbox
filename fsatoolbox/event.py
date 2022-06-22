@@ -8,6 +8,9 @@ class event:
     isControllable: bool = None
     isFault: bool = None
 
+    def __hash__(self):
+        return hash(self.label)
+
     def __repr__(self):
         return self.label
 

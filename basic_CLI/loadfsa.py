@@ -4,6 +4,9 @@ from termcolor import colored
 from basic_CLI.checkevents import checkevents
 import fsatoolbox
 from fsatoolbox import *
+import colorama
+
+colorama.init()
 
 
 def loadfsa(args, eventslst, fsalst, path):

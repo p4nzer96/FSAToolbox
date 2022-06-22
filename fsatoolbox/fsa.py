@@ -308,7 +308,7 @@ class fsa:
 
         # Populating the column representing the properties of the states
 
-        # TODO: Trovare una soluzione più elegante
+        # TODO: Find a better solution
 
         for i, state in enumerate(self.X):
 
@@ -461,13 +461,16 @@ class fsa:
             raise ValueError
 
     def remove_state(self, state):
+        """
+        Removes an state or a list of states from the FSA
+        Args:
+            state (state): state/s to remove
+        """
 
         state = self._state_parser(state)
 
         if state is None or state not in self.X:
             raise StateNotFoundExc("Error: state not in X")
-
-        self._update_fsa()
 
         for x in self._X:
             if x == state:
@@ -477,7 +480,16 @@ class fsa:
             self._delta.drop(self.delta[((self._delta.start == state) |
                                          (self._delta.end == state))].index, inplace=True)
 
+        self._update_fsa()
+
     def change_state_props(self, state, **kwargs):
+        """
+        Changes the properties of a state
+
+        Args:
+            state (state): state of which you want to change the properties
+            **kwargs (): properties
+        """
 
         state = self._state_parser(state)
 
@@ -486,6 +498,8 @@ class fsa:
 
         for prop in kwargs.keys():
             setattr(state, prop, kwargs[prop])
+
+        self._update_fsa()
 
     def add_event(self, new_event, isObservable=None, isControllable=None, isFault=None):
         """
@@ -528,15 +542,13 @@ class fsa:
         """
         Removes an event or a list of events from the FSA
         Args:
-            event (state):
+            event (event): event/S to remove
         """
 
         event = self._event_parser(event)
 
         if event is None or event not in self.E:
             raise EventNotFoundExc("Error: event not in alphabet")
-
-        self._update_fsa()
 
         for e in self._E:
             if e == event:
@@ -545,7 +557,16 @@ class fsa:
         if not self._delta.empty:
             self._delta.drop(self.delta[(self._delta.transition == event)], inplace=True)
 
+        self._update_fsa()
+
     def change_event_props(self, event, **kwargs):
+        """
+        Changes the properties of an event
+
+        Args:
+            event (event): event of which you want to change the properties
+            **kwargs (): properties
+        """
 
         event = self._event_parser(event)
 
@@ -554,6 +575,8 @@ class fsa:
 
         for prop in kwargs.keys():
             setattr(event, prop, kwargs[prop])
+
+        self._update_fsa()
 
     def add_transition(self, initial_state, tr_event, end_state):
 
@@ -564,9 +587,6 @@ class fsa:
             initial_state (state, optional): initial state
             tr_event (event, optional): transition
             end_state (state, optional): ending state
-
-        Returns: DataFrame that contains the filtered data according to parameters
-
         """
 
         # Initial State
@@ -621,6 +641,14 @@ class fsa:
         self._update_fsa()
 
     def remove_transition(self, start, event, end):
+        """
+        Removes a transition to the delta relation/function
+
+        Args:
+            start (state, optional): initial state
+            event (event, optional): transition
+            end (state, optional): ending state
+        """
 
         start = self._state_parser(start)
         event = self._event_parser(event)
@@ -630,7 +658,7 @@ class fsa:
                                  (self._delta.transition == event) &
                                  (self._delta.end == end))]
 
-        if transition.empty():
+        if transition.empty:
             raise TransitionNotFoundExc("Error: transition not in delta")
 
         self._delta.drop(transition.index, inplace=True)
@@ -640,7 +668,13 @@ class fsa:
     # Internal Methods -------------------------------------------------------------
 
     def _state_parser(self, states):
-
+        """
+        Parse a state from string to the corresponding object
+        Args:
+            states (str): A string that represents a state
+        Returns:
+              Corresponding state object
+        """
         if isinstance(states, list):
             parsed_states = []
             for x in states:
@@ -663,6 +697,13 @@ class fsa:
             raise TypeError
 
     def _event_parser(self, events):
+        """
+        Parse a state from string to the corresponding object
+        Args:
+            events (str): A string that represents an event
+        Returns:
+            Corresponding event object
+        """
 
         if isinstance(events, list):
             parsed_events = []
@@ -686,18 +727,18 @@ class fsa:
             raise TypeError
 
     def _update_fsa(self):
-
+        """
+        Refreshes FSA (updates states properties, x0 and Xm)
+        """
+        self._x0 = []
         for x in self._X:
-            if x.isInitial is True and x not in self._x0:
+            if x.isInitial is True:
                 self._x0.append(x)
-            elif x.isInitial is False and x in self._x0:
-                self._x0.remove(x)
 
+        self._Xm = []
         for x in self._X:
-            if x.isFinal is True and x not in self._Xm:
+            if x.isFinal is True:
                 self._Xm.append(x)
-            elif x.isFinal is False and x in self._Xm:
-                self._Xm.remove(x)
 
         self.is_Reachable = None
         self.is_co_Reachable = None

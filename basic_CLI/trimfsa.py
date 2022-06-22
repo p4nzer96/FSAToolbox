@@ -1,21 +1,19 @@
-from termcolor import colored
-
 import fsatoolbox
 from fsatoolbox import *
+from termcolor import colored
 import colorama
+
+from fsatoolbox.trim import trim
 
 colorama.init()
 
 
-def exth(args, eventslst, fsalst, path):
+def trimfsa(args, eventslst, fsalst, path):
     if '-h' in args:
-        print(colored("exth: ", "yellow", attrs=["bold"]) + "This functions computes the extended specification "
-                                                            "automaton, given the specification automaton H")
-        print(colored("\nUsage:", attrs=["bold"]) + "\n\texth outputname inputname (Ex: exth H1 H) ")
-        print(colored("\nExample:", attrs=["bold"]) + "\n\texth H1 H")
+        print(colored("\ntrimfsa: ", "yellow", attrs=["bold"]) + "This functions computes a trim of a FSA ")
+        print(colored("\nUsage:", attrs=["bold"]) + "\n\ttrimfsa output input")
+        print(colored("\nExample:", attrs=["bold"]) + "\n\ttrimfsa G2 G1")
         print("")
-        # print("Optional arguments:")
-        # print("-v verbose output, this will print the steps of the algorithm")
         return
 
     if len(args) < 2:
@@ -32,7 +30,7 @@ def exth(args, eventslst, fsalst, path):
             return
 
     try:
-        fsalst[args[0]] = hhat(fsalst[args[1]])
+        fsalst[args[0]] = trim(fsalst[args[1]])
     except Exception as e:
         print(colored("There was an error while computing the extended supervisor:", "red"))
         print(e)

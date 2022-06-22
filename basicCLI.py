@@ -4,6 +4,7 @@ import shlex
 import colorama
 from termcolor import colored
 
+from basic_CLI.trimfsa import trimfsa
 from basic_CLI.analysis import reachability, coreachability, blocking, trim, dead, reverse
 from basic_CLI.checkevents import updateevents
 from basic_CLI.conccomp import conccomp
@@ -45,7 +46,7 @@ def help(args, eventslst, fsalst, path):
     print("-> " + colored("addevent", "yellow") + ":\tAdds an event to a FSA")
     print("-> " + colored("rmevent", "yellow") + ": \tRemoves an event from a FSA")
     print("-> " + colored("elist", "yellow") + ":   \tLists all events of a FSA")
-    print("-> " + colored("editevent", "yellow") + "\tEdits event properties")
+    print("-> " + colored("editevent", "yellow") + ":\tEdits event properties")
     print("-> " + colored("addtrans", "yellow") + ":\tAdds a transition to a FSA")
     print("-> " + colored("rmtrans", "yellow") + ": \tRemoves a transition to a FSA")
 
@@ -53,6 +54,7 @@ def help(args, eventslst, fsalst, path):
     print("Commands used to call functions on FSA\n")
 
     print("-> " + colored("cc", "yellow") + ":       \tComputes the concurrent composition between two FSA")
+    print("-> " + colored("trimfsa", "yellow") + ":  \tComputes the a trim of a FSA")
     print("-> " + colored("fm", "yellow") + ":       \tComputes the Fault Monitor of a FSA")
     print("-> " + colored("diag", "yellow") + ":     \tComputes the diagnoser of a FSA")
     print("-> " + colored("obs", "yellow") + ":       \tConverts a NFA into a DFA")
@@ -190,10 +192,11 @@ def lst(args, eventslst, fsalst, path):
         print("")
         return
 
-    print("Elements in: " + path + "\\\n")
+    print(colored("\nElements in: ", "yellow", attrs=["bold"]) + path + "\\\n")
     l = os.listdir(path + "\\")  # files only
     for el in l:
         print(el)
+    print("")
 
 
 def listfsa(args, eventslst, fsalst, path):  # TODO add some stats?
@@ -283,6 +286,7 @@ commands = {
     'editevent': editevent,
     'editstate': editstate,
     'cc': conccomp,
+    'trimfsa': trimfsa,
     'fm': faultmon,
     'diag': diagnoser,
     'obs': observer,

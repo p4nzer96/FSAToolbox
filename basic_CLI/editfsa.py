@@ -4,6 +4,9 @@ from termcolor import colored
 
 import fsatoolbox
 from fsatoolbox import *
+import colorama
+
+colorama.init()
 
 
 def addstate(args, eventslst, fsalst, path):
@@ -165,8 +168,8 @@ def editstate(args, eventslst, fsalst, path):
     try:
         props = {
             'isInitial': ('-i' in args),
-            'isFinal': ('f' in args),
-            'isForbidden': ('fb' in args)
+            'isFinal': ('-f' in args),
+            'isForbidden': ('-fb' in args)
         }
         fsalst[args[0]].change_state_props(args[1], **props)
     except Exception as e:

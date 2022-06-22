@@ -1,8 +1,12 @@
+import copy
+
 from fsatoolbox import fsa
 from fsatoolbox.utils import analysis
 
 
-def trim(G: fsa):
+def trim(fsa_obj: fsa):
+
+    G = copy.deepcopy(fsa_obj)
 
     if G.is_Trim is None:
         analysis.get_trim_info(G)

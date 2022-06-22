@@ -3,6 +3,9 @@ import os.path
 import fsatoolbox
 from fsatoolbox import *
 from termcolor import colored
+import colorama
+
+colorama.init()
 
 
 def savefsa(args, eventslst, fsalst, path):

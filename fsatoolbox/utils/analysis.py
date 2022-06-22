@@ -1,6 +1,10 @@
 def get_reachability_info(fsa_obj, set_fsa=True):
     reachable_states = []  # List of reachable states
-    initial_state = fsa_obj.x0[0]  # take the first initial state
+
+    try:
+        initial_state = fsa_obj.x0[0]  # take the first initial state
+    except IndexError:
+        raise Exception("FSA has not initial state")
 
     end_algorithm_flag = 0
     reachable_states.append(initial_state)
@@ -31,13 +35,13 @@ def get_reachability_info(fsa_obj, set_fsa=True):
                 end_algorithm_flag = 1
 
         # Check the reachable states
-        for x_states in fsa_obj.X:
+    for x_states in fsa_obj.X:
 
-            if x_states in reachable_states:
-                x_states.is_Reachable = True
+        if x_states in reachable_states:
+            x_states.is_Reachable = True
 
-            else:
-                x_states.is_Reachable = False
+        else:
+            x_states.is_Reachable = False
 
     # If all states are reachable, also the FSA is reachable
     is_reachable = all([x.is_Reachable for x in fsa_obj.X])

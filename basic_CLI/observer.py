@@ -2,6 +2,9 @@ from termcolor import colored
 
 import fsatoolbox
 from fsatoolbox import *
+import colorama
+
+colorama.init()
 
 
 def observer(args, eventslst, fsalst, path):
@@ -14,7 +17,7 @@ def observer(args, eventslst, fsalst, path):
         return
 
     if len(args) < 2:
-        print(colored("Not enough arguments provided, type \"nfa2dfa -h\" to help", "yellow"))
+        print(colored("Not enough arguments provided, type \"obs -h\" to help", "yellow"))
         return
 
     if args[0] in fsalst:

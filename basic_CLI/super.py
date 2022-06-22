@@ -2,6 +2,9 @@ from termcolor import colored
 
 import fsatoolbox
 from fsatoolbox import *
+import colorama
+
+colorama.init()
 
 
 def supervisor(args, eventslst, fsalst, path):

@@ -3,6 +3,9 @@ from fsatoolbox import *
 from fsatoolbox.utils.analysis import get_blockingness_info, get_deadness_info, get_reachability_info, \
     get_reversibility_info, get_trim_info, get_co_reachability_info
 from termcolor import colored
+import colorama
+
+colorama.init()
 
 
 def reachability(args, eventslst, fsalst, path):
@@ -25,12 +28,16 @@ def reachability(args, eventslst, fsalst, path):
 
     try:
         is_reachable, reachable_states = get_reachability_info(fsalst[args[0]])
+        print("")
         if is_reachable:
-            print("The fsa is reachable")
+            print(colored("The fsa is reachable", "green"))
             print("Reachable states:", end=' -> ')
             print(reachable_states)
         else:
-            print("The fsa is not reachable")
+            print(colored("The fsa is not reachable", "yellow"))
+            print("Reachable states:", end=' -> ')
+            print(reachable_states)
+        print("")
 
     except Exception as e:
         print(colored("There was an error while computing the reachability:", "red"))
@@ -39,7 +46,8 @@ def reachability(args, eventslst, fsalst, path):
 
 def coreachability(args, eventslst, fsalst, path):
     if '-h' in args:
-        print(colored("\ncoreach: ", "yellow", attrs=["bold"]) + "This functions computes the co-reachability of a fsa\n")
+        print(
+            colored("\ncoreach: ", "yellow", attrs=["bold"]) + "This functions computes the co-reachability of a fsa\n")
         print(colored("Usage:", attrs=["bold"]) + "\n\tcoreach fsa_name\n")
         print(colored("Example:", attrs=["bold"]) + "\n\tcoreach G0")
         print("")
@@ -57,14 +65,16 @@ def coreachability(args, eventslst, fsalst, path):
 
     try:
         is_coreachable, coreachable_states = get_co_reachability_info(fsalst[args[0]])
+        print("")
         if is_coreachable:
-            print("The fsa is co-reachable")
+            print(colored("The fsa is co-reachable", "green"))
             print("Co-reachable states:", end=' -> ')
             print(coreachable_states)
         else:
-            print("The fsa is not co-reachable")
+            print(colored("The fsa is not co-reachable", "yellow"))
             print("Co-reachable states:", end=' -> ')
             print(coreachable_states)
+        print("")
 
     except Exception as e:
         print(colored("There was an error while computing the reachability:", "red"))
@@ -91,12 +101,14 @@ def blocking(args, eventslst, fsalst, path):
 
     try:
         is_blocking, blocking_states = get_blockingness_info(fsalst[args[0]])
+        print("")
         if is_blocking:
-            print("The fsa is blocking")
+            print(colored("The fsa is blocking", "yellow"))
             print("Blocking states:", end=' -> ')
             print(blocking_states)
         else:
-            print("The fsa is not blocking")
+            print(colored("The fsa is not blocking", "green"))
+        print("")
 
     except Exception as e:
         print(colored("There was an error while computing the reachability:", "red"))
@@ -123,10 +135,12 @@ def trim(args, eventslst, fsalst, path):
 
     try:
         is_trim = get_trim_info(fsalst[args[0]])
+        print("")
         if is_trim:
-            print("The fsa is trim")
+            print(colored("The fsa is trim", "green"))
         else:
-            print("The fsa is not trim")
+            print(colored("The fsa is not trim", "yellow"))
+        print("")
 
     except Exception as e:
         print(colored("There was an error while computing the reachability:", "red"))
@@ -136,7 +150,7 @@ def trim(args, eventslst, fsalst, path):
 def dead(args, eventslst, fsalst, path):
     if '-h' in args:
         print(colored("\ndead: ", "yellow", attrs=["bold"]) + "This functions computes if a fsa has dead states\n")
-        print(colored("Usage:", attrs=["bold"]) +"\n\tdead fsa_name\n")
+        print(colored("Usage:", attrs=["bold"]) + "\n\tdead fsa_name\n")
         print(colored("Example:", attrs=["bold"]) + "\n\tdead G0")
         print("")
         # print("Optional arguments:")
@@ -153,11 +167,14 @@ def dead(args, eventslst, fsalst, path):
 
     try:
         dead = get_deadness_info(fsalst[args[0]])
+        print("")
         if len(dead) == 0:
-            print("There are no dead events")
+            print(colored("There are no dead states", "green"))
         else:
-            print("List of dead events", end=' -> ')
+            print(colored("There are dead states", "yellow"))
+            print("List of dead states", end=' -> ')
             print(dead)
+        print("")
 
     except Exception as e:
         print(colored("There was an error while computing the reachability:", "red"))
@@ -184,10 +201,12 @@ def reverse(args, eventslst, fsalst, path):
 
     try:
         is_reversable = get_reversibility_info(fsalst[args[0]])
+        print("")
         if is_reversable:
-            print("The fsa is reversible")
+            print(colored("The fsa is reversible", "green"))
         else:
-            print("The fsa is not reversible")
+            print(colored("The fsa is not reversible", "yellow"))
+        print("")
 
     except Exception as e:
         print(colored("There was an error while computing the reachability:\n", "red"))
