@@ -35,7 +35,6 @@ except:
 
 from .Tables import TableCanvas, ColumnHeader
 import json
-import my_globals
 
 
 class MyTable(TableCanvas):
