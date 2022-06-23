@@ -8,7 +8,7 @@ import colorama
 colorama.init()
 
 
-def reachability(args, eventslst, fsalst, path):
+def reachability(args, fsalst):
     if '-h' in args:
         print(colored("\nreach: ", "yellow", attrs=["bold"]) + "This functions computes the reachability of a fsa\n")
         print(colored("Usage:", attrs=["bold"]) + "\n\treach fsa_name\n")
@@ -44,7 +44,7 @@ def reachability(args, eventslst, fsalst, path):
         print(e)
 
 
-def coreachability(args, eventslst, fsalst, path):
+def coreachability(args, fsalst):
     if '-h' in args:
         print(
             colored("\ncoreach: ", "yellow", attrs=["bold"]) + "This functions computes the co-reachability of a fsa\n")
@@ -81,7 +81,7 @@ def coreachability(args, eventslst, fsalst, path):
         print(e)
 
 
-def blocking(args, eventslst, fsalst, path):
+def blocking(args, fsalst):
     if '-h' in args:
         print(colored("\nblocking: ", "yellow", attrs=["bold"]) + "This functions computes if the fsa is blocking\n")
         print(colored("Usage:", attrs=["bold"]) + "\n\tblocking fsa_name\n")
@@ -115,7 +115,7 @@ def blocking(args, eventslst, fsalst, path):
         print(e)
 
 
-def trim(args, eventslst, fsalst, path):
+def trim(args, fsalst):
     if '-h' in args:
         print(colored("\ntrim: ", "yellow", attrs=["bold"]) + "This functions computes if the fsa is trim\n")
         print(colored("Usage:", attrs=["bold"]) + "\n\ttrim fsa_name\n")
@@ -147,7 +147,7 @@ def trim(args, eventslst, fsalst, path):
         print(e)
 
 
-def dead(args, eventslst, fsalst, path):
+def dead(args, fsalst):
     if '-h' in args:
         print(colored("\ndead: ", "yellow", attrs=["bold"]) + "This functions computes if a fsa has dead states\n")
         print(colored("Usage:", attrs=["bold"]) + "\n\tdead fsa_name\n")
@@ -181,7 +181,7 @@ def dead(args, eventslst, fsalst, path):
         print(e)
 
 
-def reverse(args, eventslst, fsalst, path):
+def reverse(args, fsalst):
     if '-h' in args:
         print(colored("\nreverse: ", "yellow", attrs=["bold"]) + "This functions computes if the fsa is reversible\n")
         print(colored("Usage:", attrs=["bold"]) + "\n\treverse fsa_name\n")

@@ -1,4 +1,5 @@
 import os.path
+from basic_CLI.exceptions import ArgsException
 
 import fsatoolbox
 from fsatoolbox import *
@@ -8,18 +9,12 @@ import colorama
 colorama.init()
 
 
-def savefsa(args, eventslst, fsalst, path):
-    if '-h' in args:
-        print(colored("\nsave: ", "yellow", attrs=["bold"]) + "Saves a FSA to file")
-        print(colored("\nUsage:", attrs=["bold"]) + "\n\tsave fsa_to_save path_to_file")
-        print(colored("\nExample:", attrs=["bold"]) + "\n\tsave G0 G0.fsa")
-        print(colored("\nNotes: ", attrs=["bold"]) + "\n\t * Only .fsa files currently supported")
-        print("")
-        return
-
+def save_CLI(args_d):
+    args=args_d['args']
+    fsalst=args_d['fsalst']
+    path=args_d['']
     if len(args) < 2:
-        print(colored("Not enough arguments provided, type \"save -h\" to help", "yellow"))
-        return
+        raise ArgsException()
 
     if args[0] in fsalst:
 

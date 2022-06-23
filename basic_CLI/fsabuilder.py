@@ -1,6 +1,5 @@
 import fsatoolbox
 from fsatoolbox import *
-from basic_CLI.checkevents import checkevents
 from termcolor import colored
 import colorama
 
@@ -9,7 +8,7 @@ colorama.init()
 
 # TODO add exit (abort) option in every input
 
-def fsabuilder(args, eventslst, fsalst, path):
+def build_CLI(args, fsalst, **kwargs):
     prompt_col = 'green'
     warn_col = 'yellow'
 
@@ -183,7 +182,5 @@ def fsabuilder(args, eventslst, fsalst, path):
                 G.add_transition(inp[0], inp[1], inp[2])
             except Exception:
                 continue
-
-    checkevents(G, eventslst, fsalst)
 
     fsalst[args[0]] = G

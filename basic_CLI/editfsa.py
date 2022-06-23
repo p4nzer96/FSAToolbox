@@ -9,7 +9,7 @@ import colorama
 colorama.init()
 
 
-def addstate(args, eventslst, fsalst, path):
+def addstate(args, fsalst):
     if '-h' in args:
         print(colored("\naddstate: ", "yellow", attrs=["bold"]) + "This functions adds a state to a fsa")
         print(colored("\nUsage:") + "\n\taddstate fsa_name state_name")
@@ -36,7 +36,7 @@ def addstate(args, eventslst, fsalst, path):
         print(e)
 
 
-def rmstate(args, eventslst, fsalst, path):
+def rmstate(args, fsalst):
     if '-h' in args:
         print(colored("\nrmstate: ", "yellow", attrs=["bold"]) + "This functions removes a state to a fsa")
         print(colored("\nUsage:", attrs=["bold"]) + "\n\trmstate fsa_name state_name")
@@ -58,7 +58,7 @@ def rmstate(args, eventslst, fsalst, path):
         print(e)
 
 
-def addevent(args, eventslst, fsalst, path):
+def addevent(args, fsalst):
     if '-h' in args:
         print(colored("\naddevent: ", "yellow", attrs=["bold"]) + "This functions adds an event to a fsa")
         print(colored("\nUsage:", attrs=["bold"]) + "\n\taddevent fsa_name event_name")
@@ -80,7 +80,7 @@ def addevent(args, eventslst, fsalst, path):
         print(e)
 
 
-def rmevent(args, eventslst, fsalst, path):
+def rmevent(args, fsalst):
     if '-h' in args:
         print(colored("\nrmevent: ", "yellow", attrs=["bold"]) + "This functions removes an event from a fsa")
         print(colored("\nUsage:", attrs=["bold"]) + "\n\trmevent fsa_name event_name")
@@ -102,7 +102,7 @@ def rmevent(args, eventslst, fsalst, path):
         print(e)
 
 
-def addtrans(args, eventslst, fsalst, path):
+def addtrans(args, fsalst):
     if '-h' in args:
         print(colored("\naddtrans: ", "yellow", attrs=["bold"]) + "This functions adds a transition to a fsa")
         print(colored("\nUsage:", attrs=["bold"]) + "\n\taddtrans fsa_name initial_state event final_state")
@@ -124,7 +124,7 @@ def addtrans(args, eventslst, fsalst, path):
         print(e)
 
 
-def rmtrans(args, eventslst, fsalst, path):
+def rmtrans(args, fsalst):
     if '-h' in args:
         print(colored("\nrmtrans: ", "yellow", attrs=["bold"]) + "This functions removes a transition to a fsa")
         print(colored("\nUsage:", attrs=["bold"]) + "\n\trmtrans fsa_name initial_state event final_state")
@@ -146,7 +146,7 @@ def rmtrans(args, eventslst, fsalst, path):
         print(e)
 
 
-def editstate(args, eventslst, fsalst, path):
+def editstate(args, fsalst):
     if '-h' in args:
         print(colored("\neditstate:", "yellow", attrs=["bold"]) + "This functions is used to modify a state inside a "
                                                                   "fsa")
