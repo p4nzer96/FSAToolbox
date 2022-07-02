@@ -5,7 +5,7 @@ from fsatoolbox.trim import trim
 import copy
 
 
-def hhat(H):
+def hhat(H, verbose=False):
     """
     Function that, given H (where H represents a specification automaton), returns the corresponding extended
     specification automaton
@@ -72,12 +72,9 @@ def get_weakly_forbidden(A: fsa, forbidden: list):
     return list(wb_states)
 
 
-def compute_supervisor(G, H):
+def compute_supervisor(G, H, verbose=False):
     # Computing the extended specification automaton
     h_hat = hhat(H)
-
-    if None in [x.isForbidden for x in G.X] + [x.isForbidden for x in G.X]:
-        raise TypeError("Found forbidden states not set")
 
     # Computing the composition automaton
     A = cc(G, h_hat)

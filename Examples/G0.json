@@ -1,0 +1,33 @@
+{
+    "X": {
+        "x0": {
+            "isInitial": true,
+            "isFinal": true
+        },
+        "x1": {
+            "isInitial": false,
+            "isFinal": false
+        }
+    },
+    "E": {
+        "a": {
+            "isObservable": true
+        },
+        "b": {
+            "isObservable": true
+        }
+    },
+    "delta": {
+        "0": {
+            "start": "x0",
+            "event": "a",
+            "end": "x1"
+        },
+        "1": {
+            "start": "x1",
+            "event": "b",
+            "end": "x0"
+        }
+    }
+    
+}

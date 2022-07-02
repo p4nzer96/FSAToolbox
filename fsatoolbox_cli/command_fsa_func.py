@@ -15,13 +15,13 @@ class command_fsa_func(command):
             self.helper()
             return
 
-        # Checking the arguments
-
         # Do I just have to show the result?
         if not args[0]:
             show_mode = True
         else:
             show_mode = False
+
+        # Checking the arguments
 
         # (ERROR) Too few arguments
         if len(args) < min(self.n_req_args):
@@ -40,6 +40,8 @@ class command_fsa_func(command):
                 inp = input(colored("Error, fsa already exists, do you want to overwrite it? [y/N]: ", "red"))
                 if inp.lower() == 'n' or inp == '':
                     return
+                else:
+                    self.fsa_dict.pop(args[0])
 
             # Are there any FSAs not present in the fsa_dict?
             missing_fsa = [x for x in args[1:] if x not in self.fsa_dict.keys()]
