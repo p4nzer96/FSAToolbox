@@ -7,10 +7,13 @@ colorama.init()
 
 class command(ABC):
 
-    def __init__(self, category, input_formats, n_req_args, **kwargs):
-        self.category = category
+    def __init__(self, category, input_formats, n_req_args, callback, fsa_dict, **kwargs):
+
+        self.callback = callback
         self.input_formats = input_formats
-        self.n_req_args = n_req_args
+        self.n_req_args = [n_req_args] if not isinstance(n_req_args, list) else n_req_args
+        self.category = category
+        self.fsa_dict = fsa_dict
 
         # Optional arguments to format the help
 
@@ -21,14 +24,17 @@ class command(ABC):
         self.help_optional = kwargs.get('help_optional')
         self.help_notes = kwargs.get('help_notes')
 
+        self.WARN_COLOR = "yellow"
+        self.ERR_COLOR = "red"
+
     @abstractmethod
-    def func_call(self):
+    def func_call(self, args: list, opts: list):
         pass
 
     def helper(self):
 
         print("")
-        print(colored(self.f_name, "yellow", attrs=["bold"]) + ":\t{}\n".format(self.description))
+        print(colored(self.f_name, self.WARN_COLOR, attrs=["bold"]) + ":\t{}\n".format(self.description))
         if self.help_usage:
             print(colored("\nUsage:", attrs=["bold"]) + "\n\t{}".format(self.help_usage))
         if self.help_optional:

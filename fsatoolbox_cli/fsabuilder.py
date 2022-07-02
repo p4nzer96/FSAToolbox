@@ -12,23 +12,6 @@ def build_CLI(args, fsalst, **kwargs):
     prompt_col = 'green'
     warn_col = 'yellow'
 
-    if len(args) < 1:
-        print(colored("Not enough arguments provided, type \"build -h\" to help", warn_col))
-        return
-
-    if '-h' in args:
-        print(colored("\nbuild: ", "yellow", attrs=["bold"]) + "This functions starts an interactive program to build "
-                                                               "a FSA")
-        print(colored("\nUsage:", attrs=["bold"]) + "\n\tbuild fsa_name (ex: build G0)")
-        print(colored("\nExample:", attrs=["bold"]) + "\n\tbuild G0")
-        print("")
-        return
-
-    if args[0] in fsalst:
-        inp = input(colored("Error, fsa already exists, do you want to overwrite it? [y/N]: ", warn_col))
-        if inp == 'N' or inp == 'n' or inp == '':
-            return
-
     G = fsa(name=args[0])
 
     # states

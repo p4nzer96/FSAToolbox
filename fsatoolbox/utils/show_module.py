@@ -126,7 +126,7 @@ def show_comp(X, E, delta):
             x_props = ", ".join(props_list)
             x_props = "[{}]".format(x_props)
 
-        data[0, i] += " {}".format(x_props)
+        data[i, 0] += " {}".format(x_props)
 
     for i, e in enumerate(E):
 

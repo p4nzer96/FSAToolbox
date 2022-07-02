@@ -4,23 +4,10 @@ import shlex
 import colorama
 from termcolor import colored
 
-from basic_CLI.trimfsa import trimfsa
-from basic_CLI.analysis import reachability, coreachability, blocking, trim, dead, reverse
-from basic_CLI.conccomp import cc_CLI
-from basic_CLI.diagnoser import diagnoser
-from basic_CLI.editfsa import addstate, rmstate, addevent, rmevent, addtrans, rmtrans, editstate
-from basic_CLI.exth import exth
-from basic_CLI.faultmon import faultmon
-from basic_CLI.fsabuilder import build_CLI
-from basic_CLI.load_CLI import load_CLI
-from basic_CLI.observer import observer
-from basic_CLI.savefsa import save_CLI
-from basic_CLI.super import supervisor
-
 
 # commands
 
-def help(args, fsalst):
+def help():
     print("This is only a test version: available commands:\n")
 
     print(colored("-------------------------- Basic Commands  --------------------------", "green"))
@@ -73,73 +60,10 @@ def help(args, fsalst):
     print(colored("\n[CTRL+C or exit to quit the program]\n", "red"))
 
 
-def changepath(args, path):
-    if '-h' in args:
-        print(colored("\nchdir: ", "yellow", attrs=["bold"]) + "This functions changes the default path")
-        print(colored("\nUsage:", attrs=["bold"]) + "\n\tchdir newpath")
-        print(colored("\nExample:", attrs=["bold"]) + "\n\tchdir C:\\\\Automi")
-        print(colored("\nNotes: ", attrs=["bold"]) + "\n\t * In windows use \\\\ instead of \\ (ex. C:\\\\Automi) or "
-                                                     "put the path in brackets (ex. \"C:\\Automi\\\")")
-        print("")
-        return path
-
-    if len(args) < 1:
-        print(colored("Not enough arguments provided, type \"chdir -h\" to help", "yellow"))
-        return path
-
-    # Path is absolute
-
-    if os.path.isabs(os.path.normpath(args[0])):
-        if os.path.isdir(os.path.normpath(args[0])):
-            return os.path.normpath(args[0])
-        else:
-            print(colored("Invalid path", "red"))
-            return path
-
-        # Path is not absolute
-
-    else:
-        tail = os.path.normpath(args[0])
-        head = path
-        # Parsing the path
-        parsed_path = os.path.split(tail)
-
-        # ".." Escape character
-        if ".." in parsed_path:
-            if parsed_path == ("", ".."):
-                new_path = os.path.split(head)[0]
-            elif parsed_path[0] == ".." and parsed_path[1] != "":
-                head = os.path.split(path)[0]
-                tail = parsed_path[1]
-                new_path = os.path.join(head, tail)
-            else:
-                print(colored("Invalid path", "red"))
-                return head
-
-        # "." Escape character
-        elif "." in parsed_path:
-            if parsed_path == ("", "."):
-                new_path = head
-            elif parsed_path[0] == "." and parsed_path[1] != "":
-                tail = parsed_path[1]
-                new_path = os.path.join(path, tail)
-            else:
-                print(colored("Invalid path", "red"))
-                return head
-
-        # No escape character
-        else:
-            new_path = os.path.join(head, tail)
-
-        # Checking if new_path exists
-        if os.path.isdir(new_path):
-            return new_path
-        else:
-            print(colored("Invalid path", "red"))
-            return head
+# def changepath(args, path):
 
 
-def removefsa(args, fsalst):
+'''def removefsa(args, fsalst):
     if '-h' in args:
         print(colored("\nremove:", "yellow", attrs=["bold"]) + " Removes a FSA")
         print(colored("\nUsage:", attrs=["bold"]) + "\n\tremove fsa_name")
@@ -207,6 +131,7 @@ def listfsa(args, fsalst):  # TODO add some stats?
 
     for key, value in fsalst.items():
         print(key)
+'''
 
 # def editevent(args, fsalst):
 #     if '-h' in args:
@@ -237,11 +162,10 @@ def listfsa(args, fsalst):  # TODO add some stats?
 #         e.isControllable) + ", Fault: " + str(e.isFault))
 
 
-
 colorama.init()  # fix for colored text with old cmd
 
 # list of loaded FSA
-fsalst = dict()
+'''fsalst = dict()
 eventslst = []
 
 commandsPath = {
@@ -279,7 +203,7 @@ commands = {
     'supervisor': supervisor,
     'exth': exth,
     'help': help
-}
+}'''
 
 home = os.path.normpath(os.path.expanduser("~"))
 path = home + '/Documents/FsaToolbox'
@@ -321,35 +245,35 @@ while 1:
         if cmd[0] == 'exit':
             break
 
-        #check if the input is the function format -> todo fun?
-        if  "(" in cmd[0] and ")" in cmd[0]: #TODO regex
+        # check if the input is the function format -> todo fun?
+        if "(" in cmd[0] and ")" in cmd[0]:  # TODO regex
             if '=' in cmd[0]:
-                dest=cmd[0].split('=')[0]
-                comm=cmd[0].split('=')[1].split('(')[0]
-                args=cmd[0].split('(')[1].split(')')[0].split(',')
-                opts=cmd[1:]
+                dest = cmd[0].split('=')[0]
+                comm = cmd[0].split('=')[1].split('(')[0]
+                args = cmd[0].split('(')[1].split(')')[0].split(',')
+                opts = cmd[1:]
             else:
-                dest=None
-                comm=cmd[0].split('(')[0]
-                args=cmd[0].split('(')[1].split(')')[0].split(',')
-                opts=cmd[1:]
+                dest = None
+                comm = cmd[0].split('(')[0]
+                args = cmd[0].split('(')[1].split(')')[0].split(',')
+                opts = cmd[1:]
         else:
             comm = cmd[0]
-            if len(cmd)>1:
-                dest=cmd[1]
+            if len(cmd) > 1:
+                dest = cmd[1]
                 args = [x for x in cmd[1:] if '-' not in x]
                 opts = [x for x in cmd[1:] if '-' in x]
             else:
-                dest=None
-                args=None
-                opts=None
-            
+                dest = None
+                args = None
+                opts = None
+
         if comm in commandsPath:
             commandsPath[comm](dest=dest, args=args, opts=opts, fsalst=fsalst, path=path)
-        
+
         elif comm in commands:
             commands[comm](dest=dest, args=args, opts=opts, fsalst=fsalst)
-        
+
         else:
             print(colored("Unrecognized command", "red"))
     except KeyboardInterrupt:
