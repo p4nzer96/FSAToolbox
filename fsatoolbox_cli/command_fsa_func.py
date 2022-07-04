@@ -27,7 +27,7 @@ class command_fsa_func(command):
         if len(args) < min(self.n_req_args):
             print(colored("Not enough arguments provided, type \"{} -h\" to help", self.WARN_COLOR).format(self.f_name))
 
-        # Too many arguments
+        # (ERROR) Too many arguments
         elif len(args) > max(self.n_req_args):
             print(colored("Too much arguments provided, type \"{} -h\" to help", self.WARN_COLOR).format(self.f_name))
             return
@@ -43,7 +43,7 @@ class command_fsa_func(command):
                 else:
                     self.fsa_dict.pop(args[0])
 
-            # Are there any FSAs not present in the fsa_dict?
+            # Are there any FSA not present in the fsa_dict?
             missing_fsa = [x for x in args[1:] if x not in self.fsa_dict.keys()]
 
             if len(missing_fsa) > 0:
@@ -67,11 +67,4 @@ class command_fsa_func(command):
                 return
 
     def _retrieve_fsa(self, args):
-
-        p_args = []
-
-        for i, arg in enumerate(args):
-            if arg and arg in self.fsa_dict:
-                p_args.append(self.fsa_dict[arg])
-
-        return p_args
+        return [self.fsa_dict[x] for x in args if x and x in self.fsa_dict]

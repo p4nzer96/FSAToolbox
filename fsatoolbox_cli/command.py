@@ -10,10 +10,10 @@ class command(ABC):
     def __init__(self, category, input_formats, n_req_args, callback, fsa_dict, **kwargs):
 
         self.callback = callback
-        self.input_formats = input_formats
-        self.n_req_args = [n_req_args] if not isinstance(n_req_args, list) else n_req_args
-        self.category = category
-        self.fsa_dict = fsa_dict
+        self.input_formats = input_formats  # Supported input formats
+        self.n_req_args = [n_req_args] if not isinstance(n_req_args, list) else n_req_args  # Req. arguments
+        self.category = category  # Command category
+        self.fsa_dict = fsa_dict  # Dict containing all the FSA currently loaded
 
         # Optional arguments to format the help
 

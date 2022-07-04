@@ -1,9 +1,9 @@
-import os
 import re
 import shlex
-import colorama
 
+import colorama
 from termcolor import colored
+
 from fsatoolbox_cli.cli_commands import cmdict
 
 colorama.init()
@@ -104,7 +104,12 @@ command_list = [
     "load(Gs.json)",
     "load(Hs.json)",
     "supervisor(Gs, Hs)",
-    "S = supervisor(Gs, Hs)"
+    "S = supervisor(Gs, Hs),"
+    "reach Gs",
+    "coreach(Gs)",
+    "trim(Gs)",
+    "dead Gs",
+    "blocking Gs"
 ]
 for command in command_list:
 
@@ -120,7 +125,5 @@ for command in command_list:
 
         if pattern == 'matlab' and comm_obj.category == "functions":
             args = [None] + args
-
-        print(args)
 
         comm_obj.func_call(args, opts)
