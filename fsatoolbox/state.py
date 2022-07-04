@@ -16,7 +16,7 @@ class state:
     is_co_Reachable_to_x0: bool = None
 
     # Used for supervisory problems
-    isForbidden: bool = None
+    isForbidden: bool = False
 
     def __hash__(self):
         return hash(self.label)
