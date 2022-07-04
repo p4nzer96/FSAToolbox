@@ -15,4 +15,4 @@ class event:
         return self.label
 
     def __eq__(self, other):
-        return self.label == other.label
+        return self.__hash__() == other.__hash__()

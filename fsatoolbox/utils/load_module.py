@@ -1,5 +1,6 @@
 import os
 import json
+import pandas as pd
 
 
 def loadfile(filename):
@@ -10,6 +11,8 @@ def loadfile(filename):
             data = load_txt(filename)
         elif ".json" in extension or ".fsa" in extension:
             data = load_json(filename)
+        elif ".csv" in extension:
+            data = load_csv(filename)
         else:
             raise ValueError("File format not recognized")
 
@@ -113,3 +116,93 @@ def load_txt(filename):
     fd.close()
 
     return fsa_dict
+
+
+def load_csv(filename):
+    jsonObject = {"X": {}, "E": {}, "delta": {}}
+
+    data = pd.read_csv("F.csv").fillna("")
+
+    # States
+
+    for i, row in data.iterrows():
+        x = str(row[0]).split("_")
+
+        # Initial States
+
+        if "i" in x:
+            is_initial = True
+            x.remove("i")
+        else:
+            is_initial = False
+
+        # Final States
+
+        if "f" in x:
+            is_final = True
+            x.remove("f")
+        else:
+            is_final = False
+
+        state = "_".join(x)
+
+        jsonObject['X'][state] = {'isInitial': is_initial,
+                                  'isFinal': is_final}
+        data.values[i, 0] = state
+
+    events = []
+
+    # Events
+
+    for event in data.columns[1:]:
+
+        e = str(event).split("_")
+
+        # Event is observable?
+
+        if "uo" in e:
+            is_observable = False
+            e.remove("uo")
+        else:
+            is_observable = True
+
+        # Event is controllable?
+
+        if "uc" in e:
+            is_controllable = False
+            e.remove("uc")
+        else:
+            is_controllable = True
+
+        # Event is fault?
+
+        if "f" in e:
+            is_fault = True
+            e.remove("f")
+        else:
+            is_fault = False
+
+        event_str = "_".join(e)
+
+        jsonObject['E'][event_str] = {'isObservable': is_observable,
+                                      'isControllable': is_controllable,
+                                      'isFault': is_fault}
+        events.append(event_str)
+
+    data.columns = ['State'] + events
+
+    # Transitions
+
+    count = 0
+    for i in range(data.shape[0]):
+        initial_state = data.values[i, 0]
+        for j in range(1, data.shape[1]):
+            event = data.columns[j]
+            if data.values[i, j] != "":
+                for end_state in str(data.values[i, j]).split("-"):
+                    jsonObject['delta'][count] = {"start": initial_state,
+                                                  "event": event,
+                                                  "end": end_state}
+                    count += 1
+
+    return jsonObject

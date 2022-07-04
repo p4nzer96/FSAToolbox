@@ -18,11 +18,12 @@ class state:
     # Used for supervisory problems
     isForbidden: bool = None
 
-    def __hash__(self):  # TODO: Improvement needed
+    def __hash__(self):
         return hash(self.label)
 
     def __repr__(self):
         return self.label
 
     def __eq__(self, other):
-        return self.label == other.label
+        return self.__hash__() == other.__hash__()
+
