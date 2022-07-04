@@ -4,24 +4,10 @@ import shlex
 import colorama
 from termcolor import colored
 
-from basic_CLI.trimfsa import trimfsa
-from basic_CLI.analysis import reachability, coreachability, blocking, trim, dead, reverse
-from basic_CLI.checkevents import updateevents
-from basic_CLI.conccomp import conccomp
-from basic_CLI.diagnoser import diagnoser
-from basic_CLI.editfsa import addstate, rmstate, addevent, rmevent, addtrans, rmtrans, editstate
-from basic_CLI.exth import exth
-from basic_CLI.faultmon import faultmon
-from basic_CLI.fsabuilder import fsabuilder
-from basic_CLI.loadfsa import loadfsa
-from basic_CLI.observer import observer
-from basic_CLI.savefsa import savefsa
-from basic_CLI.super import supervisor
-
 
 # commands
 
-def help(args, eventslst, fsalst, path):
+def help():
     print("This is only a test version: available commands:\n")
 
     print(colored("-------------------------- Basic Commands  --------------------------", "green"))
@@ -74,73 +60,10 @@ def help(args, eventslst, fsalst, path):
     print(colored("\n[CTRL+C or exit to quit the program]\n", "red"))
 
 
-def changepath(args, path):
-    if '-h' in args:
-        print(colored("\nchdir: ", "yellow", attrs=["bold"]) + "This functions changes the default path")
-        print(colored("\nUsage:", attrs=["bold"]) + "\n\tchdir newpath")
-        print(colored("\nExample:", attrs=["bold"]) + "\n\tchdir C:\\\\Automi")
-        print(colored("\nNotes: ", attrs=["bold"]) + "\n\t * In windows use \\\\ instead of \\ (ex. C:\\\\Automi) or "
-                                                     "put the path in brackets (ex. \"C:\\Automi\\\")")
-        print("")
-        return path
-
-    if len(args) < 1:
-        print(colored("Not enough arguments provided, type \"chdir -h\" to help", "yellow"))
-        return path
-
-    # Path is absolute
-
-    if os.path.isabs(os.path.normpath(args[0])):
-        if os.path.isdir(os.path.normpath(args[0])):
-            return os.path.normpath(args[0])
-        else:
-            print(colored("Invalid path", "red"))
-            return path
-
-        # Path is not absolute
-
-    else:
-        tail = os.path.normpath(args[0])
-        head = path
-        # Parsing the path
-        parsed_path = os.path.split(tail)
-
-        # ".." Escape character
-        if ".." in parsed_path:
-            if parsed_path == ("", ".."):
-                new_path = os.path.split(head)[0]
-            elif parsed_path[0] == ".." and parsed_path[1] != "":
-                head = os.path.split(path)[0]
-                tail = parsed_path[1]
-                new_path = os.path.join(head, tail)
-            else:
-                print(colored("Invalid path", "red"))
-                return head
-
-        # "." Escape character
-        elif "." in parsed_path:
-            if parsed_path == ("", "."):
-                new_path = head
-            elif parsed_path[0] == "." and parsed_path[1] != "":
-                tail = parsed_path[1]
-                new_path = os.path.join(path, tail)
-            else:
-                print(colored("Invalid path", "red"))
-                return head
-
-        # No escape character
-        else:
-            new_path = os.path.join(head, tail)
-
-        # Checking if new_path exists
-        if os.path.isdir(new_path):
-            return new_path
-        else:
-            print(colored("Invalid path", "red"))
-            return head
+# def changepath(args, path):
 
 
-def removefsa(args, eventslst, fsalst, path):
+'''def removefsa(args, fsalst):
     if '-h' in args:
         print(colored("\nremove:", "yellow", attrs=["bold"]) + " Removes a FSA")
         print(colored("\nUsage:", attrs=["bold"]) + "\n\tremove fsa_name")
@@ -159,14 +82,14 @@ def removefsa(args, eventslst, fsalst, path):
     del fsalst[args[0]]
 
 
-def currpath(args, eventslst, fsalst, path):
+def currpath(args, fsalst, path):
     if '-h' in args:
         print(colored("\nshowdir: ", "yellow", attrs=["bold"]) + "Prints the current working directory\n")
     else:
         print(path)
 
 
-def showfsa(args, eventslst, fsalst, path):
+def showfsa(args, fsalst):
     if '-h' in args:
         print(colored("\nshow: ", "yellow", attrs=["bold"]) + "Prints the structure of the FSA")
         print(colored("\nUsage:", attrs=["bold"]) + "\n\tshow fsa_name")
@@ -185,7 +108,7 @@ def showfsa(args, eventslst, fsalst, path):
     print(fsalst[args[0]])
 
 
-def lst(args, eventslst, fsalst, path):
+def lst(args, fsalst):
     if '-h' in args:
         print(colored("\nldir: ", "yellow", attrs=["bold"]) + "Show files/dirs inside current working folder")
         print(colored("\nUsage:", attrs=["bold"]) + "\n\tldir")
@@ -199,7 +122,7 @@ def lst(args, eventslst, fsalst, path):
     print("")
 
 
-def listfsa(args, eventslst, fsalst, path):  # TODO add some stats?
+def listfsa(args, fsalst):  # TODO add some stats?
 
     if '-h' in args:
         print(colored("\nlist: ", "yellow", attrs=["bold"]) + "Prints the FSA currently loaded")
@@ -208,65 +131,53 @@ def listfsa(args, eventslst, fsalst, path):  # TODO add some stats?
 
     for key, value in fsalst.items():
         print(key)
+'''
 
+# def editevent(args, fsalst):
+#     if '-h' in args:
+#         print(colored("\neditevent: ", "yellow",
+#                       attrs=["bold"]) + "This function is used to edit an event that is loaded in the event list")
+#         print(colored("\nUsage:", attrs=["bold"]) + "\n\teditevent event-name -options")
+#         print(colored("\nOptions:", attrs=["bold"]) +
+#               "\n\t-o set the event as observable" +
+#               "\n\t-c set the event as controllable" +
+#               "\n\t-f set the event as a fault event")
+#         print(colored("\nExample:", attrs=["bold"]) + "\n\teditevent a -o")
+#         print("")
+#         return
+#     if len(args) < 1:
+#         print(colored("Not enough arguments provided, type \"editevent -h\" to help", "yellow"))
+#         return
 
-def listevents(args, eventslst, fsalst, path):
+#     if not (any(e.label == args[0] for e in eventslst)):
+#         print(colored("Error, event not found in the event list", "red"))
+#         return
 
-    if '-h' in args:
-        print(colored("\nelist: ", "yellow", attrs=["bold"]) + "List the events currently loaded")
-        print(colored("\nUsage:", attrs=["bold"]) + "\n\telist")
-        print("")
-        return
+#     e = [i for i in eventslst if i.label == args[0]][0]
+#     e.isObservable = ('-o' in args)
+#     e.isControllable = ('-c' in args)
+#     e.isFault = ('-f' in args)
 
-    for e in eventslst:
-        print("- " + e.label + ":  Observable: " + str(e.isObservable) + ", Controllable: " + str(
-            e.isControllable) + ", Fault: " + str(e.isFault))
-
-
-def editevent(args, eventslst, fsalst, path):
-    if '-h' in args:
-        print(colored("\neditevent: ", "yellow",
-                      attrs=["bold"]) + "This function is used to edit an event that is loaded in the event list")
-        print(colored("\nUsage:", attrs=["bold"]) + "\n\teditevent event-name -options")
-        print(colored("\nOptions:", attrs=["bold"]) +
-              "\n\t-o set the event as observable" +
-              "\n\t-c set the event as controllable" +
-              "\n\t-f set the event as a fault event")
-        print(colored("\nExample:", attrs=["bold"]) + "\n\teditevent a -o")
-        print("")
-        return
-    if len(args) < 1:
-        print(colored("Not enough arguments provided, type \"editevent -h\" to help", "yellow"))
-        return
-
-    if not (any(e.label == args[0] for e in eventslst)):
-        print(colored("Error, event not found in the event list", "red"))
-        return
-
-    e = [i for i in eventslst if i.label == args[0]][0]
-    e.isObservable = ('-o' in args)
-    e.isControllable = ('-c' in args)
-    e.isFault = ('-f' in args)
-
-    print("- " + e.label + ":  Observable: " + str(e.isObservable) + ", Controllable: " + str(
-        e.isControllable) + ", Fault: " + str(e.isFault))
-
-    updateevents(eventslst, fsalst)
+#     print("- " + e.label + ":  Observable: " + str(e.isObservable) + ", Controllable: " + str(
+#         e.isControllable) + ", Fault: " + str(e.isFault))
 
 
 colorama.init()  # fix for colored text with old cmd
 
 # list of loaded FSA
-fsalst = dict()
+'''fsalst = dict()
 eventslst = []
 
-commands = {
+commandsPath = {
     'chdir': changepath,
     'showdir': currpath,
-    'load': loadfsa,
+    'load': load_CLI,
+    'save': save_CLI,
+}
+
+commands = {
     'remove': removefsa,
-    'save': savefsa,
-    'build': fsabuilder,
+    'build': build_CLI,
     'addstate': addstate,
     'rmstate': rmstate,
     'addevent': addevent,
@@ -282,10 +193,9 @@ commands = {
     'reverse': reverse,
     'ldir': lst,
     'list': listfsa,
-    'elist': listevents,
-    'editevent': editevent,
+    # 'editevent': editevent,
     'editstate': editstate,
-    'cc': conccomp,
+    'cc': cc_CLI,
     'trimfsa': trimfsa,
     'fm': faultmon,
     'diag': diagnoser,
@@ -293,7 +203,7 @@ commands = {
     'supervisor': supervisor,
     'exth': exth,
     'help': help
-}
+}'''
 
 home = os.path.normpath(os.path.expanduser("~"))
 path = home + '/Documents/FsaToolbox'
@@ -331,15 +241,39 @@ while 1:
         cmd = shlex.split(input(">>"), posix=False)
         if not cmd:
             continue
-        args = cmd[1:]  # extract arguments
 
-        if cmd[0] == 'chdir':
-            path = changepath(args, path)
-            continue
         if cmd[0] == 'exit':
             break
-        if cmd[0] in commands:
-            commands[cmd[0]](args, eventslst, fsalst, path)
+
+        # check if the input is the function format -> todo fun?
+        if "(" in cmd[0] and ")" in cmd[0]:  # TODO regex
+            if '=' in cmd[0]:
+                dest = cmd[0].split('=')[0]
+                comm = cmd[0].split('=')[1].split('(')[0]
+                args = cmd[0].split('(')[1].split(')')[0].split(',')
+                opts = cmd[1:]
+            else:
+                dest = None
+                comm = cmd[0].split('(')[0]
+                args = cmd[0].split('(')[1].split(')')[0].split(',')
+                opts = cmd[1:]
+        else:
+            comm = cmd[0]
+            if len(cmd) > 1:
+                dest = cmd[1]
+                args = [x for x in cmd[1:] if '-' not in x]
+                opts = [x for x in cmd[1:] if '-' in x]
+            else:
+                dest = None
+                args = None
+                opts = None
+
+        if comm in commandsPath:
+            commandsPath[comm](dest=dest, args=args, opts=opts, fsalst=fsalst, path=path)
+
+        elif comm in commands:
+            commands[comm](dest=dest, args=args, opts=opts, fsalst=fsalst)
+
         else:
             print(colored("Unrecognized command", "red"))
     except KeyboardInterrupt:
