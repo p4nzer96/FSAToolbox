@@ -1,3 +1,4 @@
+import os
 import fsatoolbox
 from fsatoolbox import trim, fm, diag, nfa2dfa, hhat, compute_supervisor
 from fsatoolbox.analysis import get_reachability_info, get_co_reachability_info, get_blockingness_info, get_trim_info, \
@@ -20,6 +21,10 @@ def help():
     print("")
 
 
+def cls():
+    os.system("CLS")
+
+
 fsa_dict = dict()
 
 help_cli = command_basic(
@@ -29,6 +34,15 @@ help_cli = command_basic(
     f_name="help",
     callback=help,
     description="Prints the list of available commands"
+)
+
+cls_cli = command_basic(
+    category='basic',
+    input_formats=["standard", "matlab"],
+    n_req_args=0,
+    f_name="cls",
+    callback=cls,
+    description="Clears the CLI"
 )
 
 chdir_cli = command_basic(
@@ -319,5 +333,6 @@ cmdict = {
     'trim': trim_cli,
     'dead': dead_cli,
     'reverse': reverse_cli,
-    'help': help_cli
+    'help': help_cli,
+    'cls': cls_cli
 }

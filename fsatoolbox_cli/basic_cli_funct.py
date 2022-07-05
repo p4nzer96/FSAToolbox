@@ -16,10 +16,6 @@ colorama.init()
 def fix_config_path(recreate=False):
     if recreate is True:
 
-        err_str = "There were some problems with the configuration file, which " \
-                  "needs to be recreated: press [ENTER] to proceed"
-
-        input(colored(err_str, "red"))
         create_config()
 
     else:

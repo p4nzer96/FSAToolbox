@@ -1,9 +1,12 @@
-import os
 import re
 import shlex
 
 from termcolor import colored
 from fsatoolbox_cli.cli_commands import cmdict
+
+
+def hamming_distance(chaine1, chaine2):
+    return sum(c1 != c2 for c1, c2 in zip(chaine1, chaine2))
 
 
 def parse(inp):
@@ -71,6 +74,17 @@ def checkinput(pattern, inp):
 
     if p_command not in cmdict.keys():
         print(colored("ERROR: Unrecognized command", "red"))
+
+        try:
+            word_list = list(cmdict.keys())
+            hamming_values = [hamming_distance(p_command, x) for x in cmdict.keys()]
+            nearest_word = word_list[hamming_values.index(min(hamming_values))]
+            if min(hamming_values) <= 3:
+                print(colored("Did you mean ", "red") + colored(nearest_word, "red", attrs=["bold"]) + colored("?", "red"))
+
+        except Exception:
+            print("")
+
         return False
 
     if pattern not in cmdict[p_command].input_formats:
@@ -115,7 +129,6 @@ if __name__ == "__main__":
         pattern, inp = parse(str_inp)
 
         if checkinput(pattern, inp):
-            if pattern == 'matlab':
+            if pattern == 'matlab' and cmdict[inp['comm']].category == "functions":
                 inp['args'] = [None] + inp['args']
-            print(inp['args'])
             cmdict[inp['comm']].func_call(inp['args'], inp['opts'])
