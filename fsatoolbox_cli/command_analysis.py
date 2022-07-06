@@ -20,15 +20,28 @@ class command_analysis(command):
         if len(args) < min(self.n_req_args):
             print(colored("Not enough arguments provided, type \"{} -h\" to help", self.WARN_COLOR).format(self.f_name))
 
-        # Correct number of arguments
+        # Too many arguments
         elif len(args) > max(self.n_req_args):
-            print(colored("Too much arguments provided, type \"{} -h\" to help", self.WARN_COLOR).format(self.f_name))
+            print(colored("Too many arguments provided, type \"{} -h\" to help", self.WARN_COLOR).format(self.f_name))
             return
 
+        # Correct number of arguments
         else:
+            # Are there any FSA not present in the fsa_dict?
+            missing_fsa = [x for x in args if x not in self.fsa_dict.keys()]
 
-            p_args = self._retrieve_fsa(args)
-            self.callback(*p_args)
+            if len(missing_fsa) > 0:
+                print(colored("Error, the following FSA do not exists: " + str(missing_fsa)[1:-1], "red"))
+                return
+
+            try:
+                # Function call
+                p_args = self._retrieve_fsa(args)
+                self.callback(*p_args)
+            except Exception as e:
+                print(colored("There was an error while computing the analysis:", "red"))
+                print(e)
+                return
 
     def _retrieve_fsa(self, args):
 
