@@ -18,7 +18,7 @@ class EventNotFoundExc(Exception):
 class TransitionNotFoundExc(Exception):
     pass
 
-
+#TODO trasform error prints in exceptions
 class fsa:
     """
     Class used to represent a Finite State Automaton (FSA)
@@ -58,7 +58,8 @@ class fsa:
 
     def __repr__(self):
 
-        rep = "\nFSA: " + self._name + "\n" + self.showfsa()
+        #rep = "\nFSA: " + self._name + "\n" + self.showfsa()
+        rep = self.showfsa()
         return rep
 
     @property
