@@ -83,7 +83,7 @@ def compute_supervisor(G, H, verbose=False):
     forbidden = get_forbidden(A)
 
     if len(forbidden) == 0:
-        return H, A
+        return A
 
     weakly_forbidden = get_weakly_forbidden(A, forbidden)
 
