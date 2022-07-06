@@ -47,7 +47,7 @@ class command_fsa_func(command):
             missing_fsa = [x for x in args[1:] if x not in self.fsa_dict.keys()]
 
             if len(missing_fsa) > 0:
-                print(colored("Error, the following FSA doesn't exists: " + str(missing_fsa)[1:-1], "red"))
+                print(colored("Error, the following FSA do not exists: " + str(missing_fsa)[1:-1], "red"))
                 return
 
             try:
@@ -62,7 +62,7 @@ class command_fsa_func(command):
                     self.fsa_dict[args[0]] = result
 
             except Exception as e:
-                print(colored("There was an error while computing the concurrent composition:", "red"))
+                print(colored("There was an error while computing the function:", "red"))
                 print(e)
                 return
 
