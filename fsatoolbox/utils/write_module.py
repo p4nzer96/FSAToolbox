@@ -12,13 +12,13 @@ def save_json(filename, X, E, delta):
 
     for x in X:
 
-        state_properties = vars(x)
+        state_properties = ["isInitial", "isFinal"]
         dict_x = {}
 
-        for prop in state_properties.keys():
+        for prop in state_properties:
 
-            if state_properties[prop] is not None:
-                dict_x[str(prop)] = state_properties[prop]
+            if getattr(x, prop) is not None:
+                dict_x[str(prop)] = getattr(x, prop)
 
         fsa_dict["X"][x.label] = dict_x
 
@@ -27,13 +27,13 @@ def save_json(filename, X, E, delta):
 
     for e in E:
 
-        event_properties = vars(e)
+        event_properties = ["isObservable", "isControllable", "isFault"]
         dict_e = {}
 
-        for prop in event_properties.keys():
+        for prop in event_properties:
 
-            if event_properties[prop] is not None:
-                dict_e[str(prop)] = event_properties[prop]
+            if getattr(e, prop) is not None:
+                dict_e[str(prop)] = getattr(e, prop)
 
         fsa_dict["E"][e.label] = dict_e
 
@@ -41,7 +41,7 @@ def save_json(filename, X, E, delta):
     fsa_dict["delta"] = dict.fromkeys(list(delta.index))
 
     for index, row in delta.iterrows():
-        fsa_dict["delta"][index] = dict.fromkeys(["start", "fsa_event", "end"])
+        fsa_dict["delta"][index] = dict.fromkeys(["start", "event", "end"])
 
         fsa_dict["delta"][index]["start"] = row[0].label
         fsa_dict["delta"][index]["fsa_event"] = row[1].label
@@ -110,6 +110,9 @@ def save_txt(filename, X, E, delta):
                 state = trans["end"]
                 s_label = state.label
 
-                f.write(f'{e_label:<10}{s_label:<10}{c_value:<10}{o_value:<10}{f_value:<10}\n')
+                for value in [e_label, s_label, c_value, o_value, f_value]:
+                    if value:
+                        f.write(f'{value:<10}')
 
+                f.write("\n")
             f.write("\n")

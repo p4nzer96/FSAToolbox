@@ -117,9 +117,9 @@ def show_comp(X, E, delta):
         x_props = ""
         state_attr = vars(x)
 
-        if state_attr["isInitial"]:
+        if state_attr["isInitial"] is True:
             props_list.append("I")
-        if state_attr["isFinal"]:
+        if state_attr["isFinal"] is True:
             props_list.append("F")
 
         if len(props_list) != 0:
@@ -134,9 +134,9 @@ def show_comp(X, E, delta):
         e_props = ""
         ev_attr = vars(e)
 
-        if not ev_attr["isControllable"]:
+        if ev_attr["isControllable"] is False:
             props_list.append("UC")
-        if not ev_attr["isObservable"]:
+        if ev_attr["isObservable"] is False:
             props_list.append("UO")
         if ev_attr["isFault"]:
             props_list.append("F")

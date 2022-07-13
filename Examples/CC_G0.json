@@ -1,29 +1,21 @@
 {
     "X": {
         "x0'": {
-            "label": "x0'",
             "isInitial": true,
-            "isFinal": true,
-            "isForbidden": false
+            "isFinal": true
         },
         "x1'": {
-            "label": "x1'",
             "isInitial": false,
-            "isFinal": false,
-            "isForbidden": false
+            "isFinal": false
         }
     },
     "E": {
         "a": {
-            "label": "a",
             "isObservable": true,
-            "isControllable": false,
             "isFault": false
         },
         "b": {
-            "label": "b",
             "isObservable": true,
-            "isControllable": false,
             "isFault": false
         }
     },

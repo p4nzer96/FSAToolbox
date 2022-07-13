@@ -46,30 +46,30 @@ def load_txt(filename):
 
             # Is the event controllable?
 
-            if ev_trans[2] == "c":
+            if "c" in ev_trans:
                 fsa_dictionary['E'][ev_trans[0]]['isControllable'] = True
-            elif ev_trans[2] == "uc":
+            elif "uc" in ev_trans:
                 fsa_dictionary['E'][ev_trans[0]]['isControllable'] = False
             else:
-                raise ValueError
+                pass
 
             # Is the event observable?
 
-            if ev_trans[3] == "o":
+            if "o" in ev_trans:
                 fsa_dictionary['E'][ev_trans[0]]['isObservable'] = True
-            elif ev_trans[3] == "uo":
+            elif "uo" in ev_trans:
                 fsa_dictionary['E'][ev_trans[0]]['isObservable'] = False
             else:
-                raise ValueError
+                pass
 
             # Is the event faulty?
 
-            if ev_trans[4] == "f":
+            if "f" in ev_trans:
                 fsa_dictionary['E'][ev_trans[0]]['isFaulty'] = True
-            elif ev_trans[4] == "uf":
+            elif "uf" in ev_trans:
                 fsa_dictionary['E'][ev_trans[0]]['isFaulty'] = False
             else:
-                raise ValueError
+                pass
 
         # Add state to the dict
 

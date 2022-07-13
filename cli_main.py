@@ -124,11 +124,26 @@ if __name__ == "__main__":
     print("")
 
     while True:
-        str_inp = input(">> ")
 
-        pattern, inp = parse(str_inp)
+        try:
 
-        if checkinput(pattern, inp):
-            if pattern == 'matlab' and cmdict[inp['comm']].category == "functions":
-                inp['args'] = [None] + inp['args']
-            cmdict[inp['comm']].func_call(inp['args'], inp['opts'])
+            str_inp = input(">> ")
+
+            pattern, inp = parse(str_inp)
+
+            if checkinput(pattern, inp):
+
+                comm_obj = cmdict[inp['comm']]
+                args = [x for x in inp['args'] if x != ""]
+                opts = [x for x in inp['opts'] if x != ""]
+
+                if pattern == 'matlab' and cmdict[inp['comm']].category == "functions":
+                    inp['args'] = [None] + inp['args']
+
+                comm_obj.func_call(inp['args'], inp['opts'])
+
+        except KeyboardInterrupt:
+
+            print("")
+            exit()
+

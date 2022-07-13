@@ -127,7 +127,7 @@ def ldir_cli_f():
     print(colored("\nElements in: ", "yellow", attrs=["bold"]) + path + "\\\n")
     file_list = os.listdir(path + "\\")  # files only
     for el in file_list:
-        if os.path.isdir(el):
+        if os.path.isdir(path + "\\" + el):
             print(colored(el, "green"))
         else:
             print(el)
@@ -145,7 +145,7 @@ def showdir_cli_f():
         fix_config_path(recreate=True)
         path = read_cwdir()
 
-    print("Current working directory: " + path)
+    print(colored("Current working directory: ", "yellow") + path)
 
 
 def clear_cli_f(fsa_dict):
@@ -199,7 +199,7 @@ def load_cli_f(arg1=None, arg2=None, fsa_dict=None):
         filepath = os.path.join(path, filepath)
 
     if os.path.isfile(filepath):
-        G = fsa.from_file(filepath)
+        G = fsa.from_file(filepath, name=name)
 
     else:
         if filepath[-5:] == ".json" or filepath[-4:] == ".txt":
@@ -211,7 +211,7 @@ def load_cli_f(arg1=None, arg2=None, fsa_dict=None):
     fsa_dict[name] = G
 
 
-def save_cli_f(args, fsa_dict):
+def save_cli_f(fsa_name, savepath, fsa_dict):
     try:
         path = read_cwdir()
 
@@ -222,15 +222,15 @@ def save_cli_f(args, fsa_dict):
         fix_config_path(recreate=True)
         path = read_cwdir()
 
-    if args[0] in fsa_dict:
+    if fsa_name in fsa_dict:
 
-        if not os.path.isabs(args[1]):
-            filename = os.path.join(path, args[1])
+        if not os.path.isabs(savepath):
+            filename = os.path.join(path, savepath)
         else:
-            filename = args[1]
+            filename = savepath
 
         try:
-            fsa_dict[args[0]].to_file(filename)  # current path
+            fsa_dict[fsa_name].to_file(filename)  # current path
         except Exception as e:
             print(colored("Error while saving the file:", "red"))
             print(e)
