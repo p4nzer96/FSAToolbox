@@ -1,12 +1,10 @@
-import os
-import fsatoolbox
-from fsatoolbox import trim, nfa2dfa, hhat, compute_supervisor
-from fsatoolbox_cli.functions import fm_cli, diag_cli
+from fsatoolbox import nfa2dfa, hhat, compute_supervisor, cc, trim
 from fsatoolbox_cli.analysis import reachability_cli, coreachability_cli, blocking_cli, trim_cli, dead_cli, reverse_cli
 from fsatoolbox_cli.basic_cli_funct import *
 from fsatoolbox_cli.command_analysis import command_analysis
 from fsatoolbox_cli.command_basic import command_basic
 from fsatoolbox_cli.command_fsa_func import command_fsa_func
+from fsatoolbox_cli.functions import fm_cli, diag_cli
 
 
 def help():
@@ -153,7 +151,7 @@ cc_cli = command_fsa_func(
     input_formats=["standard", "matlab", "matlab_eq"],
     n_req_args=3,
     f_name="cc",
-    callback=fsatoolbox.cc,
+    callback=cc,
     fsa_dict=fsa_dict,
     description="This function computes the concurrent composition between two FSA",
     help_usage="cc output input1 input2",

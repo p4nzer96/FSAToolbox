@@ -121,7 +121,7 @@ def load_txt(filename):
 def load_csv(filename):
     jsonObject = {"X": {}, "E": {}, "delta": {}}
 
-    data = pd.read_csv("F.csv").fillna("")
+    data = pd.read_csv(filename).fillna("")
 
     # States
 

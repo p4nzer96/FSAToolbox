@@ -3,7 +3,6 @@ import os
 
 filename = "config.ini"
 
-
 def create_config(**kwargs):
     config = configparser.ConfigParser()
     config.read(filename)

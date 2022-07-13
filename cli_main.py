@@ -1,17 +1,19 @@
+import os
 import re
 import shlex
-
+import nltk
 from termcolor import colored
 from fsatoolbox_cli.cli_commands import cmdict
 
 
-def hamming_distance(chaine1, chaine2):
-    return sum(c1 != c2 for c1, c2 in zip(chaine1, chaine2))
+def levenstein_distance(chaine1, chaine2):
+    return nltk.edit_distance(chaine1, chaine2)
 
 
 def parse(inp):
     inp1 = shlex.split(inp, posix=False)
-    if not inp1: return {'comm': None, 'args': [], 'opts': []}
+    if not inp1:
+        return {'comm': None, 'args': [], 'opts': []}
 
     # remove spaces
     inp_noSpaces = inp.replace(" ", "")
@@ -77,10 +79,11 @@ def checkinput(pattern, inp):
 
         try:
             word_list = list(cmdict.keys())
-            hamming_values = [hamming_distance(p_command, x) for x in cmdict.keys()]
+            hamming_values = [levenstein_distance(p_command, x) for x in cmdict.keys()]
             nearest_word = word_list[hamming_values.index(min(hamming_values))]
             if min(hamming_values) <= 3:
-                print(colored("Did you mean ", "red") + colored(nearest_word, "red", attrs=["bold"]) + colored("?", "red"))
+                print(colored("Did you mean ", "red") + colored(nearest_word, "red", attrs=["bold"]) + colored("?",
+                                                                                                               "red"))
 
         except Exception:
             print("")
@@ -95,6 +98,8 @@ def checkinput(pattern, inp):
 
 
 if __name__ == "__main__":
+
+    os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
     forg_color = 'green'
     back_color = 'cyan'
@@ -146,4 +151,3 @@ if __name__ == "__main__":
 
             print("")
             exit()
-

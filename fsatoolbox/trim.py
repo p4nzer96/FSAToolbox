@@ -3,7 +3,7 @@ import copy
 from fsatoolbox import fsa, analysis
 
 
-def trim(fsa_obj: fsa):
+def trim(fsa_obj: fsa, **kwargs):
 
     G = copy.deepcopy(fsa_obj)
 

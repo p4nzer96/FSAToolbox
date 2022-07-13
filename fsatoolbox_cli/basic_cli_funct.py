@@ -190,11 +190,6 @@ def load_cli_f(arg1=None, arg2=None, fsa_dict=None):
         name = arg1
         filepath = arg2
 
-    if name in fsa_dict:
-        inp = input(colored("Warning, fsa already exists, do you want to overwrite it? [y/N]: ", "yellow"))
-        if inp.lower() == 'n' or inp == '':
-            return
-
     if not os.path.isabs(filepath):
         filepath = os.path.join(path, filepath)
 
@@ -202,11 +197,16 @@ def load_cli_f(arg1=None, arg2=None, fsa_dict=None):
         G = fsa.from_file(filepath, name=name)
 
     else:
-        if filepath[-5:] == ".json" or filepath[-4:] == ".txt":
+        if filepath[-5:] == ".json" or filepath[-4:] == ".txt" or filepath[-4:] == ".csv":
             print(colored("Error: file does not exists", "red"))
         else:
             print(colored("Error: file does not exists (did you forget the extension?)", "red"))
         return
+
+    if name in fsa_dict:
+        inp = input(colored("Warning, fsa already exists, do you want to overwrite it? [y/N]: ", "yellow"))
+        if inp.lower() == 'n' or inp == '':
+            return
 
     fsa_dict[name] = G
 
@@ -277,9 +277,7 @@ def build_cli_f(args, fsa_dict):
 
     state_prop = {  # name (for the prompt) and attribute name
         'initial': 'isInitial',
-        'final': 'isFinal',
-        'forbidden': 'isForbidden'
-    }
+        'final': 'isFinal'}
 
     for name, attr in state_prop.items():
         while True:
