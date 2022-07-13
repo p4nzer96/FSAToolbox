@@ -174,7 +174,7 @@ def show_comp(X, E, delta):
 
     table = tabulate(data, headers=column_labels, stralign="center", tablefmt='fancy_grid', maxcolwidths=16)
 
-    text = "\nSummary:\n" + table + \
+    text = table + \
            "\nState properties legend: I - Initial, F - Final\n" + \
            "Event properties legend: UC - Uncontrollable, UO - Unobservable, F - Fault\n"
 

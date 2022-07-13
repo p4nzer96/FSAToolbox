@@ -1,8 +1,8 @@
 import os
 import fsatoolbox
-from fsatoolbox import trim, fm, diag, nfa2dfa, hhat, compute_supervisor
-from fsatoolbox.analysis import get_reachability_info, get_co_reachability_info, get_blockingness_info, get_trim_info, \
-    get_deadness_info
+from fsatoolbox import trim, nfa2dfa, hhat, compute_supervisor
+from fsatoolbox_cli.functions import fm_cli, diag_cli
+from fsatoolbox_cli.analysis import reachability_cli, coreachability_cli, blocking_cli, trim_cli, dead_cli, reverse_cli
 from fsatoolbox_cli.basic_cli_funct import *
 from fsatoolbox_cli.command_analysis import command_analysis
 from fsatoolbox_cli.command_basic import command_basic
@@ -22,7 +22,7 @@ def help():
 
 
 def cls():
-    os.system("CLS")
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 fsa_dict = dict()
@@ -158,7 +158,7 @@ cc_cli = command_fsa_func(
     description="This function computes the concurrent composition between two FSA",
     help_usage="cc output input1 input2",
     help_example="cc G2 G1 G0",
-    help_optional=("-v", "verbose output, this will print the steps of the algorithm")
+    help_optional={"-v": "verbose output, this will print the steps of the algorithm"}
 )
 
 trimfsa_cli = command_fsa_func(
@@ -171,7 +171,7 @@ trimfsa_cli = command_fsa_func(
     description="This functions computes a trim of a FSA",
     help_usage="trimfsa output input",
     help_example="trimfsa G0 G1",
-    help_optional=("-v", "verbose output, this will print the steps of the algorithm")
+    help_optional={"-v": "verbose output, this will print the steps of the algorithm"}
 )
 
 fm_cli = command_fsa_func(
@@ -179,7 +179,7 @@ fm_cli = command_fsa_func(
     input_formats=["standard", "matlab", "matlab_eq"],
     n_req_args=2,
     f_name="fm",
-    callback=fm,
+    callback=fm_cli,
     fsa_dict=fsa_dict,
     description="This functions computes the fault monitor of the given FSA",
     help_usage="fm output input",
@@ -191,12 +191,12 @@ diag_cli = command_fsa_func(
     input_formats=["standard", "matlab", "matlab_eq"],
     n_req_args=2,
     f_name="diag",
-    callback=diag,
+    callback=diag_cli,
     fsa_dict=fsa_dict,
     description="This function computes the diagnoser of the given FSA",
     help_usage="diag output input",
     help_example="diag G1 G0",
-    help_optional=("-v", "verbose output, this will print the steps of the algorithm")
+    help_optional={"-v": "verbose output, this will print the Fault Monitor and the Fault Recognizer"}
 )
 
 obs_cli = command_fsa_func(
@@ -233,7 +233,7 @@ supervisor_cli = command_fsa_func(
     description="This function computes the supervisor of an automaton G, given the specification automaton H",
     help_usage="super output input_automaton specif_automaton",
     help_example="super S G0 H0",
-    help_optional=("-v", "verbose output, this will print the steps of the algorithm")
+    help_optional={"-v": "verbose output, this will print the steps of the algorithm"}
 
 )
 
@@ -242,7 +242,7 @@ reach_cli = command_analysis(
     input_formats=["standard", "matlab"],
     n_req_args=1,
     f_name="reach",
-    callback=get_reachability_info,
+    callback=reachability_cli,
     fsa_dict=fsa_dict,
     description="This function computes the reachability of a FSA",
     help_usage="reach fsa_name",
@@ -254,7 +254,7 @@ coreach_cli = command_analysis(
     input_formats=["standard", "matlab"],
     n_req_args=1,
     f_name="coreach",
-    callback=get_co_reachability_info,
+    callback=coreachability_cli,
     fsa_dict=fsa_dict,
     description="This function computes the co-reachability of a FSA",
     help_usage="coreach fsa_name",
@@ -266,7 +266,7 @@ blocking_cli = command_analysis(
     input_formats=["standard", "matlab"],
     n_req_args=1,
     f_name="blocking",
-    callback=get_blockingness_info,
+    callback=blocking_cli,
     fsa_dict=fsa_dict,
     description="This functions computes if the FSA is blocking",
     help_usage="blocking fsa_name",
@@ -278,7 +278,7 @@ trim_cli = command_analysis(
     input_formats=["standard", "matlab"],
     n_req_args=1,
     f_name="trim",
-    callback=get_trim_info,
+    callback=trim_cli,
     fsa_dict=fsa_dict,
     description="This functions computes if the FSA is trim",
     help_usage="trim fsa_name",
@@ -290,7 +290,7 @@ dead_cli = command_analysis(
     input_formats=["standard", "matlab"],
     n_req_args=1,
     f_name="dead",
-    callback=get_deadness_info,
+    callback=dead_cli,
     fsa_dict=fsa_dict,
     description="This functions computes if the FSA has dead states",
     help_usage="dead fsa_name",
@@ -300,9 +300,9 @@ dead_cli = command_analysis(
 reverse_cli = command_analysis(
     category='analysis',
     input_formats=["standard", "matlab"],
-    n_req_args=2,
+    n_req_args=1,
     f_name="reverse",
-    callback=command_analysis,
+    callback=reverse_cli,
     fsa_dict=fsa_dict,
     description="This functions computes if the FSA is reversible",
     help_usage="reverse fsa_name",

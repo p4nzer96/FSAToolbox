@@ -39,8 +39,8 @@ class command(ABC):
             print(colored("\nUsage:", attrs=["bold"]) + "\n\t{}".format(self.help_usage))
         if self.help_optional:
             print(colored("\nOptional Arguments:", attrs=["bold"]))
-            for opt_arg, opt_desc in self.help_optional:
-                print("\n\t{} {}".format(opt_arg, opt_desc))
+            for opt_arg, opt_desc in self.help_optional.items():
+                print("\n\t{}\t{}".format(opt_arg, opt_desc))
         if self.help_example:
             print(colored("\nExample:", attrs=["bold"]) + "\n\t{}".format(self.help_example))
         if self.help_notes:
