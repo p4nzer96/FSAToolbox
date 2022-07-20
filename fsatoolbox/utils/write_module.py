@@ -44,7 +44,7 @@ def save_json(filename, X, E, delta):
         fsa_dict["delta"][index] = dict.fromkeys(["start", "event", "end"])
 
         fsa_dict["delta"][index]["start"] = row[0].label
-        fsa_dict["delta"][index]["fsa_event"] = row[1].label
+        fsa_dict["delta"][index]["event"] = row[1].label
         fsa_dict["delta"][index]["end"] = row[2].label
 
     with open(filename, "w") as outfile:
@@ -68,21 +68,21 @@ def save_txt(filename, X, E, delta):
             elif event.isControllable is False:
                 controllable = "uc"
             else:
-                controllable = "c" #default fallback
+                controllable = "c"  # default fallback
 
             if event.isObservable is True:
                 observable = "o"
             elif event.isObservable is False:
                 observable = "uo"
             else:
-                observable = "o" #default fallback
+                observable = "o"  # default fallback
 
             if event.isFault is True:
                 fault = "f"
             elif event.isFault is False:
                 fault = "uf"
             else:
-                fault = "uf" #default fallback
+                fault = "uf"  # default fallback
 
             event_dict[event] = {"isControllable": controllable, "isObservable": observable, "isFault": fault}
 

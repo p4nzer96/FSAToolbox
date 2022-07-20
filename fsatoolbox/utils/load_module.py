@@ -65,9 +65,9 @@ def load_txt(filename):
             # Is the event faulty?
 
             if "f" in ev_trans:
-                fsa_dictionary['E'][ev_trans[0]]['isFaulty'] = True
+                fsa_dictionary['E'][ev_trans[0]]['isFault'] = True
             elif "uf" in ev_trans:
-                fsa_dictionary['E'][ev_trans[0]]['isFaulty'] = False
+                fsa_dictionary['E'][ev_trans[0]]['isFault'] = False
             else:
                 pass
 

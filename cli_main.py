@@ -143,9 +143,9 @@ if __name__ == "__main__":
                 opts = [x for x in inp['opts'] if x != ""]
 
                 if pattern == 'matlab' and cmdict[inp['comm']].category == "functions":
-                    inp['args'] = [None] + inp['args']
+                    args.insert(0, None)
 
-                comm_obj.func_call(inp['args'], inp['opts'])
+                comm_obj.func_call(args, opts)
 
         except KeyboardInterrupt:
 

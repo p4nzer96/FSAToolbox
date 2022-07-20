@@ -361,16 +361,22 @@ def build_cli_f(args, fsa_dict):
             if inp == ['-']:
                 break
 
-            for el in inp:
-                if el not in events:
-                    print(colored("The event: " + el + " is not in the fsa, try again", warn_col))
-                    break
             else:
-                break
-            continue
 
-        for e in E:
-            setattr(e, attr, False)
+                try:
+                    for el in inp:
+                        if el not in events:
+                            print(colored("The event: " + el + " is not in the fsa, try again", warn_col))
+                            raise ValueError
+
+                except ValueError:
+                    continue
+
+                for e in E:
+                    setattr(e, attr, False)
+
+                break
+
         for e in inp:
             for y in E:
                 if e == y.label:
@@ -380,7 +386,6 @@ def build_cli_f(args, fsa_dict):
     # add the events to the fsa
     for e in E:
         G.add_event(e)
-        # print(e.label+" "+str(e.isObservable)+" "+str(e.isControllable)+" "+str(e.isFault))
 
     # transitions
     while True:

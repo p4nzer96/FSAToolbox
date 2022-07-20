@@ -1,36 +1,27 @@
 {
     "X": {
         "x0''": {
-            "label": "x0''",
             "isInitial": true,
-            "isFinal": true,
-            "isForbidden": false
+            "isFinal": true
         },
         "x1''": {
-            "label": "x1''",
             "isInitial": false,
-            "isFinal": false,
-            "isForbidden": false
+            "isFinal": false
         },
         "x2''": {
-            "label": "x2''",
             "isInitial": false,
-            "isFinal": false,
-            "isForbidden": false
+            "isFinal": false
         }
     },
     "E": {
         "b": {
-            "label": "b",
             "isObservable": true,
-            "isControllable": false,
-            "isFault": false
+            "isControllable": false
         },
         "c": {
             "label": "c",
             "isObservable": true,
-            "isControllable": false,
-            "isFault": false
+            "isControllable": false
         }
     },
     "delta": {

@@ -15,17 +15,12 @@ class command_fsa_func(command):
             self.helper()
             return
 
-        # Do I just have to show the result?
-        if not args[0]:
-            show_mode = True
-        else:
-            show_mode = False
-
         # Checking the arguments
 
         # (ERROR) Too few arguments
         if len(args) < min(self.n_req_args):
             print(colored("Not enough arguments provided, type \"{} -h\" to help", self.WARN_COLOR).format(self.f_name))
+            return
 
         # (ERROR) Too many arguments
         elif len(args) > max(self.n_req_args):
@@ -34,6 +29,12 @@ class command_fsa_func(command):
 
         # Correct number of arguments
         else:
+
+            # Do I just have to show the result?
+            if not args[0]:
+                show_mode = True
+            else:
+                show_mode = False
 
             # Overwrite an exising fsa?
             if show_mode is False and args[0] in self.fsa_dict:
