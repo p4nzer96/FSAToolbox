@@ -175,7 +175,7 @@ trimfsa_cli = command_fsa_func(
     f_name="trimfsa",
     callback=trim,
     fsa_dict=fsa_dict,
-    description="This functions computes a trim of a FSA",
+    description="This function computes a trim of a FSA",
     help_usage="trimfsa output input",
     help_example="trimfsa G0 G1",
     help_optional={"-v": "verbose output, this will print the steps of the algorithm"}
@@ -188,7 +188,7 @@ fm_cli = command_fsa_func(
     f_name="fm",
     callback=fm_cli,
     fsa_dict=fsa_dict,
-    description="This functions computes the fault monitor of the given FSA",
+    description="This function computes the fault monitor of the given FSA",
     help_usage="fm output input",
     help_example="fm F1 F0",
 )
@@ -213,7 +213,7 @@ obs_cli = command_fsa_func(
     f_name="obs",
     callback=nfa2dfa,
     fsa_dict=fsa_dict,
-    description="This functions computes the equivalent DFA of the given NFA",
+    description="This function computes the equivalent DFA of the given NFA",
     help_usage="obs output input",
     help_example="obs G0 N0"
 )
@@ -225,7 +225,7 @@ exth_cli = command_fsa_func(
     f_name="exth",
     callback=hhat,
     fsa_dict=fsa_dict,
-    description="This functions computes the extended specification automaton, given the specification automaton H",
+    description="This function computes the extended specification automaton, given the specification automaton H",
     help_usage="exth output input",
     help_example="exth H2 H1",
 )
@@ -275,7 +275,7 @@ blocking_cli = command_analysis(
     f_name="blocking",
     callback=blocking_cli,
     fsa_dict=fsa_dict,
-    description="This functions computes if the FSA is blocking",
+    description="This function computes if the FSA is blocking",
     help_usage="blocking fsa_name",
     help_example="blocking G0"
 )
@@ -287,7 +287,7 @@ trim_cli = command_analysis(
     f_name="trim",
     callback=trim_cli,
     fsa_dict=fsa_dict,
-    description="This functions computes if the FSA is trim",
+    description="This function computes if the FSA is trim",
     help_usage="trim fsa_name",
     help_example="trim G0"
 )
@@ -299,7 +299,7 @@ dead_cli = command_analysis(
     f_name="dead",
     callback=dead_cli,
     fsa_dict=fsa_dict,
-    description="This functions computes if the FSA has dead states",
+    description="This function computes if the FSA has dead states",
     help_usage="dead fsa_name",
     help_example="dead G0"
 )
@@ -311,7 +311,7 @@ reverse_cli = command_analysis(
     f_name="reverse",
     callback=reverse_cli,
     fsa_dict=fsa_dict,
-    description="This functions computes if the FSA is reversible",
+    description="This function computes if the FSA is reversible",
     help_usage="reverse fsa_name",
     help_example="reverse G0"
 )
