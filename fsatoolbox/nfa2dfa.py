@@ -80,7 +80,7 @@ def nfa2dfa(G, iterationsLimit=100, verbose=False, name_style=0):
     while len(Xnew) > 0:
 
         x = Xnew.pop(0)  # select a state to analyze
-        v_print("Analyse the state: {}".format(str(x)), verbose)
+        v_print("\nAnalyzing the state: {}".format(str(x)), verbose)
         X.append(x)
 
         tempdf = pd.DataFrame({'x': [x]})  # initialize a data frame for this row
@@ -117,6 +117,7 @@ def nfa2dfa(G, iterationsLimit=100, verbose=False, name_style=0):
                 Xnew.append(beta)
         AB = pd.concat([AB, tempdf], axis=0)
 
+    v_print("", verbose)
     v_print(AB, verbose)
 
     # Add the found states to the DFA
