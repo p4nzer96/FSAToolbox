@@ -406,3 +406,9 @@ def build_cli_f(args, fsa_dict):
                 continue
 
     fsa_dict[args] = G
+
+
+# Other -----------------------------
+
+def exit_cli():
+    exit()

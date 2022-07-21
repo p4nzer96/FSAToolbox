@@ -34,6 +34,15 @@ help_cli = command_basic(
     description="Prints the list of available commands"
 )
 
+exit_cli = command_basic(
+    category='basic',
+    input_formats=["standard", "matlab"],
+    n_req_args=0,
+    f_name="exit",
+    callback=exit_cli,
+    description="Quits the program"
+)
+
 cls_cli = command_basic(
     category='basic',
     input_formats=["standard", "matlab"],
@@ -308,6 +317,7 @@ reverse_cli = command_analysis(
 )
 
 cmdict = {
+    'exit': exit_cli,
     'chdir': chdir_cli,
     'showdir': showdir_cli,
     'ldir': ldir_cli,
