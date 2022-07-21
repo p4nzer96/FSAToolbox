@@ -119,8 +119,10 @@ if __name__ == "__main__":
                 print(colored(char, back_color, back1_color), end='')
         print("")
 
-    print("Note: this is still in development")
-    print("Type \"help\" to see the list of commands\n")
+    print(colored("Alpha version \n", "green"))
+    print("Type " + colored("help", attrs=["bold"]) + " to see the list of commands")
+    print("Instead type " + colored("exit", attrs=["bold"]) + " or press " + colored("CTRL+C", attrs=["bold"]) +
+          " to quit\n")
 
     args = []
     opts = []
@@ -142,7 +144,7 @@ if __name__ == "__main__":
                 args = [x for x in inp['args'] if x != ""]
                 opts = [x for x in inp['opts'] if x != ""]
 
-                if pattern == 'matlab' and cmdict[inp['comm']].category == "functions":
+                if pattern == 'matlab' and comm_obj.category == "functions":
                     args.insert(0, None)
 
                 comm_obj.func_call(args, opts)

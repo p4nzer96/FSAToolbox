@@ -13,7 +13,9 @@ def trim(fsa_obj: fsa, **kwargs):
     if G.is_Trim:
         return G
 
-    for x in G.X:
+    fsa_states = G.X.copy()
+
+    for x in fsa_states:
         if not (x.is_Reachable and x.is_co_Reachable):
             G.remove_state(x)
 
