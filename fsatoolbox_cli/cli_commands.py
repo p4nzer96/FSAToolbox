@@ -1,4 +1,4 @@
-from fsatoolbox import nfa2dfa, compute_supervisor, cc, trim
+from fsatoolbox import nfa2dfa, hhat, compute_supervisor, cc, trim
 from fsatoolbox_cli.analysis import reachability_cli, coreachability_cli, blocking_cli, trim_cli, dead_cli, reverse_cli
 from fsatoolbox_cli.basic_cli_funct import *
 from fsatoolbox_cli.command_analysis import command_analysis
@@ -31,7 +31,7 @@ help_cli = command_basic(
     n_req_args=0,
     f_name="help",
     callback=help,
-    description="Shows the list of available commands"
+    description="Prints the list of available commands"
 )
 
 exit_cli = command_basic(
@@ -49,16 +49,17 @@ cls_cli = command_basic(
     n_req_args=0,
     f_name="cls",
     callback=cls,
-    description="Clears the screen"
+    description="Clears the CLI"
 )
 
 chdir_cli = command_basic(
     input_formats=["standard", "matlab"],
     n_req_args=1,
-    f_name="cd",
+    f_name="chdir",
     callback=chdir_cli_f,
-    description="Changes the default path",
-    help_usage="chdir C:\\\\Automi",
+    description="This function changes the default path",
+    help_usage="chdir newpath",
+    help_example="chdir C:\\\\Automi",
     help_notes=["In windows use \\\\ instead of \\ (ex. C:\\\\Automi) or put "
                 "the path in brackets (ex. \"C:\\Automi\\\")"]
 )
@@ -156,7 +157,7 @@ cc_cli = command_fsa_func(
     f_name="cc",
     callback=cc,
     fsa_dict=fsa_dict,
-    description="computes G = G1||G2: concurrent composition of Fsa G1 and G2",
+    description="Computes G = G1||G2: concurrent composition of Fsa G1 and G2",
     help_usage="cc G G1 G2",
     help_optional={"-v": "verbose output, this will print the steps of the algorithm"}
 )
