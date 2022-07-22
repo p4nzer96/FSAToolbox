@@ -7,16 +7,24 @@ from fsatoolbox_cli.command_fsa_func import command_fsa_func
 from fsatoolbox_cli.functions import fm_cli, diag_cli
 
 
-def help():
-    command_types = ['basic', 'functions', "analysis"]
-    for ct in command_types:
-        lines = "--------------------------------------"
-        print(colored("\n" + lines + " " + ct.capitalize() + " " + lines + "\n", "green"))
-        for key, value in cmdict.items():
-            if value.category == ct:
-                print(f'-> {colored(key, "yellow"):<24}', end='')
-                print("" + cmdict[key].description)
-    print("")
+def help(cmd=None):
+
+    if(cmd==None):
+        command_types = ['basic', 'functions', "analysis"]
+        for ct in command_types:
+            lines = "--------------------------------------"
+            print(colored("\n" + lines + " " + ct.capitalize() + " " + lines + "\n", "green"))
+            for key, value in cmdict.items():
+                if value.category == ct:
+                    print(f'-> {colored(key, "yellow"):<24}', end='')
+                    print("" + cmdict[key].description)
+        print("")
+    else:
+        if cmd not in cmdict:
+            print(colored(cmd+" not found","red"))
+            print(colored("Type \"help\" to show the list of available commands","yellow"))
+            return
+        cmdict[cmd].helper()
 
 
 def cls():
@@ -28,7 +36,7 @@ fsa_dict = dict()
 help_cli = command_basic(
     category='basic',
     input_formats=["standard", "matlab"],
-    n_req_args=0,
+    n_req_args=[0, 1],
     f_name="help",
     callback=help,
     description="Prints the list of available commands"
