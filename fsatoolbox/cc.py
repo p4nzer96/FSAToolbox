@@ -59,7 +59,7 @@ def cc(G0, G1, verbose=False, name_style=1):
             # Case: Private event to G0
 
             if event in G0.E and event not in G1.E:
-                v_print("Private G0", verbose, end=' -> ')
+                v_print("Private {}".format(G0.name), verbose, end=' -> ')
                 trans = G0.filter_delta(start=str(sel_state_1.label), transition=str(event.label))
                 if not trans.empty:
                     for _, el in trans.iterrows():
@@ -74,7 +74,7 @@ def cc(G0, G1, verbose=False, name_style=1):
             # Case: Private event to G1
 
             elif event not in G0.E and event in G1.E:
-                v_print("Private G1", verbose, end=' -> ')
+                v_print("Private {}".format(G1.name), verbose, end=' -> ')
                 trans = G1.filter_delta(start=str(sel_state_2.label), transition=str(event.label))
                 if not trans.empty:
                     for _, el in trans.iterrows():

@@ -46,7 +46,7 @@ class fsa:
 
         # Optional: Name of the FSA
 
-        self._name = kwargs.get('name') if kwargs.get('name') else object.__repr__(self)
+        self.name = kwargs.get('name') if kwargs.get('name') else object.__repr__(self)
 
         # FSA properties
 
