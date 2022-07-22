@@ -156,7 +156,7 @@ def clear_cli_f(fsa_dict):
 
 def showfsa_cli_f(fsa_name, fsa_dict):
     if fsa_name not in fsa_dict:
-        print(colored("Error, fsa doesn't exists", "red"))
+        print(colored("Error, fsa "+ fsa_name +" doesn't exists", "red"))
         return
 
     print(fsa_dict[fsa_name])
