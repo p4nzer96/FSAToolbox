@@ -304,6 +304,7 @@ cmdict = {
     'fm': fm_cli,
     'diag': diag_cli,
     'obs': obs_cli,
+    'exth': exth_cli,
     'supervisor': supervisor_cli,
     'reach': reach_cli,
     'coreach': coreach_cli,
