@@ -67,7 +67,7 @@ chdir_cli = command_basic(
     callback=chdir_cli_f,
     description="Changes the default path",
     help_usage="cd C:\\\\Automi",
-    help_notes=["Currently paths with spaces are not supported!"]
+    help_notes=["Currently paths with spaces or \"-\" are not supported!"]
 )
 
 showdir_cli = command_basic(
@@ -103,7 +103,10 @@ load_cli = command_basic(
     fsa_dict=fsa_dict,
     f_name="load",
     description="Loads a FSA from a file",
-    help_usage="load G0 G0.fsa"
+    help_usage="load G0 G0.txt",
+    help_alternative="G0 = load(G0.txt)",
+    help_notes=["Currently supported file types (for loading):"+ colored(" .txt .json .csv","magenta"),
+    "If the name is not given, the name of the file will be used. " + colored(" Example: load G0.txt", attrs=["bold"], color="grey")]
 )
 
 save_cli = command_basic(
@@ -113,7 +116,8 @@ save_cli = command_basic(
     callback=save_cli_f,
     fsa_dict=fsa_dict,
     description="Saves a FSA into a file",
-    help_usage="save G0 G0.fsa"
+    help_usage="save G0 G0.txt",
+    help_notes=["Currently supported file types (for saving):"+ colored(" .txt .json","magenta")]
 )
 
 show_cli = command_basic(
@@ -142,8 +146,9 @@ remove_cli = command_basic(
     f_name="remove",
     callback=remove_cli_f,
     fsa_dict=fsa_dict,
-    description="Removes a FSA from memory",
-    help_usage="remove G0"
+    description="Removes a FSAs from memory",
+    help_usage="remove G0",
+    help_alternative="remove(G0)"
 )
 
 clear_cli = command_basic(
@@ -164,7 +169,8 @@ cc_cli = command_fsa_func(
     callback=cc,
     fsa_dict=fsa_dict,
     description="Computes G = G1||G2: concurrent composition of Fsa G1 and G2",
-    help_usage="cc G G1 G2",
+    help_usage="cc G0 G1 G2",
+    help_alternative="G0 = cc(G1,G2)",
     help_optional={"-v": "verbose output, this will print the steps of the algorithm"}
 )
 
@@ -177,7 +183,8 @@ trimfsa_cli = command_fsa_func(
     fsa_dict=fsa_dict,
     description="Trims a FSA",
     help_usage="trimfsa G0 G1",
-    help_optional={"-v": "verbose output, this will print the steps of the algorithm"}
+    help_alternative="G0 = trimfsa(G1)",
+    # help_optional={"-v": "verbose output, this will print the steps of the algorithm"}
 )
 
 fm_cli = command_fsa_func(

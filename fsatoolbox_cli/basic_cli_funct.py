@@ -40,7 +40,7 @@ def fix_config_path(recreate=False):
 
 def remove_cli_f(fsa_name, fsa_dict):
     if fsa_name not in fsa_dict.keys():
-        print(colored("FSA not found", "red"))
+        print(colored("FSA \""+ fsa_name +"\" not found", "red"))
         return
 
     del fsa_dict[fsa_name]
@@ -156,7 +156,7 @@ def clear_cli_f(fsa_dict):
 
 def showfsa_cli_f(fsa_name, fsa_dict):
     if fsa_name not in fsa_dict:
-        print(colored("Error, fsa "+ fsa_name +" doesn't exists", "red"))
+        print(colored("Error, fsa \""+ fsa_name +"\" doesn't exists", "red"))
         return
 
     print(fsa_dict[fsa_name])
