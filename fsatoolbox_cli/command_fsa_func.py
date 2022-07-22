@@ -19,12 +19,12 @@ class command_fsa_func(command):
 
         # (ERROR) Too few arguments
         if len(args) < min(self.n_req_args):
-            print(colored("Not enough arguments provided, type \"{} -h\" to help", self.WARN_COLOR).format(self.f_name))
+            print(colored("Not enough arguments provided, type \"help {}\" to help", self.WARN_COLOR).format(self.f_name))
             return
 
         # (ERROR) Too many arguments
         elif len(args) > max(self.n_req_args):
-            print(colored("Too much arguments provided, type \"{} -h\" to help", self.WARN_COLOR).format(self.f_name))
+            print(colored("Too much arguments provided, type \"help {}\" to help", self.WARN_COLOR).format(self.f_name))
             return
 
         # Correct number of arguments

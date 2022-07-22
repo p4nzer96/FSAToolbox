@@ -18,11 +18,11 @@ class command_analysis(command):
 
         # Too few arguments
         if len(args) < min(self.n_req_args):
-            print(colored("Not enough arguments provided, type \"{} -h\" to help", self.WARN_COLOR).format(self.f_name))
+            print(colored("Not enough arguments provided, type \"help {}\" to help", self.WARN_COLOR).format(self.f_name))
 
         # Too many arguments
         elif len(args) > max(self.n_req_args):
-            print(colored("Too many arguments provided, type \"{} -h\" to help", self.WARN_COLOR).format(self.f_name))
+            print(colored("Too many arguments provided, type \"help {}\" to help", self.WARN_COLOR).format(self.f_name))
             return
 
         # Correct number of arguments

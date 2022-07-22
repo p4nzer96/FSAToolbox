@@ -21,6 +21,7 @@ class command(ABC):
         self.description = kwargs.get('description')
         self.help_usage = kwargs.get('help_usage')
         self.help_usage = kwargs.get('help_usage')
+        self.help_alternative = kwargs.get('help_alternative')
         self.help_optional = kwargs.get('help_optional')
         self.help_notes = kwargs.get('help_notes')
 
@@ -37,12 +38,14 @@ class command(ABC):
         print(colored(self.f_name, self.WARN_COLOR, attrs=["bold"]) + ":\t{}\n".format(self.description))
         if self.help_usage:
             print(colored("\nUsage:", attrs=["bold"]) + "\n\t{}".format(self.help_usage))
+        if self.help_alternative:
+            print(colored("\nAlternative:", attrs=["bold"], color="grey") + colored("\n\t{}".format(self.help_alternative),attrs=["bold"], color="grey"))
         if self.help_optional:
             print(colored("\nOptional Arguments:", attrs=["bold"]))
             for opt_arg, opt_desc in self.help_optional.items():
                 print("\n\t{}\t{}".format(opt_arg, opt_desc))
         if self.help_notes:
             print(colored("\nNotes:", attrs=["bold"]))
-            for note in self.help_optional:
+            for note in self.help_notes:
                 print("\n\t* {}".format(note))
         print("")
