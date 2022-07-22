@@ -43,6 +43,6 @@ class command(ABC):
                 print("\n\t{}\t{}".format(opt_arg, opt_desc))
         if self.help_notes:
             print(colored("\nNotes:", attrs=["bold"]))
-            for note in self.help_optional:
+            for note in self.help_notes:
                 print("\n\t* {}".format(note))
         print("")

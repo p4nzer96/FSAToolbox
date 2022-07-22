@@ -19,7 +19,7 @@ class command_basic(command):
 
         # (ERROR) Too few arguments
         if len(args) < min(self.n_req_args):
-            print(colored("Not enough arguments provided, type \"{} -h\" to help", self.WARN_COLOR).format(self.f_name))
+            print(colored("Not enough arguments provided, type \"help {}\" to help", self.WARN_COLOR).format(self.f_name))
 
         # Correct number of arguments
         elif len(args) in self.n_req_args:
@@ -36,4 +36,4 @@ class command_basic(command):
 
         # (ERROR) Too many arguments
         else:
-            print(colored("Too many arguments provided, type \"{} -h\" to help", self.WARN_COLOR).format(self.f_name))
+            print(colored("Too many arguments provided, type \"help {}\" to help", self.WARN_COLOR).format(self.f_name))

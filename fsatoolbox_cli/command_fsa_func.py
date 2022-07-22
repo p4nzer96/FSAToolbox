@@ -19,12 +19,12 @@ class command_fsa_func(command):
 
         # (ERROR) Too few arguments
         if len(args) < min(self.n_req_args):
-            print(colored("Not enough arguments provided, type \"{} -h\" to help", self.WARN_COLOR).format(self.f_name))
+            print(colored("Not enough arguments provided, type \"help {}\" to help", self.WARN_COLOR).format(self.f_name))
             return
 
         # (ERROR) Too many arguments
         elif len(args) > max(self.n_req_args):
-            print(colored("Too much arguments provided, type \"{} -h\" to help", self.WARN_COLOR).format(self.f_name))
+            print(colored("Too much arguments provided, type \"help {}\" to help", self.WARN_COLOR).format(self.f_name))
             return
 
         # Correct number of arguments
@@ -38,7 +38,7 @@ class command_fsa_func(command):
 
             # Overwrite an exising fsa?
             if show_mode is False and args[0] in self.fsa_dict:
-                inp = input(colored("Error, fsa already exists, do you want to overwrite it? [y/N]: ", "red"))
+                inp = input(colored("Warning, fsa "+ args[0] +" already exists, do you want to overwrite it? [y/N]: ", "yellow"))
                 if inp.lower() == 'n' or inp == '':
                     return
                 else:

@@ -21,7 +21,7 @@ def help(cmd=None):
         print("")
     else:
         if cmd not in cmdict:
-            print(colored(cmd+" not found","red"))
+            print(colored("\""+cmd+"\" not found","red"))
             print(colored("Type \"help\" to show the list of available commands","yellow"))
             return
         cmdict[cmd].helper()
@@ -57,19 +57,17 @@ cls_cli = command_basic(
     n_req_args=0,
     f_name="cls",
     callback=cls,
-    description="Clears the CLI"
+    description="Clears the screen"
 )
 
 chdir_cli = command_basic(
     input_formats=["standard", "matlab"],
     n_req_args=1,
-    f_name="chdir",
+    f_name="cd",
     callback=chdir_cli_f,
-    description="This function changes the default path",
-    help_usage="chdir newpath",
-    help_example="chdir C:\\\\Automi",
-    help_notes=["In windows use \\\\ instead of \\ (ex. C:\\\\Automi) or put "
-                "the path in brackets (ex. \"C:\\Automi\\\")"]
+    description="Changes the default path",
+    help_usage="cd C:\\\\Automi",
+    help_notes=["Currently paths with spaces are not supported!"]
 )
 
 showdir_cli = command_basic(
