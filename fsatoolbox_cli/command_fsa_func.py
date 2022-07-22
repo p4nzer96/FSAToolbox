@@ -41,8 +41,6 @@ class command_fsa_func(command):
                 inp = input(colored("Error, fsa already exists, do you want to overwrite it? [y/N]: ", "red"))
                 if inp.lower() == 'n' or inp == '':
                     return
-                else:
-                    self.fsa_dict.pop(args[0])
 
             # Are there any FSA not present in the fsa_dict?
             missing_fsa = [x for x in args[1:] if x not in self.fsa_dict.keys()]
@@ -68,4 +66,12 @@ class command_fsa_func(command):
                 return
 
     def _retrieve_fsa(self, args):
-        return [self.fsa_dict[x] for x in args if x and x in self.fsa_dict]
+
+        retrieved = []
+
+        for x in args:
+            if x and x in self.fsa_dict:
+                if self.fsa_dict[x] not in retrieved:
+                    retrieved.append(self.fsa_dict[x])
+
+        return retrieved

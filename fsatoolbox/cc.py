@@ -33,6 +33,10 @@ def cc(G0, G1, verbose=False, name_style=1):
     if len(G0.x0) == 0 or len(G1.x0) == 0:
         raise TypeError("Initial states not set")
 
+    if len(G0.x0) > 1 or len(G1.x0) > 1:
+        raise TypeError("Multiple initial states: this version of cc is not designed to work with multiple initial "
+                        "states")
+
     # The initial state is obtained by the cartesian product of the two initial states
 
     Xnew = [[G0.x0[0], G1.x0[0]]]  # TODO multiple starting states?

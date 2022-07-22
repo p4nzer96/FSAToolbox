@@ -18,7 +18,8 @@ class EventNotFoundExc(Exception):
 class TransitionNotFoundExc(Exception):
     pass
 
-#TODO trasform error prints in exceptions
+
+# TODO trasform error prints in exceptions
 class fsa:
     """
     Class used to represent a Finite State Automaton (FSA)
@@ -58,7 +59,7 @@ class fsa:
 
     def __repr__(self):
 
-        #rep = "\nFSA: " + self._name + "\n" + self.showfsa()
+        # rep = "\nFSA: " + self._name + "\n" + self.showfsa()
         rep = self.showfsa()
         return rep
 
@@ -134,6 +135,16 @@ class fsa:
         # Reading states and properties
 
         state_properties = {"isInitial": None, "isFinal": None}
+
+        if not kwargs.get("name"):
+
+            if jsonObject.get('name'):
+                fsa_name = jsonObject['name']
+            else:
+                if filename.endswith('.json'):
+                    fsa_name = filename.split('.')[-2]
+        else:
+            fsa_name = kwargs.get("name")
 
         for state_name in jsonObject['X']:
             for prop in state_properties.keys():
@@ -216,14 +227,14 @@ class fsa:
             fsa_name = kwargs.get("name")
             return cls(X, E, delta, name=fsa_name)
 
-        return cls(X, E, delta)
+        return cls(X, E, delta, name=fsa_name)
 
     def to_file(self, filename):
 
         if filename[-4:].lower() == ".txt":
             save_txt(filename, self.X, self.E, self.delta)
         elif filename[-5:].lower() == ".json":
-            save_json(filename, self.X, self.E, self.delta)
+            save_json(filename, self.X, self.E, self.delta, self.name)
         else:
             print("Unspecified file type: default saving to json")
             save_json(filename, self.X, self.E, self.delta)

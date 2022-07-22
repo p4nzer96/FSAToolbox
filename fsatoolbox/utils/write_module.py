@@ -3,7 +3,7 @@ import json
 from fsatoolbox.utils.filter_delta import filter_delta
 
 
-def save_json(filename, X, E, delta):
+def save_json(filename, X, E, delta, name):
     # Base dict structure
     fsa_dict = dict.fromkeys(["X", "E", "delta"])
 
@@ -46,6 +46,8 @@ def save_json(filename, X, E, delta):
         fsa_dict["delta"][index]["start"] = row[0].label
         fsa_dict["delta"][index]["event"] = row[1].label
         fsa_dict["delta"][index]["end"] = row[2].label
+
+    fsa_dict["name"] = name
 
     with open(filename, "w") as outfile:
         json.dump(fsa_dict, outfile, indent=4)
