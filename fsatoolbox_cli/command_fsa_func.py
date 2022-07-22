@@ -36,20 +36,20 @@ class command_fsa_func(command):
             else:
                 show_mode = False
 
-            # Overwrite an exising fsa?
-            if show_mode is False and args[0] in self.fsa_dict:
-                inp = input(colored("Warning, fsa "+ args[0] +" already exists, do you want to overwrite it? [y/N]: ", "yellow"))
-                if inp.lower() == 'n' or inp == '':
-                    return
-                else:
-                    self.fsa_dict.pop(args[0])
-
             # Are there any FSA not present in the fsa_dict?
             missing_fsa = [x for x in args[1:] if x not in self.fsa_dict.keys()]
 
             if len(missing_fsa) > 0:
                 print(colored("Error, the following FSA do not exists: " + str(missing_fsa)[1:-1], "red"))
                 return
+
+            # Overwrite an exising fsa?
+            if show_mode is False and args[0] in self.fsa_dict:
+                inp = input(colored("Warning, fsa "+ args[0] +" already exists, do you want to overwrite it? [y/N]: ", "yellow"))
+                if inp.lower() == 'n' or inp == '':
+                    return
+                else:
+                    pass #self.fsa_dict.pop(args[0])
 
             try:
 
