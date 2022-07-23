@@ -66,7 +66,7 @@ def cc(G0, G1, verbose=False, name_style=1):
 
         elif name_style == 1:
 
-            v_print("\n ----- State: ({}, {}) -----\n".format(sel_state_1.label, sel_state_2.label), verbose)
+            v_print("\n ----- State: ({},{}) -----\n".format(sel_state_1.label, sel_state_2.label), verbose)
 
         else:
             raise ValueError("Name style not defined")
@@ -136,7 +136,7 @@ def cc(G0, G1, verbose=False, name_style=1):
         if name_style == 0:
             label = "{}{}".format(x[0], x[1])
         elif name_style == 1:
-            label = "({}, {})".format(x[0], x[1])
+            label = "({},{})".format(x[0], x[1])
 
         new_state = state(label, False, False, False)
 
@@ -164,14 +164,13 @@ def cc(G0, G1, verbose=False, name_style=1):
         e_first_state = el[2][0]
         e_second_state = el[2][1]
 
-        start_state = "({}, {})".format(s_first_state, s_second_state)
-        end_state = "({}, {})".format(e_first_state, e_second_state)
-
         if name_style == 0:
 
             CC.add_transition(el[0][0].label + el[0][1].label, el[1].label, el[2][0].label + el[2][1].label)
 
         elif name_style == 1:
+            start_state = "({},{})".format(s_first_state, s_second_state)
+            end_state = "({},{})".format(e_first_state, e_second_state)
 
             CC.add_transition(start_state, el[1].label, end_state)
 
