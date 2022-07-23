@@ -54,7 +54,11 @@ class command_fsa_func(command):
             try:
 
                 # Function call
-                p_args = self._retrieve_fsa(args)
+                if show_mode is True:
+                    p_args = self._retrieve_fsa(args)
+                else:
+                    p_args = self._retrieve_fsa(args[1:]) #if showmode is false, ignore the first argument
+                
                 result = self.callback(*p_args, verbose=('-v' in opts))
 
                 if show_mode is True:
@@ -76,7 +80,7 @@ class command_fsa_func(command):
 
         for x in args:
             if x and x in self.fsa_dict:
-                if self.fsa_dict[x] not in retrieved:
-                    retrieved.append(self.fsa_dict[x])
+                #if self.fsa_dict[x] not in retrieved:
+                retrieved.append(self.fsa_dict[x])
 
         return retrieved
