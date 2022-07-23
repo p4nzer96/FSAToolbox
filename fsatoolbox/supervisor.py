@@ -99,8 +99,7 @@ def compute_supervisor(G, H, verbose=False):
     for x in A.x0:
 
         if x in weakly_forbidden:
-
-            return None
+            raise TypeError("No solution found: the initial state is forbidden or weakly forbidden")
 
     wf_f_states = forbidden + weakly_forbidden
 
