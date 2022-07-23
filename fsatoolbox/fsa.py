@@ -239,7 +239,7 @@ class fsa:
             save_json(filename, self.X, self.E, self.delta, self.name)
         else:
             print("Unspecified file type: default saving to json")
-            save_json(filename, self.X, self.E, self.delta)
+            save_json(filename+".json", self.X, self.E, self.delta, self.name)
 
     def showfsa(self, style=1):
 
