@@ -18,7 +18,8 @@ def help(cmd=None):
                 if value.category == ct:
                     print(f'-> {colored(key, "yellow"):<24}', end='')
                     print("" + cmdict[key].description)
-        print("")
+        print(colored("\n To get help for a specific function type \"help\" <function>","yellow")+ colored("\tExample: \"help load\"","magenta"))
+
     else:
         if cmd not in cmdict:
             print(colored("\""+cmd+"\" not found","red"))
@@ -106,7 +107,7 @@ load_cli = command_basic(
     help_usage="load G0 G0.txt",
     help_alternative="G0 = load(G0.txt)",
     help_notes=["Currently supported file types (for loading):"+ colored(" .txt .json .csv","magenta"),
-    "If the name is not given, the name of the file will be used. " + colored(" Example: load G0.txt", attrs=["bold"], color="grey")]
+    "If the name is not given, the name of the file will be used. " + colored(" Example: load G0.txt or load(G0.txt)", attrs=["bold"], color="grey")]
 )
 
 save_cli = command_basic(
@@ -196,6 +197,7 @@ fm_cli = command_fsa_func(
     fsa_dict=fsa_dict,
     description="Computes the fault monitor F of the given FSA G",
     help_usage="fm F G",
+    help_alternative="F = fm(G)",
 )
 
 diag_cli = command_fsa_func(
@@ -207,6 +209,7 @@ diag_cli = command_fsa_func(
     fsa_dict=fsa_dict,
     description="Computes the diagnoser of the given FSA",
     help_usage="diag G1 G0",
+    help_alternative="G1 = diag(G0)",
     help_optional={"-v": "verbose output, this will print the Fault Monitor and the Fault Recognizer"}
 )
 
@@ -218,7 +221,8 @@ obs_cli = command_fsa_func(
     callback=nfa2dfa,
     fsa_dict=fsa_dict,
     description="Computes the equivalent DFA of the given NFA",
-    help_usage="obs G0 N0"
+    help_usage="obs G1 G0",
+    help_alternative="G1 = obs(G0)",
 )
 
 supervisor_cli = command_fsa_func(
@@ -230,6 +234,7 @@ supervisor_cli = command_fsa_func(
     fsa_dict=fsa_dict,
     description="Computes the supervisor of an automaton G, given the specification automaton H",
     help_usage="supervisor S G0 H0",
+    help_alternative="S = supervisor(G0, H0)",
     help_optional={"-v": "verbose output, this will print the steps of the algorithm"}
 
 )
@@ -242,7 +247,8 @@ reach_cli = command_analysis(
     callback=reachability_cli,
     fsa_dict=fsa_dict,
     description="Computes the reachability of a FSA",
-    help_usage="reach G0"
+    help_usage="reach G0",
+    help_alternative="reach(G0)",
 )
 
 coreach_cli = command_analysis(
@@ -253,7 +259,8 @@ coreach_cli = command_analysis(
     callback=coreachability_cli,
     fsa_dict=fsa_dict,
     description="Computes the co-reachability of a FSA",
-    help_usage="coreach G0"
+    help_usage="coreach G0",
+    help_alternative="coreach(G0)",
 )
 
 blocking_cli = command_analysis(
@@ -264,7 +271,8 @@ blocking_cli = command_analysis(
     callback=blocking_cli,
     fsa_dict=fsa_dict,
     description="Computes if the FSA is blocking",
-    help_usage="blocking G0"
+    help_usage="blocking G0",
+    help_alternative="blocking(G0)",
 )
 
 trim_cli = command_analysis(
@@ -275,7 +283,8 @@ trim_cli = command_analysis(
     callback=trim_cli,
     fsa_dict=fsa_dict,
     description="Computes if the FSA is trim",
-    help_usage="trim G0"
+    help_usage="trim G0",
+    help_alternative="trim(G0)",
 )
 
 dead_cli = command_analysis(
@@ -286,7 +295,8 @@ dead_cli = command_analysis(
     callback=dead_cli,
     fsa_dict=fsa_dict,
     description="Computes if the FSA has dead states",
-    help_usage="dead G0"
+    help_usage="dead G0",
+    help_alternative="dead(G0)",
 )
 
 reverse_cli = command_analysis(
@@ -297,7 +307,8 @@ reverse_cli = command_analysis(
     callback=reverse_cli,
     fsa_dict=fsa_dict,
     description="Computes if the FSA is reversible",
-    help_usage="reverse G0"
+    help_usage="reverse G0",
+    help_alternative="reverse(G0)",
 )
 
 cmdict = {
