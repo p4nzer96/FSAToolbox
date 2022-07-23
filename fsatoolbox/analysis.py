@@ -1,4 +1,13 @@
 def get_reachability_info(fsa_obj, set_fsa=True):
+
+    # Check if there are no or multiple initial states
+
+    if len(fsa_obj.x0) == 0:
+        raise TypeError("Initial state not set")
+
+    if len(fsa_obj.x0) > 1:
+        raise TypeError("Multiple initial states")
+
     reachable_states = []  # List of reachable states
 
     try:
@@ -54,6 +63,14 @@ def get_reachability_info(fsa_obj, set_fsa=True):
 
 
 def get_co_reachability_info(fsa_obj, set_fsa=True):
+    # Check if there are no or multiple initial states
+
+    if len(fsa_obj.x0) == 0:
+        raise TypeError("Initial state not set")
+
+    if len(fsa_obj.x0) > 1:
+        raise TypeError("Multiple initial states")
+
     co_reachable_states = []  # List of co-reachable states
     final_states = []
 
@@ -114,6 +131,14 @@ def get_co_reachability_info(fsa_obj, set_fsa=True):
 
 
 def get_blockingness_info(fsa_obj, set_fsa=True):
+    # Check if there are no or multiple initial states
+
+    if len(fsa_obj.x0) == 0:
+        raise TypeError("Initial state not set")
+
+    if len(fsa_obj.x0) > 1:
+        raise TypeError("Multiple initial states")
+
     # Check if Reachable and Co-Reachable properties are set
 
     if fsa_obj.is_Reachable is None:
@@ -140,6 +165,15 @@ def get_blockingness_info(fsa_obj, set_fsa=True):
 
 
 def get_trim_info(fsa_obj, set_fsa=True):
+
+    # Check if there are no or multiple initial states
+
+    if len(fsa_obj.x0) == 0:
+        raise TypeError("Initial state not set")
+
+    if len(fsa_obj.x0) > 1:
+        raise TypeError("Multiple initial states")
+
     # Check if Reachable and Co-Reachable properties are set
 
     if fsa_obj.is_Reachable is None:
@@ -159,6 +193,15 @@ def get_trim_info(fsa_obj, set_fsa=True):
 
 
 def get_deadness_info(fsa_obj):
+
+    # Check if there are no or multiple initial states
+
+    if len(fsa_obj.x0) == 0:
+        raise TypeError("Initial state not set")
+
+    if len(fsa_obj.x0) > 1:
+        raise TypeError("Multiple initial states")
+
     dead_states = []
 
     for x_state in fsa_obj.X:
@@ -174,6 +217,15 @@ def get_deadness_info(fsa_obj):
 
 
 def get_co_reachability_to_x0_info(fsa_obj):
+
+    # Check if there are no or multiple initial states
+
+    if len(fsa_obj.x0) == 0:
+        raise TypeError("Initial state not set")
+
+    if len(fsa_obj.x0) > 1:
+        raise TypeError("Multiple initial states")
+
     co_reachable_to_x0_states = []  # List of co-reachable states
     final_states = []
 
@@ -227,6 +279,15 @@ def get_co_reachability_to_x0_info(fsa_obj):
 
 
 def get_reversibility_info(fsa_obj, set_fsa=True):
+
+    # Check if there are no or multiple initial states
+
+    if len(fsa_obj.x0) == 0:
+        raise TypeError("Initial state not set")
+
+    if len(fsa_obj.x0) > 1:
+        raise TypeError("Multiple initial states")
+
     if fsa_obj.is_Reachable is None:
         get_reachability_info(fsa_obj)
 

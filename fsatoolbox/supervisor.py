@@ -73,6 +73,15 @@ def get_weakly_forbidden(A: fsa, forbidden: list):
 
 
 def compute_supervisor(G, H, verbose=False):
+
+    # Check if there are no or multiple initial states
+
+    if len(G.x0) == 0 or len(H.x0) == 0:
+        raise TypeError("Initial states not set")
+
+    if len(G.x0) > 1 or len(H.x0) > 1:
+        raise TypeError("Multiple initial states")
+
     # Computing the extended specification automaton
     h_hat = hhat(H)
 

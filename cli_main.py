@@ -3,6 +3,8 @@ import re
 import shlex
 import nltk
 from termcolor import colored
+
+from fsatoolbox.utils.check_determinism import ObsNotSet
 from fsatoolbox_cli.cli_commands import cmdict
 
 
@@ -110,7 +112,7 @@ if __name__ == "__main__":
               " ██╔══╝  ╚════██║██╔══██║   ██║   ██║   ██║██║   ██║██║     ██╔══██╗██║   ██║ ██╔██╗ ",
               " ██║     ███████║██║  ██║   ██║   ╚██████╔╝╚██████╔╝███████╗██████╔╝╚██████╔╝██╔╝ ██╗",
               " ╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝  ╚═════╝ ╚══════╝╚═════╝  ╚═════╝ ╚═╝  ╚═╝"]
-    os.system('cls' if os.name == 'nt' else 'clear') #clear term
+    os.system('cls' if os.name == 'nt' else 'clear')  # clear term
     print("")
     for row in splash:
         for char in row:
@@ -121,6 +123,8 @@ if __name__ == "__main__":
         print("")
 
     print(colored("Alpha version \n", "green"))
+    print(colored("Credits: ", "green") + colored("Andrea Panzino", "green", attrs=["bold"]) + colored(", ", "green")
+          + colored("Dennis Loi ", "green", attrs=["bold"]) + colored("- University of Cagliari\n", "green"))
     print("Type " + colored("help", attrs=["bold"]) + " to see the list of commands")
     print("Instead type " + colored("exit", attrs=["bold"]) + " or press " + colored("CTRL+C", attrs=["bold"]) +
           " to quit\n")
@@ -154,5 +158,49 @@ if __name__ == "__main__":
 
             print("")
             exit()
-        except:
+
+        except ObsNotSet as obs_e:  # Need to set the "observable" property
+
+            while True:
+                print(colored("\nWARNING: To continue it is required to set the "
+                              "observability property for the events of {}".format(obs_e.fsa.name), "yellow"))
+                inp = input("Please input the observable events of {}, "
+                            "separated by a space (events: {}): ".format(obs_e.fsa.name, str(obs_e.fsa.E)[1:-1]))
+
+                # If the input is blank, abort the procedure
+                if inp == "":
+                    print(colored("Exit from the procedure", colored("yellow")))
+                    break
+
+                else:
+
+                    # Check if the user as inputted non-existent events
+
+                    wrong_events = []
+                    for e in inp.split(" "):
+                        if e not in obs_e.fsa.E:
+                            wrong_events.append(e)
+
+                    if len(wrong_events) > 0:
+                        print(colored("Events {} does not belong to {}"
+                                      .format(str(wrong_events)[1:-1], obs_e.fsa.name), "red"))
+                        continue
+
+                    # Set isObservable property of all the events of the current FSA
+
+                    else:
+                        for e in obs_e.fsa.E:
+                            if e in inp.split(" "):
+                                setattr(e, "isObservable", True)
+                            else:
+                                setattr(e, "isObservable", False)
+
+                        # Call again the function
+                        comm_obj.func_call(args, opts)
+                        break
+
+
+
+        except Exception:
+
             continue

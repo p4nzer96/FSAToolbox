@@ -1,5 +1,6 @@
 from fsatoolbox import fsa
 from fsatoolbox.state import state
+from fsatoolbox.utils.check_determinism import check_det
 from fsatoolbox.utils.misc import v_print
 
 
@@ -30,12 +31,25 @@ def cc(G0, G1, verbose=False, name_style=1):
         if x not in CC.E:
             CC.E.append(x)
 
+    # Check if there are no or multiple initial states
+
     if len(G0.x0) == 0 or len(G1.x0) == 0:
         raise TypeError("Initial states not set")
 
     if len(G0.x0) > 1 or len(G1.x0) > 1:
-        raise TypeError("Multiple initial states: this version of cc is not designed to work with multiple initial "
-                        "states")
+        raise TypeError("Multiple initial states")
+
+    # TODO: to clarify
+
+    '''check0, errstr0 = check_det(G0)
+
+    if check0 is True:
+        raise Exception(errstr0)
+
+    check1, errstr1 = check_det(G1)
+
+    if check1 is True:
+        raise Exception(errstr1)'''
 
     # The initial state is obtained by the cartesian product of the two initial states
 

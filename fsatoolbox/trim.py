@@ -5,6 +5,14 @@ from fsatoolbox import fsa, analysis
 
 def trim(fsa_obj: fsa, **kwargs):
 
+    # Check if there are no or multiple initial states
+
+    if len(fsa_obj.x0) == 0:
+        raise TypeError("Initial state not set")
+
+    if len(fsa_obj.x0) > 1:
+        raise TypeError("Multiple initial states")
+
     G = copy.deepcopy(fsa_obj)
 
     if G.is_Trim is None:

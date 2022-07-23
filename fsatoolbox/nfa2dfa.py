@@ -18,6 +18,15 @@ def nfa2dfa(G, iterationsLimit=100, verbose=False, name_style=0):
         A FSA that represents the equivalent DFA of the input NFA
 
     """
+
+    # Check if there are no or multiple initial states
+
+    if len(G.x0) == 0:
+        raise TypeError("Initial state not set")
+
+    if len(G.x0) > 1:
+        raise TypeError("Multiple initial states")
+
     DFA = fsa()
 
     # This dataframe contains D_eps and D_e for every state of the NFA

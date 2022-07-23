@@ -12,6 +12,15 @@ def fm(G, verbose=False):
         fsa: The corresponding Fault Monitor of G
 
     """
+
+    # Check if there are no or multiple initial states
+
+    if len(G.x0) == 0:
+        raise TypeError("Initial state not set")
+
+    if len(G.x0) > 1:
+        raise TypeError("Multiple initial states")
+
     FM = fsa()
 
     # the alphabet is the same

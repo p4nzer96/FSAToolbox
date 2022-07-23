@@ -1,4 +1,6 @@
 from termcolor import colored
+
+from fsatoolbox.utils.check_determinism import ObsNotSet
 from fsatoolbox_cli.command import command
 
 
@@ -59,6 +61,9 @@ class command_fsa_func(command):
                     print(result)
                 else:
                     self.fsa_dict[args[0]] = result
+
+            except ObsNotSet as ons:
+                raise ObsNotSet(ons.fsa)
 
             except Exception as e:
                 print(colored("There was an error while computing the function:", "red"))

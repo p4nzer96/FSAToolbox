@@ -143,6 +143,8 @@ class fsa:
             else:
                 if filename.endswith('.json'):
                     fsa_name = filename.split('.')[-2]
+                else:
+                    fsa_name = None
         else:
             fsa_name = kwargs.get("name")
 

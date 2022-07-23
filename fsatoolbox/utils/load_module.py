@@ -33,6 +33,9 @@ def load_txt(filename):
 
         # Parsing state attributes
 
+        if fsa_dictionary['X'].get(state_attrs[0]):
+            return
+
         fsa_dictionary['X'][state_attrs[0]] = {'isInitial': bool(eval(state_attrs[1])),
                                                'isFinal': bool(eval(state_attrs[2]))}
 

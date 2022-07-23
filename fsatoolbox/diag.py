@@ -4,6 +4,15 @@ from fsatoolbox.utils.misc import v_print
 
 
 def diag(G, verbose=False):
+
+    # Check if there are no or multiple initial states
+
+    if len(G.x0) == 0:
+        raise TypeError("Initial state not set")
+
+    if len(G.x0) > 1:
+        raise TypeError("Multiple initial states")
+
     # Fault monitor
     FM = fm(G)
     v_print("\n\nFault monitor:", verbose)

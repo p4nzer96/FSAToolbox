@@ -55,6 +55,7 @@ def save_json(filename, X, E, delta, name):
 
 def save_txt(filename, X, E, delta):
     n_states = str(len(X))
+    padding = max([len(x.label) for x in X]) + 4
 
     with open(filename, "w") as f:
 
@@ -94,7 +95,9 @@ def save_txt(filename, X, E, delta):
             initial_str = str(int(state.isInitial))
             final_str = str(int(state.isFinal))
 
-            f.write(f'{label:<10}{initial_str:<10}{final_str:<10}\n')
+            f.write("{label:<{width}}{initial_str:<{width}}{final_str:<{width}}\n"
+                    .format(label=label, initial_str=initial_str, final_str=final_str, width=padding))
+            # f.write(f'{label:<10}{initial_str:<10}{final_str:<10}\n')
 
             f_delta = filter_delta(delta, start=state)
 
@@ -114,7 +117,8 @@ def save_txt(filename, X, E, delta):
 
                 for value in [e_label, s_label, c_value, o_value, f_value]:
                     if value:
-                        f.write(f'{value:<10}')
+                        f.write("{value:<{width}}".format(value=value, width=padding))
+                        # f.write(f'{value:<10}')
 
                 f.write("\n")
             f.write("\n")
