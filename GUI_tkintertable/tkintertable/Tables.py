@@ -677,7 +677,11 @@ class TableCanvas(Canvas):
                 if dict_event_properties["isFault"] == 1:
                     suffix += "_f"
 
+<<<<<<< HEAD
                 GUI_Utils.dictcolObservableEvents[event_name] = 0
+=======
+            GUI_Utils.dictcolObservableEvents[event_name] = 0
+>>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
 
                 self.model.relabel_Column(current_col_index, event_name+suffix)
                 del self.model.columnlabels[current_col_name]
@@ -707,7 +711,11 @@ class TableCanvas(Canvas):
                 if dict_event_properties["isFault"] == 1:
                     suffix += "_f"
 
+<<<<<<< HEAD
                 GUI_Utils.dictcolObservableEvents[event_name] = 1
+=======
+            GUI_Utils.dictcolObservableEvents[event_name] = 1
+>>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
 
                 self.model.relabel_Column(current_col_index, event_name+suffix)
                 del self.model.columnlabels[current_col_name]
@@ -738,7 +746,11 @@ class TableCanvas(Canvas):
                 if dict_event_properties["isFault"] == 1:
                     suffix += "_f"
 
+<<<<<<< HEAD
                 GUI_Utils.dictcolControllableEvents[event_name] = 0
+=======
+            GUI_Utils.dictcolControllableEvents[event_name] = 0
+>>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
 
                 self.model.relabel_Column(current_col_index, event_name+suffix)
                 del self.model.columnlabels[current_col_name]
@@ -767,7 +779,11 @@ class TableCanvas(Canvas):
                 if dict_event_properties["isFault"] == 1:
                     suffix += "_f"
 
+<<<<<<< HEAD
                 GUI_Utils.dictcolControllableEvents[event_name] = 1
+=======
+            GUI_Utils.dictcolControllableEvents[event_name] = 1
+>>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
 
                 self.model.relabel_Column(current_col_index, event_name+suffix)
                 del self.model.columnlabels[current_col_name]
@@ -796,7 +812,11 @@ class TableCanvas(Canvas):
                 if dict_event_properties["isControllable"] == 0:
                     suffix += "_uc"
 
+<<<<<<< HEAD
                 GUI_Utils.dictcolFaultyEvents[event_name] = 1
+=======
+            GUI_Utils.dictcolFaultyEvents[event_name] = 1
+>>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
 
                 self.model.relabel_Column(current_col_index, event_name+suffix)
                 del self.model.columnlabels[current_col_name]
@@ -825,7 +845,11 @@ class TableCanvas(Canvas):
                 if dict_event_properties["isControllable"] == 0:
                     suffix += "_uc"
 
+<<<<<<< HEAD
                 GUI_Utils.dictcolFaultyEvents[event_name] = 0
+=======
+            GUI_Utils.dictcolFaultyEvents[event_name] = 0
+>>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
 
                 self.model.relabel_Column(current_col_index, event_name+suffix)
                 del self.model.columnlabels[current_col_name]
@@ -840,6 +864,7 @@ class TableCanvas(Canvas):
         if n:
             col = self.getSelectedColumn()
             previous_col_name = self.model.getColumnLabel(col)
+<<<<<<< HEAD
             # print("previous_col_name: ", previous_col_name)
             # print("delete GUI_Utils.dictcolObservableEvents: ", GUI_Utils.dictcolObservableEvents)
             # print("delete GUI_Utils.dictcolControllableEvents: ", GUI_Utils.dictcolControllableEvents)
@@ -850,6 +875,11 @@ class TableCanvas(Canvas):
             del GUI_Utils.dictcolObservableEvents[event_to_delete]
             del GUI_Utils.dictcolControllableEvents[event_to_delete]
             del GUI_Utils.dictcolFaultyEvents[event_to_delete]
+=======
+            del GUI_Utils.dictcolObservableEvents[str(previous_col_name)]
+            del GUI_Utils.dictcolControllableEvents[str(previous_col_name)]
+            del GUI_Utils.dictcolFaultyEvents[str(previous_col_name)]
+>>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
             self.model.deleteColumn(col)
             self.currentcol = self.currentcol - 1
             # print("delete self.model.columnlabels=", self.model.columnlabels)
@@ -2924,8 +2954,14 @@ class ColumnHeader(Canvas):
         current_observable_value = GUI_Utils.dictcolObservableEvents.get(str(previous_col_name))
         current_controllable_value = GUI_Utils.dictcolControllableEvents.get(str(previous_col_name))
         current_faulty_value = GUI_Utils.dictcolFaultyEvents.get(str(previous_col_name))
+<<<<<<< HEAD
 
         from emoji import emojize
+=======
+        # print("current_observable_value: ", current_observable_value)
+        # print("current_controllable_value: ", current_controllable_value)
+        # print("current_faulty_value: ", current_faulty_value)
+>>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
         label_Obs = ""
         label_Unobs = ""
         label_Contr = ""
@@ -3050,14 +3086,21 @@ class ColumnHeader(Canvas):
                     label = self.columnlabels[self.model.getColumnLabel(i)]
                     columnlabels_without_properties.append(get_event_from_columnlabel(label)[label])
 
+<<<<<<< HEAD
                 # print("columnlabels_without_properties: ", columnlabels_without_properties)
 
                 dict_previous_col_name_properties = get_event_from_columnlabel(previous_col_name)
                 #print(str(previous_col_name) + ":      dict_previous_col_name_properties: ", dict_previous_col_name_properties)
+=======
+                del GUI_Utils.dictcolObservableEvents[dict_previous_col_name_properties[previous_col_name]]
+                del GUI_Utils.dictcolControllableEvents[dict_previous_col_name_properties[previous_col_name]]
+                del GUI_Utils.dictcolFaultyEvents[dict_previous_col_name_properties[previous_col_name]]
+>>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
 
                 dict_ans_properties = get_event_from_columnlabel(ans)
                 #print(str(ans) + ":      dict_ans_properties: ", dict_ans_properties)
 
+<<<<<<< HEAD
                 # print("get_event_from_columnlabel(previous_col_name)", get_event_from_columnlabel(previous_col_name))
                 if dict_ans_properties[ans] in columnlabels_without_properties and dict_ans_properties[ans] != get_event_from_columnlabel(previous_col_name)[previous_col_name]:
                     print("ERROR:\t\t\t\t\t\tThe event {} is already present. Only one instance of it is allowed." .format(dict_ans_properties[ans]))
@@ -3111,6 +3154,13 @@ class ColumnHeader(Canvas):
 
                 print("after del columnlabels:", self.columnlabels)
 
+=======
+                GUI_Utils.dictcolObservableEvents.update({dict_ans_properties[ans]: dict_ans_properties["properties"]["isObservable"]})
+                GUI_Utils.dictcolControllableEvents.update({dict_ans_properties[ans]: dict_ans_properties["properties"]["isControllable"]})
+                GUI_Utils.dictcolFaultyEvents.update({dict_ans_properties[ans]: dict_ans_properties["properties"]["isFault"]})
+
+
+>>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
                 # print("GUI_Utils.dictcolObservableEvents: ", GUI_Utils.dictcolObservableEvents)
                 # print("GUI_Utils.dictcolControllableEvents: ", GUI_Utils.dictcolControllableEvents)
                 # print("GUI_Utils.dictcolFaultyEvents: ", GUI_Utils.dictcolFaultyEvents)
