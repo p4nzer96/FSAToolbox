@@ -241,6 +241,7 @@ class TableModel(object):
         # print("getCellRecord")
         value = None
         colname = self.getColumnName(columnIndex)
+        # print("self.columntypes: ", self.columntypes)
         coltype = self.columntypes[colname]
         name = self.getRecName(rowIndex)
         #print self.data[name]
@@ -298,6 +299,8 @@ class TableModel(object):
          """Get the attribute of the record at the specified column index.
             This determines what will be displayed in the cell"""
          # print("getRecordAttributeAtColumn")
+
+         # print("data:", self.data)
          value = None
          if columnName != None and recName != None:
              if columnName not in self.data[recName]:
@@ -539,6 +542,39 @@ class TableModel(object):
         """Change the column label - can be used in a table header"""
         # print("relabel_Column")
         colname = self.getColumnName(columnIndex)
+
+        # print("colname: ", colname)
+        # print("columnIndex: ", columnIndex)
+        # print("newname: ", newname)
+        #
+
+        for keyData in self.data:
+            if colname in self.data[keyData]:
+                self.data[keyData][newname] = self.data[keyData][colname]
+                del self.data[keyData][colname]
+
+        # print("/////////////////////////////")
+        # print("before self.columnlabels: ", self.columnlabels)
+        # # print("before self.currenttable.columnlabels: ", self.currenttable.columnlabels)
+        del self.columnlabels[colname]
+        # print("self.columnNames before: ", self.columnNames)
+        self.columnNames[columnIndex] = newname
+        # print("self.columnNames after: ", self.columnNames)
+        # print("self.columntypes before: ", self.columntypes)
+        self.columntypes[newname] = 'text'
+        del self.columntypes[colname]
+        # print("self.columntypes after: ", self.columntypes)
+        self.columnlabels.update({newname: newname})
+        self.columnOrder[columnIndex] = newname
+        # print("after self.columnlabels: ", self.columnlabels)
+        ## print("after self.currenttable.columnlabels: ", self.currenttable.columnlabels)
+        # print("/////////////////////////////")
+        # print("self.columnOrder: ", self.columnOrder)
+
+
+
+        #
+
         self.columnlabels[colname]=newname
         return
 
@@ -550,14 +586,18 @@ class TableModel(object):
         return coltype
 
     def getColumnCount(self):
-         """Returns the number of columns in the data model."""
-         # print("getColumnCount")
-         return len(self.columnNames)
+        """Returns the number of columns in the data model."""
+        # print("getColumnCount")
+        # print("len(self.columnNames): ", len(self.columnNames))
+        return len(self.columnNames)
 
     def getColumnName(self, columnIndex):
-         """Returns the name of the given column by columnIndex."""
-         # print("getColumnName")
-         return self.columnNames[columnIndex]
+        """Returns the name of the given column by columnIndex."""
+        # print("getColumnName")
+        # print("self.columnNames: ", self.columnNames)
+        # print("columnIndex: ", columnIndex)
+        return self.columnNames[columnIndex]
+
 
     def getColumnLabel(self, columnIndex):
         """Returns the label for this column"""
@@ -675,6 +715,7 @@ class TableModel(object):
                 pass
         else:
             self.data[name][colname] = value
+            # print("value: ", value)
         return
 
     def setFormulaAt(self, f, rowIndex, columnIndex):

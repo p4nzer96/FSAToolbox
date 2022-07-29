@@ -53,14 +53,13 @@ import platform
 
 
 import json
-import my_globals
+import GUI_Utils
 from tkinter import simpledialog
 from tkinter import filedialog
 
 
 def get_event_suffix(event_string):
     '''returns a dict with bool infos about isObservable, isControllable and isFault, and the name without suffix of the event'''
-
     dict_event_properties = {}
     if event_string.endswith("_uc_f_uo") or event_string.endswith("_uc_uo_f") or event_string.endswith(
             "_f_uc_uo") or event_string.endswith("_f_uo_uc") or event_string.endswith(
@@ -553,6 +552,7 @@ class TableCanvas(Canvas):
             num = simpledialog.askinteger("Now many rows?",
                                             "Number of rows:",initialvalue=1,
                                              parent=self.parentframe)
+
         if not num:
             return
         keys = self.model.autoAddRows(num)
@@ -566,11 +566,13 @@ class TableCanvas(Canvas):
         if newname == None:
 
             coltypes = self.getModel().getDefaultTypes()
+
             d = MultipleValDialog(title='New Column',
                                     initialvalues=(coltypes, ''),
                                     labels=('Column Type','Name'),
                                     types=('list','string'),
                                     parent=self.parentframe)
+
             if d.result == None:
                 return
             else:
@@ -582,9 +584,9 @@ class TableCanvas(Canvas):
             # global dictcolObservableEvents
             # global dictcolControllableEvents
             # global dictcolFaultyEvents
-            my_globals.dictcolObservableEvents.update({newname: 1})
-            my_globals.dictcolControllableEvents.update({newname: 1})
-            my_globals.dictcolFaultyEvents.update({newname: 0})
+            GUI_Utils.dictcolObservableEvents.update({newname: 1})
+            GUI_Utils.dictcolControllableEvents.update({newname: 1})
+            GUI_Utils.dictcolFaultyEvents.update({newname: 0})
             # **********************************************************************************************************
 
 
@@ -603,19 +605,19 @@ class TableCanvas(Canvas):
                 event_name = dict_event_properties["name"]
 
                 if dict_event_properties["isObservable"] == 0:
-                    my_globals.dictcolObservableEvents[event_name] = 0
+                    GUI_Utils.dictcolObservableEvents[event_name] = 0
                 else:
-                    my_globals.dictcolObservableEvents[event_name] = 1
+                    GUI_Utils.dictcolObservableEvents[event_name] = 1
 
                 if dict_event_properties["isControllable"] == 0:
-                    my_globals.dictcolControllableEvents[event_name] = 0
+                    GUI_Utils.dictcolControllableEvents[event_name] = 0
                 else:
-                    my_globals.dictcolControllableEvents[event_name] = 1
+                    GUI_Utils.dictcolControllableEvents[event_name] = 1
 
                 if dict_event_properties["isFault"] == 0:
-                    my_globals.dictcolFaultyEvents[event_name] = 0
+                    GUI_Utils.dictcolFaultyEvents[event_name] = 0
                 else:
-                    my_globals.dictcolFaultyEvents[event_name] = 1
+                    GUI_Utils.dictcolFaultyEvents[event_name] = 1
 
                 if len(newname) >= 10:
                     current_col_index = self.getSelectedColumn()
@@ -660,25 +662,26 @@ class TableCanvas(Canvas):
                                 "Unobservable Event?",
                                       parent=self.parentframe)
         if n:
-            #global dictcolObservableEvents
             current_col_index = self.getSelectedColumn()
             current_col_name = self.model.getColumnLabel(current_col_index)
 
-
-
             dict_event_properties = get_event_suffix(current_col_name)
 
-            event_name = dict_event_properties["name"]
-            suffix = "_uo"
-            if dict_event_properties["isControllable"] == 0:
-                suffix += "_uc"
-            if dict_event_properties["isFault"] == 1:
-                suffix += "_f"
+            if dict_event_properties["isObservable"] == 0:
+                pass
+            else:
+                event_name = dict_event_properties["name"]
+                suffix = "_uo"
+                if dict_event_properties["isControllable"] == 0:
+                    suffix += "_uc"
+                if dict_event_properties["isFault"] == 1:
+                    suffix += "_f"
 
-            my_globals.dictcolObservableEvents[event_name] = 0
+                GUI_Utils.dictcolObservableEvents[event_name] = 0
 
-            self.model.relabel_Column(current_col_index, event_name+suffix)
-            self.redraw()
+                self.model.relabel_Column(current_col_index, event_name+suffix)
+                del self.model.columnlabels[current_col_name]
+                self.redraw()
 
     def setCurrentEventAsObservable(self):
         """Set the event as Observable - can be used in a table header"""
@@ -693,18 +696,24 @@ class TableCanvas(Canvas):
 
             dict_event_properties = get_event_suffix(current_col_name)
 
-            event_name = dict_event_properties["name"]
-            suffix = ""
+            if dict_event_properties["isObservable"] == 1:
+                pass
+            else:
+                event_name = dict_event_properties["name"]
+                suffix = ""
 
-            if dict_event_properties["isControllable"] == 0:
-                suffix += "_uc"
-            if dict_event_properties["isFault"] == 1:
-                suffix += "_f"
+                if dict_event_properties["isControllable"] == 0:
+                    suffix += "_uc"
+                if dict_event_properties["isFault"] == 1:
+                    suffix += "_f"
 
-            my_globals.dictcolObservableEvents[event_name] = 1
+                GUI_Utils.dictcolObservableEvents[event_name] = 1
 
-            self.model.relabel_Column(current_col_index, event_name+suffix)
-            self.redraw()
+                self.model.relabel_Column(current_col_index, event_name+suffix)
+                del self.model.columnlabels[current_col_name]
+
+
+                self.redraw()
 
     def setCurrentEventAsUncontrollable(self):
         """Set the event as Uncontrollable - can be used in a table header"""
@@ -714,23 +723,26 @@ class TableCanvas(Canvas):
                                 "Uncontrollable Event?",
                                       parent=self.parentframe)
         if n:
-            #global dictcolControllableEvents
             current_col_index = self.getSelectedColumn()
             current_col_name = self.model.getColumnLabel(current_col_index)
 
             dict_event_properties = get_event_suffix(current_col_name)
 
-            event_name = dict_event_properties["name"]
-            suffix = "_uc"
-            if dict_event_properties["isObservable"] == 0:
-                suffix += "_uo"
-            if dict_event_properties["isFault"] == 1:
-                suffix += "_f"
+            if dict_event_properties["isControllable"] == 0:
+                pass
+            else:
+                event_name = dict_event_properties["name"]
+                suffix = "_uc"
+                if dict_event_properties["isObservable"] == 0:
+                    suffix += "_uo"
+                if dict_event_properties["isFault"] == 1:
+                    suffix += "_f"
 
-            my_globals.dictcolControllableEvents[event_name] = 0
+                GUI_Utils.dictcolControllableEvents[event_name] = 0
 
-            self.model.relabel_Column(current_col_index, event_name+suffix)
-            self.redraw()
+                self.model.relabel_Column(current_col_index, event_name+suffix)
+                del self.model.columnlabels[current_col_name]
+                self.redraw()
 
     def setCurrentEventAsControllable(self):
         """Set the event as Controllable - can be used in a table header"""
@@ -740,23 +752,26 @@ class TableCanvas(Canvas):
                                 "Controllable Event?",
                                       parent=self.parentframe)
         if n:
-            #global dictcolControllableEvents
             current_col_index = self.getSelectedColumn()
             current_col_name = self.model.getColumnLabel(current_col_index)
 
             dict_event_properties = get_event_suffix(current_col_name)
 
-            event_name = dict_event_properties["name"]
-            suffix = ""
-            if dict_event_properties["isObservable"] == 0:
-                suffix += "_uo"
-            if dict_event_properties["isFault"] == 1:
-                suffix += "_f"
+            if dict_event_properties["isControllable"] == 1:
+                pass
+            else:
+                event_name = dict_event_properties["name"]
+                suffix = ""
+                if dict_event_properties["isObservable"] == 0:
+                    suffix += "_uo"
+                if dict_event_properties["isFault"] == 1:
+                    suffix += "_f"
 
-            my_globals.dictcolControllableEvents[event_name] = 1
+                GUI_Utils.dictcolControllableEvents[event_name] = 1
 
-            self.model.relabel_Column(current_col_index, event_name+suffix)
-            self.redraw()
+                self.model.relabel_Column(current_col_index, event_name+suffix)
+                del self.model.columnlabels[current_col_name]
+                self.redraw()
 
     def setCurrentEventAsFaulty(self):
         """Set the event as Faulty - can be used in a table header"""
@@ -766,24 +781,26 @@ class TableCanvas(Canvas):
                                 "Faulty Event?",
                                       parent=self.parentframe)
         if n:
-            #global dictcolFaultyEvents
-
             current_col_index = self.getSelectedColumn()
             current_col_name = self.model.getColumnLabel(current_col_index)
 
             dict_event_properties = get_event_suffix(current_col_name)
 
-            event_name = dict_event_properties["name"]
-            suffix = "_f"
-            if dict_event_properties["isObservable"] == 0:
-                suffix += "_uo"
-            if dict_event_properties["isControllable"] == 0:
-                suffix += "_uc"
+            if dict_event_properties["isFault"] == 1:
+                pass
+            else:
+                event_name = dict_event_properties["name"]
+                suffix = "_f"
+                if dict_event_properties["isObservable"] == 0:
+                    suffix += "_uo"
+                if dict_event_properties["isControllable"] == 0:
+                    suffix += "_uc"
 
-            my_globals.dictcolFaultyEvents[event_name] = 1
+                GUI_Utils.dictcolFaultyEvents[event_name] = 1
 
-            self.model.relabel_Column(current_col_index, event_name+suffix)
-            self.redraw()
+                self.model.relabel_Column(current_col_index, event_name+suffix)
+                del self.model.columnlabels[current_col_name]
+                self.redraw()
 
     def setCurrentEventAsUnfaulty(self):
         """Set the event as Unfaulty - can be used in a table header"""
@@ -793,24 +810,26 @@ class TableCanvas(Canvas):
                                 "Observable Event?",
                                       parent=self.parentframe)
         if n:
-            #global dictcolFaultyEvents
             current_col_index = self.getSelectedColumn()
             current_col_name = self.model.getColumnLabel(current_col_index)
 
-
             dict_event_properties = get_event_suffix(current_col_name)
 
-            event_name = dict_event_properties["name"]
-            suffix = ""
-            if dict_event_properties["isObservable"] == 0:
-                suffix += "_uo"
-            if dict_event_properties["isControllable"] == 0:
-                suffix += "_uc"
+            if dict_event_properties["isFault"] == 0:
+                pass
+            else:
+                event_name = dict_event_properties["name"]
+                suffix = ""
+                if dict_event_properties["isObservable"] == 0:
+                    suffix += "_uo"
+                if dict_event_properties["isControllable"] == 0:
+                    suffix += "_uc"
 
-            my_globals.dictcolFaultyEvents[event_name] = 0
+                GUI_Utils.dictcolFaultyEvents[event_name] = 0
 
-            self.model.relabel_Column(current_col_index, event_name+suffix)
-            self.redraw()
+                self.model.relabel_Column(current_col_index, event_name+suffix)
+                del self.model.columnlabels[current_col_name]
+                self.redraw()
 
     def deleteColumn(self):
         """Delete currently selected column"""
@@ -821,11 +840,20 @@ class TableCanvas(Canvas):
         if n:
             col = self.getSelectedColumn()
             previous_col_name = self.model.getColumnLabel(col)
-            del my_globals.dictcolObservableEvents[str(previous_col_name)]
-            del my_globals.dictcolControllableEvents[str(previous_col_name)]
-            del my_globals.dictcolFaultyEvents[str(previous_col_name)]
+            # print("previous_col_name: ", previous_col_name)
+            # print("delete GUI_Utils.dictcolObservableEvents: ", GUI_Utils.dictcolObservableEvents)
+            # print("delete GUI_Utils.dictcolControllableEvents: ", GUI_Utils.dictcolControllableEvents)
+            # print("delete GUI_Utils.dictcolFaultyEvents: ", GUI_Utils.dictcolFaultyEvents)
+
+            dict_previous_col_name_properties = get_event_suffix(previous_col_name)
+            event_to_delete = dict_previous_col_name_properties["name"]
+            del GUI_Utils.dictcolObservableEvents[event_to_delete]
+            del GUI_Utils.dictcolControllableEvents[event_to_delete]
+            del GUI_Utils.dictcolFaultyEvents[event_to_delete]
             self.model.deleteColumn(col)
             self.currentcol = self.currentcol - 1
+            # print("delete self.model.columnlabels=", self.model.columnlabels)
+            # del self.model.columnlabels[previous_col_name]
             self.redrawTable()
 
         return
@@ -1109,6 +1137,8 @@ class TableCanvas(Canvas):
         """Get x-y coordinates to drawing a cell in a given row/col"""
         # print("getCellCoords")
         colname=self.model.getColumnName(col)
+        # print("colname: ", colname)
+        # print("self.model.columnwidths: ", self.model.columnwidths)
         if colname in self.model.columnwidths:
             w=self.model.columnwidths[colname]
         else:
@@ -1600,6 +1630,7 @@ class TableCanvas(Canvas):
         """Add left and right click behaviour for canvas, should not have to override
             this function, it will take its values from defined dicts in constructor"""
         # print("popupMenu")
+        '''
         defaultactions = {"Set Fill Color" : lambda : self.setcellColor(rows,cols,key='bg'),
                         "Set Text Color" : lambda : self.setcellColor(rows,cols,key='fg'),
                         "Copy" : lambda : self.copyCell(rows, cols),
@@ -1629,6 +1660,23 @@ class TableCanvas(Canvas):
         general = ["Select All", "Add Row(s)" , "Delete Row(s)", "Auto Fit Columns", "Filter Records", "Preferences"]
         filecommands = ['New','Load','Save','Import text','Export csv']
         plotcommands = ['Plot Selected','Plot Options']
+        '''
+
+        defaultactions = {"Set Fill Color" : lambda : self.setcellColor(rows,cols,key='bg'),
+                        "Set Text Color" : lambda : self.setcellColor(rows,cols,key='fg'),
+                        "Copy" : lambda : self.copyCell(rows, cols),
+                        "Paste" : lambda : self.pasteCell(rows, cols),
+                        "Delete Row(s)" : lambda : self.deleteRow(),
+                        "View Record" : lambda : self.getRecordInfo(row),
+                        "Clear Data" : lambda : self.deleteCells(rows, cols),
+                        "Select All" : self.select_All,
+                        "Auto Fit Columns" : self.autoResizeColumns
+                        }
+
+        main = ["Set Fill Color","Set Text Color","Copy", "Paste", "Clear Data"]
+        general = ["Select All", "Delete Row(s)", "Auto Fit Columns"]
+        filecommands = []
+        plotcommands = []
 
         def createSubMenu(parent, label, commands):
             # print("createSubMenu")
@@ -1670,14 +1718,15 @@ class TableCanvas(Canvas):
 
             if coltype in self.columnactions:
                 add_commands(coltype)
+                # add_commands(coltype)
             add_defaultcommands()
 
         for action in general:
             popupmenu.add_command(label=action, command=defaultactions[action])
 
-        popupmenu.add_separator()
-        createSubMenu(popupmenu, 'File', filecommands)
-        createSubMenu(popupmenu, 'Plot', plotcommands)
+        # popupmenu.add_separator()
+        # createSubMenu(popupmenu, 'File', filecommands)
+        # createSubMenu(popupmenu, 'Plot', plotcommands)
         popupmenu.bind("<FocusOut>", popupFocusOut)
         popupmenu.focus_set()
         popupmenu.post(event.x_root, event.y_root)
@@ -2871,14 +2920,12 @@ class ColumnHeader(Canvas):
         else:
             previous_col_name.replace(" ", "")
 
-        # print("previous_col_name: ", previous_col_name)
 
-        current_observable_value = my_globals.dictcolObservableEvents.get(str(previous_col_name))
-        current_controllable_value = my_globals.dictcolControllableEvents.get(str(previous_col_name))
-        current_faulty_value = my_globals.dictcolFaultyEvents.get(str(previous_col_name))
-        # print("current_observable_value: ", current_observable_value)
-        # print("current_controllable_value: ", current_controllable_value)
-        # print("current_faulty_value: ", current_faulty_value)
+        current_observable_value = GUI_Utils.dictcolObservableEvents.get(str(previous_col_name))
+        current_controllable_value = GUI_Utils.dictcolControllableEvents.get(str(previous_col_name))
+        current_faulty_value = GUI_Utils.dictcolFaultyEvents.get(str(previous_col_name))
+
+        from emoji import emojize
         label_Obs = ""
         label_Unobs = ""
         label_Contr = ""
@@ -2886,23 +2933,23 @@ class ColumnHeader(Canvas):
         label_Faulty = ""
         label_Unfaulty = ""
         if current_observable_value==1:
-            label_Obs = "(It is)"
+            label_Obs = "(It is)" + emojize(":check_mark:")
             label_Unobs = "(It's not)"
         else:
             label_Obs = "(It's not)"
-            label_Unobs = "(It is)"
+            label_Unobs = "(It is)" + emojize(":check_mark:")
         if current_controllable_value==1:
-            label_Contr = "(It is)"
+            label_Contr = "(It is)" + emojize(":check_mark:")
             label_Uncontr = "(It's not)"
         else:
             label_Contr = "(It's not)"
-            label_Uncontr = "(It is)"
+            label_Uncontr = "(It is)" + emojize(":check_mark:")
         if current_faulty_value==1:
-            label_Faulty = "(It is)"
+            label_Faulty = "(It is)" + emojize(":check_mark:")
             label_Unfaulty = "(It's not)"
         else:
             label_Faulty = "(It's not)"
-            label_Unfaulty = "(It is)"
+            label_Unfaulty = "(It is)" + emojize(":check_mark:")
 
 
         popupmenu.add_command(label="Rename Column", command=self.relabel_Column)
@@ -2928,16 +2975,20 @@ class ColumnHeader(Canvas):
         # print("relabel_Column")
         col=self.table.currentcol
         previous_col_name = self.model.getColumnLabel(col)
-
+        # print("previous_col_name:", previous_col_name)
         ans = simpledialog.askstring("New column name?", "Enter new name:")
         if ans !=None:
             if ans == '':
                 messagebox.showwarning("Error", "Name should not be blank.")
                 return
+            elif ans == previous_col_name:
+                pass
             else:
-                self.model.relabel_Column(col, ans)
-                self.redraw()
-
+                list_columnlabels = list(self.columnlabels)
+                print(list_columnlabels)
+                for i in range(len(list_columnlabels)):
+                    if list_columnlabels[i] == previous_col_name:
+                        index_previous_col_name = i
                 def get_event_from_columnlabel(columnlabel):
                     '''To get rid of the columnlabel suffix and get its event properties'''
                     prev_label = columnlabel
@@ -2990,28 +3041,79 @@ class ColumnHeader(Canvas):
                         columnlabel.replace(" ", "")
                         dict_event_properties.update({prev_label: columnlabel, "properties": {"isObservable": 1, "isControllable": 1, "isFault": 0}})
 
-                    print(str(prev_label)+":      dict_event_properties: ", dict_event_properties)
+                    #print(str(prev_label)+":      dict_event_properties: ", dict_event_properties)
                     return dict_event_properties
 
 
-                dict_previous_col_name_properties = get_event_from_columnlabel(previous_col_name)
-                print(str(previous_col_name) + ":      dict_previous_col_name_properties: ", dict_previous_col_name_properties)
+                columnlabels_without_properties = []
+                for i in range(1, len(self.columnlabels)-1):
+                    label = self.columnlabels[self.model.getColumnLabel(i)]
+                    columnlabels_without_properties.append(get_event_from_columnlabel(label)[label])
 
-                del my_globals.dictcolObservableEvents[dict_previous_col_name_properties[previous_col_name]]
-                del my_globals.dictcolControllableEvents[dict_previous_col_name_properties[previous_col_name]]
-                del my_globals.dictcolFaultyEvents[dict_previous_col_name_properties[previous_col_name]]
+                # print("columnlabels_without_properties: ", columnlabels_without_properties)
+
+                dict_previous_col_name_properties = get_event_from_columnlabel(previous_col_name)
+                #print(str(previous_col_name) + ":      dict_previous_col_name_properties: ", dict_previous_col_name_properties)
 
                 dict_ans_properties = get_event_from_columnlabel(ans)
-                print(str(ans) + ":      dict_ans_properties: ", dict_ans_properties)
+                #print(str(ans) + ":      dict_ans_properties: ", dict_ans_properties)
 
-                my_globals.dictcolObservableEvents.update({dict_ans_properties[ans]: dict_ans_properties["properties"]["isObservable"]})
-                my_globals.dictcolControllableEvents.update({dict_ans_properties[ans]: dict_ans_properties["properties"]["isControllable"]})
-                my_globals.dictcolFaultyEvents.update({dict_ans_properties[ans]: dict_ans_properties["properties"]["isFault"]})
+                # print("get_event_from_columnlabel(previous_col_name)", get_event_from_columnlabel(previous_col_name))
+                if dict_ans_properties[ans] in columnlabels_without_properties and dict_ans_properties[ans] != get_event_from_columnlabel(previous_col_name)[previous_col_name]:
+                    print("ERROR:\t\t\t\t\t\tThe event {} is already present. Only one instance of it is allowed." .format(dict_ans_properties[ans]))
+                    win = Tk()
+                    # Set the geometry of Tkinter frame
+                    # win.geometry(win_geometry)
+                    text_relabel = "\r\nThe event '{}' is already present. Only one instance of it is allowed.\r\n".format(dict_ans_properties[ans])
+
+                    win.geometry("500x130")
+                    win['background'] = '#ecec00'
+                    win.title("Syntax error")
+                    Label(win, text=text_relabel, font=('Helvetica 10 bold'), background='yellow',
+                          justify="left").pack(pady=20)
+                    win.mainloop()
+                    return
 
 
-                # print("my_globals.dictcolObservableEvents: ", my_globals.dictcolObservableEvents)
-                # print("my_globals.dictcolControllableEvents: ", my_globals.dictcolControllableEvents)
-                # print("my_globals.dictcolFaultyEvents: ", my_globals.dictcolFaultyEvents)
+
+                #del self.columnlabels[previous_col_name]
+                # print("before del columnlabels:", self.columnlabels)
+
+
+
+                del GUI_Utils.dictcolObservableEvents[dict_previous_col_name_properties[previous_col_name]]
+                del GUI_Utils.dictcolControllableEvents[dict_previous_col_name_properties[previous_col_name]]
+                del GUI_Utils.dictcolFaultyEvents[dict_previous_col_name_properties[previous_col_name]]
+
+
+
+                GUI_Utils.dictcolObservableEvents.update({dict_ans_properties[ans]: dict_ans_properties["properties"]["isObservable"]})
+                GUI_Utils.dictcolControllableEvents.update({dict_ans_properties[ans]: dict_ans_properties["properties"]["isControllable"]})
+                GUI_Utils.dictcolFaultyEvents.update({dict_ans_properties[ans]: dict_ans_properties["properties"]["isFault"]})
+
+                self.model.relabel_Column(col, ans)
+                del self.columnlabels[previous_col_name]
+
+                #
+                self.columnlabels.clear()
+                for i in range(len(list_columnlabels)):
+                    if i == index_previous_col_name:
+                        list_columnlabels[i] = ans
+                        break
+
+                for i in range(len(list_columnlabels)):
+                    self.columnlabels.update({list_columnlabels[i]: list_columnlabels[i]})
+
+                #
+
+                self.redraw()
+                #self.table.redrawTable()
+
+                print("after del columnlabels:", self.columnlabels)
+
+                # print("GUI_Utils.dictcolObservableEvents: ", GUI_Utils.dictcolObservableEvents)
+                # print("GUI_Utils.dictcolControllableEvents: ", GUI_Utils.dictcolControllableEvents)
+                # print("GUI_Utils.dictcolFaultyEvents: ", GUI_Utils.dictcolFaultyEvents)
 
                 return
 

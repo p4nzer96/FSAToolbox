@@ -41,7 +41,7 @@ class Preferences:
                 raise
         except:
             # If we didn't find a file then set to default and save
-            print ('Did not find preferences!!!')
+            # print ('Did not find preferences!!!') # *********************************************
             self.prefs=defaults.copy()
             self.pref_file=os.path.join(dirs[0],filename)
             self.prefs['_prefdir']=dirs[0]
@@ -133,6 +133,6 @@ class Preferences:
             pickle.dump(self.prefs, fd, protocol=2)
             fd.close()
         except:
-            print ('could not save')
+            #print ('could not save') # *********************************************
             return
         return

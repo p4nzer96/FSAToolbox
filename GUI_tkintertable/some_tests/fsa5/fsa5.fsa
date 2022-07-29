@@ -1,0 +1,52 @@
+13
+
+x0	1	0	0
+eps	x2	c	o	uf
+eps	x1	c	o	uf
+b	x0	c	o	f
+
+x1	0	0	0
+a	x2	c	uo	uf
+a	x4	c	uo	uf
+b	x3	c	o	f
+
+x2	0	0	0
+b	x4	c	o	f
+b	x5	c	o	f
+
+x3	0	0	0
+eps	x3	c	o	uf
+eps	x7	c	o	uf
+c	x4	uc	uo	f
+
+x4	0	0	1
+c	x8	uc	uo	f
+
+x5	0	0	1
+a	x0	c	uo	uf
+a	x5	c	uo	uf
+a	x2	c	uo	uf
+a	x12	c	uo	uf
+
+x6	0	0	0
+a	x0	c	uo	uf
+a	x7	c	uo	uf
+
+x7	0	1	0
+d	x7	uc	uo	uf
+
+x8	0	0	0
+c	x9	uc	uo	f
+b	x11	c	o	f
+
+x9	0	0	0
+
+x10	0	1	0
+a	x10	c	uo	uf
+a	x9	c	uo	uf
+
+x11	0	0	0
+c	x10	uc	uo	f
+
+x12	0	0	0
+a	x5	c	uo	uf

@@ -42,7 +42,7 @@ class RecordViewDialog(Dialog):
     """Dialog for viewing and editing table records"""
 
     def __init__(self, parent, title=None, table=None, row=None):
-        print("RecordViewDialog__init__")
+        # print("RecordViewDialog__init__")
         if table != None:
             self.table = table
             self.model = table.getModel()
@@ -56,7 +56,7 @@ class RecordViewDialog(Dialog):
 
     def body(self, master):
         """Show all record fields in entry fields or labels"""
-        print("body")
+        # print("body")
         model = self.model
         cols = self.recdata.keys()
         self.editable = []
@@ -86,7 +86,7 @@ class RecordViewDialog(Dialog):
 
     def apply(self):
         """apply"""
-        print("apply")
+        # print("apply")
         cols = self.table.cols
         model = self.model
         absrow = self.table.get_AbsoluteRow(self.row)
@@ -111,7 +111,7 @@ class MultipleValDialog(simpledialog.Dialog):
     """Simple dialog to get multiple values"""
 
     def __init__(self, parent, title=None, initialvalues=None, labels=None, types=None):
-        print("MultipleValDialog__init__")
+        # print("MultipleValDialog__init__")
         if labels != None:
             self.initialvalues = initialvalues
             self.labels = labels
@@ -119,7 +119,7 @@ class MultipleValDialog(simpledialog.Dialog):
         simpledialog.Dialog.__init__(self, parent, title)
 
     def body(self, master):
-        print("body")
+        # print("body")
         r=0
         self.vrs=[];self.entries=[]
         for i in range(len(self.labels)):
@@ -154,7 +154,7 @@ class MultipleValDialog(simpledialog.Dialog):
         return self.entries[0] # initial focus
 
     def apply(self):
-        print("apply")
+        # print("apply")
         self.result = True
         self.results = []
         for i in range(len(self.labels)):

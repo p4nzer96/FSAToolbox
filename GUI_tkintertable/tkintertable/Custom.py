@@ -35,14 +35,13 @@ except:
 
 from .Tables import TableCanvas, ColumnHeader
 import json
-import my_globals
 
 
 class MyTable(TableCanvas):
     """Sub-class of Tablecanvas, with some changes in behaviour to make
     a customised table - just an example"""
     def __init__(self, parent=None, model=None):
-        print("MyTable__init__")
+        # print("MyTable__init__")
         TableCanvas.__init__(self, parent, model)
         self.bgcolor = '#FFFAF1'
         self.fgcolor = 'black'
