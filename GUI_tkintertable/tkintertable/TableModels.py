@@ -124,7 +124,8 @@ class TableModel(object):
         # Define the starting column names and locations in the table.
         self.columnNames = []
         self.columntypes = {}
-        self.columnOrder = None
+        # self.columnOrder = None # 'None' gave problems
+        self.columnOrder = {}
         #record column labels for use in a table header
         self.columnlabels={}
         for colname in self.columnNames:
@@ -534,8 +535,10 @@ class TableModel(object):
         for x in range(start, end):
             if x == start:
                 self.addColumn("State")
+                self.columnOrder.update({0:"State"})
             else:
                 self.addColumn("event" + str(x-1))
+                self.columnOrder.update({x-1: "event" + str(x-1)})
         return
 
     def relabel_Column(self, columnIndex, newname):
@@ -546,7 +549,7 @@ class TableModel(object):
         # print("colname: ", colname)
         # print("columnIndex: ", columnIndex)
         # print("newname: ", newname)
-        #
+
 
         for keyData in self.data:
             if colname in self.data[keyData]:
@@ -555,7 +558,6 @@ class TableModel(object):
 
         # print("/////////////////////////////")
         # print("before self.columnlabels: ", self.columnlabels)
-        # # print("before self.currenttable.columnlabels: ", self.currenttable.columnlabels)
         del self.columnlabels[colname]
         # print("self.columnNames before: ", self.columnNames)
         self.columnNames[columnIndex] = newname
@@ -565,17 +567,17 @@ class TableModel(object):
         del self.columntypes[colname]
         # print("self.columntypes after: ", self.columntypes)
         self.columnlabels.update({newname: newname})
+        # print("self.columnOrder: ", self.columnOrder)
+        # print("columnIndex: ", columnIndex)
+
         self.columnOrder[columnIndex] = newname
-        # print("after self.columnlabels: ", self.columnlabels)
-        ## print("after self.currenttable.columnlabels: ", self.currenttable.columnlabels)
+
         # print("/////////////////////////////")
         # print("self.columnOrder: ", self.columnOrder)
 
-
-
-        #
-
         self.columnlabels[colname]=newname
+        # print("after self.columnlabels: ", self.columnlabels)
+
         return
 
     def getColumnType(self, columnIndex):

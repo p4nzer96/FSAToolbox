@@ -25,14 +25,11 @@ import json
 import GUI_Utils
 from loadfsa import *
 from loadfsa_GUI import *
-<<<<<<< HEAD
 
 import time
 
 
 
-=======
->>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
 
 try:
     from tkinter import *
@@ -326,7 +323,6 @@ class TablesApp(Frame):
                                                              ("json files","*.json"),
                                                              ("All files","*.*")],
                                                   parent=self.tablesapp_win)
-<<<<<<< HEAD
 
 
         if os.path.isfile(filename):
@@ -347,8 +343,6 @@ class TablesApp(Frame):
 
 
 
-=======
->>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
         # from fsatoolbox.fsa import fsa
         # from loadfsa_GUI import fsa_GUI
         import analysis
@@ -366,17 +360,11 @@ class TablesApp(Frame):
         delta = f.delta
         # print(f)
 
-<<<<<<< HEAD
         num_elements_per_row = 5
         text_content = "FSA name: " + GUI_Utils.last_sheet + "\n"
         text_content += "___________________________\n"
 
         dict_max_chars_per_row_found = {}
-=======
-        num_chars_per_line = 50
-        text_content = "FSA name: " + GUI_Utils.last_sheet + "\n"
-        text_content += "______________________________________\n"
->>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
 
         if x0:
             # states
@@ -1116,11 +1104,7 @@ class TablesApp(Frame):
 
             # Trim
             is_trim = analysis.get_trim_info(f)
-<<<<<<< HEAD
             text_content += "___________________________\n"
-=======
-            text_content += "______________________________________"
->>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
             text_content += "\nTRIM\n"
             if is_trim == 1:
                 text_content += "FSA is trim? YES\n"
@@ -1553,12 +1537,9 @@ class TablesApp(Frame):
 
         self.currenttable.model.columnNames.clear()
         self.currenttable.model.columnlabels.clear()
-<<<<<<< HEAD
         #print("before clear self.currenttable.model.columntypes: ", self.currenttable.model.columntypes)
         self.currenttable.model.columntypes.clear()
         #print("after clear self.currenttable.model.columntypes: ", self.currenttable.model.columntypes)
-=======
->>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
         GUI_Utils.dictcolControllableEvents.clear()
         GUI_Utils.dictcolObservableEvents.clear()
         GUI_Utils.dictcolFaultyEvents.clear()
@@ -1599,13 +1580,10 @@ class TablesApp(Frame):
                     GUI_Utils.setEventAsUnfaulty(self.currenttable, list_events[i - 1])
             else:
                 GUI_Utils.setEventAsUnfaulty(self.currenttable, list_events[i - 1])
-<<<<<<< HEAD
 
 
             dict_events[list_events[i - 1]]["label"] = list_events[i - 1] + suffix_event  # added now *************************************************
 
-=======
->>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
 
             dict_event_suffixes.update({list_events[i - 1]: suffix_event})
             self.currenttable.model.addColumn(list_events[i - 1]+suffix_event)
@@ -1995,10 +1973,7 @@ class TablesApp(Frame):
 
         self.currenttable.model.columnNames.clear()
         self.currenttable.model.columnlabels.clear()
-<<<<<<< HEAD
         self.currenttable.model.columntypes.clear()
-=======
->>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
         GUI_Utils.dictcolControllableEvents.clear()
         GUI_Utils.dictcolObservableEvents.clear()
         GUI_Utils.dictcolFaultyEvents.clear()
@@ -2037,11 +2012,8 @@ class TablesApp(Frame):
                     GUI_Utils.setEventAsUnfaulty(self.currenttable, list_events[i - 1])
             else:
                 GUI_Utils.setEventAsUnfaulty(self.currenttable, list_events[i - 1])
-<<<<<<< HEAD
 
             dict_events[list_events[i - 1]]["label"] = list_events[i - 1] + suffix_event  # added now *************************************************
-=======
->>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
 
             dict_event_suffixes.update({list_events[i - 1]: suffix_event})
             num_chars = len(list_events[i - 1] + suffix_event)
@@ -2274,10 +2246,7 @@ class TablesApp(Frame):
 
         self.currenttable.model.columnNames.clear()
         self.currenttable.model.columnlabels.clear()
-<<<<<<< HEAD
         self.currenttable.model.columntypes.clear()
-=======
->>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
         GUI_Utils.dictcolControllableEvents.clear()
         GUI_Utils.dictcolObservableEvents.clear()
         GUI_Utils.dictcolFaultyEvents.clear()
@@ -2446,33 +2415,19 @@ class TablesApp(Frame):
                 list_events.append(current_event)
 
                 suffix_event = ""
-<<<<<<< HEAD
                 if "isObservable" in dict_events[current_event]:
                     if dict_events[current_event]["isObservable"] == 1:
                         GUI_Utils.setEventAsObservable(self.currenttable, current_event)
                     elif dict_events[current_event]["isObservable"] == 0:
-=======
-                if "isObservable" in dict_event_properties[current_event]:
-                    if dict_event_properties[current_event]["isObservable"] == 1:
-                        GUI_Utils.setEventAsObservable(self.currenttable, current_event)
-                    elif dict_event_properties[current_event]["isObservable"] == 0:
->>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
                         suffix_event += "_uo"
                         GUI_Utils.setEventAsUnobservable(self.currenttable, current_event)
                 else:
                     GUI_Utils.setEventAsUnobservable(self.currenttable, current_event)
 
-<<<<<<< HEAD
                 if "isControllable" in dict_events[current_event]:
                     if dict_events[current_event]["isControllable"] == 1:
                         GUI_Utils.setEventAsControllable(self.currenttable, current_event)
                     elif dict_events[current_event]["isControllable"] == 0:
-=======
-                if "isControllable" in dict_event_properties[current_event]:
-                    if dict_event_properties[current_event]["isControllable"] == 1:
-                        GUI_Utils.setEventAsControllable(self.currenttable, current_event)
-                    elif dict_event_properties[current_event]["isControllable"] == 0:
->>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
                         suffix_event += "_uc"
                         GUI_Utils.setEventAsUncontrollable(self.currenttable, current_event)
                 else:
@@ -2482,19 +2437,12 @@ class TablesApp(Frame):
                     if dict_events[current_event]["isFault"] == 1:
                         suffix_event += "_f"
                         GUI_Utils.setEventAsFaulty(self.currenttable, current_event)
-<<<<<<< HEAD
                     elif dict_events[current_event]["isFault"] == 0:
                         GUI_Utils.setEventAsUnfaulty(self.currenttable, current_event)
                 else:
                     GUI_Utils.setEventAsUnfaulty(self.currenttable, current_event)
 
                 dict_events[list_events[i - 1]]["label"] = list_events[i - 1] + suffix_event  # added now *************************************************
-=======
-                    elif dict_event_properties[current_event]["isFault"] == 0:
-                        GUI_Utils.setEventAsUnfaulty(self.currenttable, current_event)
-                else:
-                    GUI_Utils.setEventAsUnfaulty(self.currenttable, current_event)
->>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
 
                 dict_event_suffixes.update({current_event: suffix_event})
                 self.currenttable.model.addColumn(current_event + suffix_event)
@@ -3100,25 +3048,16 @@ class TablesApp(Frame):
 
     def from_Table_To_Json(self):
         """Convert the current table content into an FSA Json file description"""
-<<<<<<< HEAD
         #print("from_Table_To_Json")
         # GUI_Utils.fromTableToJson(self.currenttable)
         GUI_Utils.fromTableToJson(self)
-=======
-        # print("from_Table_To_Json")
-        GUI_Utils.fromTableToJson(self.currenttable)
->>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
         self.saved = 0
         return
 
     def analyze_FSA(self):
         """Convert the current table content into a Json file"""
-<<<<<<< HEAD
         #print("analyze_FSA")
         self.from_Table_To_Json()
-=======
-        # print("analyze_FSA")
->>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
         GUI_Utils.analyzeFsa(self.currenttable)
         self.saved = 0
         return
@@ -3312,13 +3251,8 @@ class ToolBar(Frame):
         self.add_button('Plot Prefs', self.parentapp.plotSetup, img)
         '''
 
-<<<<<<< HEAD
         #img = GUI_Utils.from_table_to_json()
         #self.add_button('From table to json', self.parentapp.from_Table_To_Json, img)
-=======
-        img = GUI_Utils.from_table_to_json()
-        self.add_button('From table to json', self.parentapp.from_Table_To_Json, img)
->>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
         img = GUI_Utils.analyze_fsa()
         self.add_button('Analyze FSA', self.parentapp.analyze_FSA, img)
         return
@@ -3360,7 +3294,6 @@ def main():
     return
 
 if __name__ == '__main__':
-<<<<<<< HEAD
     # GUI_Utils.initialize()
 
     '''
@@ -3400,13 +3333,12 @@ if __name__ == '__main__':
 
 
     print("\n________________________________________________________________________________________________\n")
+    print("                                 FSA Table app - Terminal window                                 \n")
     print("   Here will be reported the eventual syntax errors found in the FSA description files you load,\n")
     print("   or the eventual errors found in the FSA Table after you fill it and start the FSA analysis.\n")
     print("   Click the 'Help' button on the toolbar to see how to populate the files and the table.")
     print("________________________________________________________________________________________________\n")
 
 
-=======
->>>>>>> 6eec0fc7ba72e11e7493637950183fe7ca785366
     main()
 
