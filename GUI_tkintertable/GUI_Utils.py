@@ -114,7 +114,7 @@ def setEventAsUnfaulty(MyTable, column_name=None):
 
 def fromTableToJson(MyTable):
     """Convert the current table content into a Json file"""
-    #print("fromTableToJson")
+    # print("fromTableToJson")
     global dictcolControllableEvents
     global dictcolObservableEvents
     global dictcolFaultyEvents
@@ -181,7 +181,7 @@ def fromTableToJson(MyTable):
         if curr_event in list_events:
             flag_more_than_one_same_event = 1
             print(
-                "Syntax error:\t\t\t\t\t\t\tThe event '{}' must be defined only once (only one column per event), instead more have been found.".format(
+                "Syntax error:\t\tThe event '{}' must be defined only once (only one column per event), instead more have been found.".format(
                     curr_event))
         list_events.append(curr_event)
 
@@ -226,7 +226,7 @@ def fromTableToJson(MyTable):
                     #print("MyTable.currenttable.model.getCellRecord({}, 0) = {}".format(iter_row, MyTable.currenttable.model.getCellRecord(iter_row, 0)))
                     if (iter_row + 1) not in list_rows_empty_states:
                         print(
-                            "Syntax error in row {}, col State:\t\t\t\t\tThe name of the state has not been properly specified. Please define it.".format(iter_row + 1))
+                            "Syntax error in row {}, col State:\tThe name of the state has not been properly specified. Please define it.".format(iter_row + 1))
                         list_rows_empty_states.append(iter_row + 1)
                         #print("list_rows_empty_states: ", list_rows_empty_states)
                         flag_empty_state = 1  # redundant
@@ -251,7 +251,7 @@ def fromTableToJson(MyTable):
                             if current_state in dict_X:
                                 flag_more_than_one_same_state = 1
                                 print(
-                                    "Syntax error in row {}, col {}:\t\t\t\t\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
+                                    "Syntax error in row {}, col {}:\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
                                         str(iter_row + 1), "State", current_state,
                                         dict_states_first_csv_row[str(current_state)],
                                         "State"))
@@ -266,7 +266,7 @@ def fromTableToJson(MyTable):
                             if current_state in dict_X:
                                 flag_more_than_one_same_state = 1
                                 print(
-                                    "Syntax error in row {}, col {}:\t\t\t\t\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
+                                    "Syntax error in row {}, col {}:\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
                                         str(iter_row + 1), "State", current_state,
                                         dict_states_first_csv_row[str(current_state)],
                                         "State"))
@@ -281,7 +281,7 @@ def fromTableToJson(MyTable):
                             if current_state in dict_X:
                                 flag_more_than_one_same_state = 1
                                 print(
-                                    "Syntax error in row {}, col {}:\t\t\t\t\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
+                                    "Syntax error in row {}, col {}:\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
                                         str(iter_row + 1), "State", current_state,
                                         dict_states_first_csv_row[str(current_state)],
                                         "State"))
@@ -296,7 +296,7 @@ def fromTableToJson(MyTable):
                             if current_state in dict_X:
                                 flag_more_than_one_same_state = 1
                                 print(
-                                    "Syntax error in row {}, col {}:\t\t\t\t\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
+                                    "Syntax error in row {}, col {}:\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
                                         str(iter_row + 1), "State", current_state,
                                         dict_states_first_csv_row[str(current_state)],
                                         "State"))
@@ -311,7 +311,7 @@ def fromTableToJson(MyTable):
                             if current_state in dict_X:
                                 flag_more_than_one_same_state = 1
                                 print(
-                                    "Syntax error in row {}, col {}:\t\t\t\t\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
+                                    "Syntax error in row {}, col {}:\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
                                         str(iter_row + 1), "State", current_state,
                                         dict_states_first_csv_row[str(current_state)],
                                         "State"))
@@ -325,7 +325,7 @@ def fromTableToJson(MyTable):
                             if current_state in dict_X:
                                 flag_more_than_one_same_state = 1
                                 print(
-                                    "Syntax error in row {}, col {}:\t\t\t\t\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
+                                    "Syntax error in row {}, col {}:\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
                                         str(iter_row + 1), "State", current_state,
                                         dict_states_first_csv_row[str(current_state)],
                                         "State"))
@@ -339,7 +339,7 @@ def fromTableToJson(MyTable):
                             if current_state in dict_X:
                                 flag_more_than_one_same_state = 1
                                 print(
-                                    "Syntax error in row {}, col {}:\t\t\t\t\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
+                                    "Syntax error in row {}, col {}:\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
                                         str(iter_row + 1), "State", current_state,
                                         dict_states_first_csv_row[str(current_state)],
                                         "State"))
@@ -354,7 +354,7 @@ def fromTableToJson(MyTable):
                             if current_state in dict_X:
                                 flag_more_than_one_same_state = 1
                                 print(
-                                    "Syntax error in row {}, col {}:\t\t\t\t\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
+                                    "Syntax error in row {}, col {}:\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
                                         str(iter_row + 1), "State", current_state,
                                         dict_states_first_csv_row[str(current_state)],
                                         "State"))
@@ -368,7 +368,7 @@ def fromTableToJson(MyTable):
                             if current_state in dict_X:
                                 flag_more_than_one_same_state = 1
                                 print(
-                                    "Syntax error in row {}, col {}:\t\t\t\t\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
+                                    "Syntax error in row {}, col {}:\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
                                         str(iter_row + 1), "State", current_state,
                                         dict_states_first_csv_row[str(current_state)],
                                         "State"))
@@ -382,7 +382,7 @@ def fromTableToJson(MyTable):
                             if current_state in dict_X:
                                 flag_more_than_one_same_state = 1
                                 print(
-                                    "Syntax error in row {}, col {}:\t\t\t\t\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
+                                    "Syntax error in row {}, col {}:\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
                                         str(iter_row + 1), "State", current_state,
                                         dict_states_first_csv_row[str(current_state)],
                                         "State"))
@@ -396,7 +396,7 @@ def fromTableToJson(MyTable):
                             if current_state in dict_X:
                                 flag_more_than_one_same_state = 1
                                 print(
-                                    "Syntax error in row {}, col {}:\t\t\t\t\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
+                                    "Syntax error in row {}, col {}:\tMultiple occurrence of the state '{}', already specified in row {}, col {}.".format(
                                         str(iter_row + 1), "State", current_state,
                                         dict_states_first_csv_row[str(current_state)],
                                         "State"))
@@ -465,7 +465,7 @@ def fromTableToJson(MyTable):
                     #print("MyTable.currenttable.model.getCellRecord({}, 0) = {}".format(iter_row, MyTable.currenttable.model.getCellRecord(iter_row, 0)))
                     if (iter_row + 1) not in list_rows_empty_states:
                         print(
-                            "Syntax error in row {}, col State:\t\t\t\t\tThe name of the state has not been properly specified. Please define it.".format(iter_row + 1))
+                            "Syntax error in row {}, col State:\tThe name of the state has not been properly specified. Please define it.".format(iter_row + 1))
                         list_rows_empty_states.append(iter_row + 1)
                         #print("list_rows_empty_states: ", list_rows_empty_states)
                         flag_empty_state = 1  # redundant
@@ -504,27 +504,31 @@ def fromTableToJson(MyTable):
             elif counter_initial_states > 1:
                 flag_more_than_one_initial_state = 1
                 print(
-                    "Syntax error in row {}, col State:\t\t\t\t\tThe state '{}' has been specified as Initial, while the real initial one is the first defined '{}' in row {}.".format(
+                    "Syntax error in row {}, col State:\tThe state '{}' has been specified as Initial, while the real initial one is the first defined '{}' in row {}.".format(
                         dict_X[keyX]["row"], keyX, initial_state, dict_X[initial_state]["row"]))
 
     if counter_initial_states == 0 and flag_initial_state_specified == 0:
         flag_zero_initial_states = 1
-        print("Syntax error:\t\t\t\t\t\t\t\t\t\tThe initial state has not been specified, please insert it in the 'State' column.")
+        print("Syntax error:\t\tThe initial state has not been specified, please insert it in the 'State' column.")
 
     flag_event_state = 0
     list_E = list(dict_E.keys())
     for keyX in dict_X:
         if keyX in list_E:
-            flag_event_state = 1
+            # flag_event_state = 1  # it is better not to use a popup to advertise the user of the Warning, or the FSA analysis cannot procede
+            print("Syntax warning:\t\t\t\tThe column event '{}' has the same name as the state '{}' of row {}. Please ignore this warning if this is the correct behaviour." .format(keyX, keyX, dict_X[keyX]["row"]))
+
+
 
     flag_end_state_not_a_state = 0
-    list_X = list(dict_X.keys())
-    # print("dict_delta: ", dict_delta)
-    for keydelta in dict_delta:
-        if dict_delta[keydelta]["ends"] not in list_X:
-            flag_end_state_not_a_state = 1
-            # print("dict_delta: ", dict_delta)
-            print("Syntax error in row {}, event {}:\t\t\t\tThe end-state '{}' specified in this cell is not defined in the column 'State'." .format(dict_X[dict_delta[keydelta]["start"]]["row"], dict_delta[keydelta]["name"], dict_delta[keydelta]["ends"]))
+    if flag_more_than_one_same_state == 0:
+        list_X = list(dict_X.keys())
+        # print("dict_delta: ", dict_delta)
+        for keydelta in dict_delta:
+            if dict_delta[keydelta]["ends"] not in list_X:
+                flag_end_state_not_a_state = 1
+                # print("dict_delta: ", dict_delta)
+                print("Syntax error in row {}, col {}:\t\tThe end-state '{}' specified in this cell is not defined in the column 'State'." .format(dict_X[dict_delta[keydelta]["start"]]["row"], dict_delta[keydelta]["name"], dict_delta[keydelta]["ends"]))
 
 
 
@@ -592,9 +596,24 @@ def fromTableToJson(MyTable):
         ttk.Button(win, text="Example", command=open_popup_errors_on_csv_file).pack()
         win.mainloop()
 
+
         if flag_error:
-            # print(flag_error)
+            print(flag_error)
             return
+        else:
+            print("warning")
+            for keyX in dict_X:
+                del dict_X[keyX]["row"]
+
+            json_dict["X"] = dict_X
+            json_dict["delta"] = dict_delta
+            json_dict["E"] = dict_E
+
+            with open(".\json_table\description_table.json", "w") as outfile:
+                json.dump(json_dict, outfile, indent=4)
+            print("... 'description_table.json' generated into the folder 'json_table'.")
+
+            outfile.close()
 
 
     for keyX in dict_X:
@@ -611,6 +630,7 @@ def fromTableToJson(MyTable):
     outfile.close()
 
     return
+
 
 
 def from_table_to_json():
@@ -1693,13 +1713,14 @@ def check_syntax_errors_in_json_file(jsonObject):
         for keyX in dict_start_states:
             for keyE in dict_events:
                 if keyE == keyX:
-                    flag_events_named_as_states = 1
+                    flag_events_named_as_states = 1  # it is better not to use a popup to advertise the user of the Warning, or the FSA analysis cannot procede
                     list_events_named_as_states.append(keyE)
+
         if flag_events_named_as_states == 1:
-            flag_syntax_warning = 1
+            # flag_syntax_warning = 1  # it is better not to use a popup to advertise the user of the Warning, or the FSA analysis cannot procede
             for i in range(len(list_events_named_as_states)):
                 print(
-                    "Syntax warning:\t\t\tThe event '{}' has the same name as the state '{}'. Please ignore this warning if this is the correct set-up.".format(
+                    "Syntax warning:\t\t\tThe event '{}' has the same name as the state '{}'. Please ignore this warning if this is the correct behaviour.".format(
                         list_events_named_as_states[i], list_events_named_as_states[i]))
 
     # check if there are start-states or end-states of a delta transition not specified as states

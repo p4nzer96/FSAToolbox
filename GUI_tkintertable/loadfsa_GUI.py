@@ -289,7 +289,7 @@ def load_txt_or_fsa_GUI(filename=None):
     # print("list_not_allowed_empty_lines: ", list_not_allowed_empty_lines)
 
     if len(clean_lines) == 0:
-        print("Syntax error:\t\t\tThe file is empty. Please fill it.")
+        print("Syntax error:\t\t\t\tThe file is empty. Please fill it.")
         win = Tk()
         # Set the geometry of Tkinter frame
         # win.geometry(win_geometry)
@@ -314,22 +314,22 @@ def load_txt_or_fsa_GUI(filename=None):
         if clean_lines[0][0].isnumeric() is not True:
             flag_missing_num_states = 1
             print(
-                "Syntax error in line 1:\t\t\t\tThe number of states specified at the beginning of the file ('{}') is not an 'integer', please modify it.".format(
+                "Syntax error in line 1:\t\t\tThe number of states specified at the beginning of the file ('{}') is not an 'integer', please modify it.".format(
                     clean_lines[0][0]))
     else:
         flag_missing_num_states = 1
         print(
-            "Syntax error in line 1:\t\t\t\tThe number of states must be specified at the beginning of the file, please insert it.")
+            "Syntax error in line 1:\t\t\tThe number of states must be specified at the beginning of the file, please insert it.")
 
     if len(list_not_allowed_empty_lines) != 0 or flag_missing_num_states == 1:
         if len(list_not_allowed_empty_lines) != 0:
             for iter_lnael in range(len(list_not_allowed_empty_lines)):
                 if (list_not_allowed_empty_lines[iter_lnael] < 10):
                     print("Syntax error in line " + str(
-                        list_not_allowed_empty_lines[iter_lnael]) + ":\t\t\t\tEmpty line not allowed. Please correct the error to continue the parsing.")
+                        list_not_allowed_empty_lines[iter_lnael]) + ":\t\t\tEmpty line not allowed. Please correct the error to continue the parsing.")
                 else:
                     print("Syntax error in line " + str(
-                        list_not_allowed_empty_lines[iter_lnael]) + ":\t\t\tEmpty line not allowed. Please correct the error to continue the parsing.")
+                        list_not_allowed_empty_lines[iter_lnael]) + ":\t\tEmpty line not allowed. Please correct the error to continue the parsing.")
 
         win = Tk()
         # Set the geometry of Tkinter frame
@@ -396,18 +396,18 @@ def load_txt_or_fsa_GUI(filename=None):
                         str_bool_final = ""
                         str_bool_forbidden = ""
                         if bool_init == 0:
-                            str_bool_init = "\t\t\tcol 2('"+str(clean_lines[iter_lines][1])+"') must be '1' or '0'"
+                            str_bool_init = "\t\tcol 2('"+str(clean_lines[iter_lines][1])+"') must be '1' or '0'"
                         if bool_final == 0:
-                            str_bool_final = "\t\t\tcol 3('"+str(clean_lines[iter_lines][2])+"') must be '1' or '0'"
+                            str_bool_final = "\t\tcol 3('"+str(clean_lines[iter_lines][2])+"') must be '1' or '0'"
                         if bool_forbidden == 0:
-                            str_bool_forbidden = "\t\t\tcol 4('"+str(clean_lines[iter_lines][3])+"') must be '1' or '0'"
+                            str_bool_forbidden = "\t\tcol 4('"+str(clean_lines[iter_lines][3])+"') must be '1' or '0'"
                         flag_syntax_error = 1
                         print("Syntax error in state line " + str(iter_lines+1) + ':' + str(str_bool_init) + str(str_bool_final) + str(str_bool_forbidden) + '.')
                 except:
                     flag_syntax_error = 1
                     num_corrupted_states += 1
                     print("Syntax error in state line " + str(
-                        iter_lines + 1) + ":\t\t\tThe state properties of '{}' are not completely defined (insert in order Initial(1/0), Final(1/0), Forbidden(1/0) after the state).".format(
+                        iter_lines + 1) + ":\t\tThe state properties of '{}' are not completely defined (insert in order Initial(1/0), Final(1/0), Forbidden(1/0) after the state).".format(
                         current_start_state))
             else:
                 flag_syntax_error = 1
@@ -434,6 +434,13 @@ def load_txt_or_fsa_GUI(filename=None):
                         or clean_lines[iter_lines][3] != dict_events[current_event]["isObservable"] \
                         or clean_lines[iter_lines][4] != dict_events[current_event]["isFault"])
 
+                        if clean_lines[iter_lines][0] in dict_start_states:
+                            print(
+                                "Syntax warning:\t\t\t\tThe event '{}' specified in line {} has the same name as the state '{}' defined in line {}. Please ignore this warning if this is the correct behaviour.".format(
+                                    clean_lines[iter_lines][0], iter_lines + 1, clean_lines[iter_lines][0],
+                                    dict_start_states[clean_lines[iter_lines][0]]["line"]))
+
+
                         if clean_lines[iter_lines][0] not in dict_events:
                             dict_events.update({clean_lines[iter_lines][0]: {"line": iter_lines + 1,
                                                                          "isControllable": clean_lines[iter_lines][2],
@@ -456,7 +463,7 @@ def load_txt_or_fsa_GUI(filename=None):
                         flag_syntax_error = 1
                         bool_event = 0
                         print("Syntax error in event line " + str(
-                            iter_lines + 1) + ":\t\t\tFive column elements are required in this event line, or maybe it is needed a blank line above this line.")
+                            iter_lines + 1) + ":\t\tFive column elements are required in this event line, or maybe it is needed a blank line above this line.")
 
                     if (iter_lines + 1) < len(clean_lines) and clean_lines[iter_lines + 1][0] != '':
                         iter_lines += 1  # reiteration of while flag_end_current_start_state == 0:
@@ -468,28 +475,28 @@ def load_txt_or_fsa_GUI(filename=None):
 
                     if bool_event == 1:
                         flag_syntax_error = 1
-                        print("Syntax error in event line " + str(iter_lines) + ":\t\t\tThe event in this line ('{}') has different properties respect to its first declaration in line {}.".format(current_event, dict_events[current_event]["line"]))
+                        print("Syntax error in event line " + str(iter_lines) + ":\t\tThe event in this line ('{}') has different properties respect to its first declaration in line {}.".format(current_event, dict_events[current_event]["line"]))
 
             else:
                 str_bool_c_uc = ""
                 str_bool_o_uo = ""
                 str_bool_f_uf = ""
                 if bool_c_uc == 0:
-                    str_bool_c_uc = "\t\t\tcol 3('" + str(clean_lines[iter_lines][2]) + "') must be 'c' or 'uc'"
+                    str_bool_c_uc = "\t\tcol 3('" + str(clean_lines[iter_lines][2]) + "') must be 'c' or 'uc'"
                 if bool_o_uo == 0:
-                    str_bool_o_uo = "\t\t\tcol 4('" + str(clean_lines[iter_lines][3]) + "') must be 'o' or 'uo'"
+                    str_bool_o_uo = "\t\tcol 4('" + str(clean_lines[iter_lines][3]) + "') must be 'o' or 'uo'"
                 if bool_f_uf == 0:
-                    str_bool_f_uf = "\t\t\tcol 5('" + str(clean_lines[iter_lines][4]) + "') must be 'f' or 'uf'"
+                    str_bool_f_uf = "\t\tcol 5('" + str(clean_lines[iter_lines][4]) + "') must be 'f' or 'uf'"
                 flag_syntax_error = 1
                 print("Syntax error in event line " + str(iter_lines + 1) + ':' + str(str_bool_c_uc) + str(str_bool_o_uo) + str(str_bool_f_uf) +'.')
                 iter_lines += 1
         elif clean_lines[iter_lines][0] != '' and flag_the_next_line_is_a_state == 0 and len(clean_lines[iter_lines]) < 5:
             flag_syntax_error = 1
-            print("Syntax error in event line " + str(iter_lines + 1) + ":\t\t\tFive column elements are required in this event line.")
+            print("Syntax error in event line " + str(iter_lines + 1) + ":\t\tFive column elements are required in this event line.")
             iter_lines += 1
     if len(dict_start_states) + num_corrupted_states != num_states:
         flag_syntax_error = 1
-        print("Syntax error in line 1:\t\t\t\tThe number of possible states found in the file ({}) does not correspond to the number of states specified at the beginning of the file ({}).".format(len(dict_start_states) + num_corrupted_states, num_states))
+        print("Syntax error in line 1:\t\t\tThe number of possible states found in the file ({}) does not correspond to the number of states specified at the beginning of the file ({}).".format(len(dict_start_states) + num_corrupted_states, num_states))
 
     #print("dict_start_states: ", dict_start_states)
     # print("dict_events: ", dict_events)
@@ -510,7 +517,7 @@ def load_txt_or_fsa_GUI(filename=None):
         if dict_deltas[key_delta]["ends"] not in dict_start_states:
             flag_end_state_not_a_state = 1
             print("Syntax error in event line " + str(
-                dict_deltas[key_delta]["line"]) + ":\t\t\tThe end_state '{}' is not a defined state (or well defined).".format(
+                dict_deltas[key_delta]["line"]) + ":\t\tThe end-state '{}' is not a defined state (or well defined).".format(
                 dict_deltas[key_delta]["ends"]))
 
     for key_delta in dict_deltas:
@@ -1154,17 +1161,18 @@ def load_csv_GUI(filename=None):
     list_E = list(dict_E.keys())
     for keyX in dict_X:
         if keyX in list_E:
-            flag_event_state = 1
-            print("Warning shared names:\t\t\t\tThe event '{}' of col {} is named as the state '{}' of row {}. Please ignore this warning if this is the correct behaviour." .format(keyX, dict_csv_col_label[str(dict_E[keyX]["col"])], keyX, dict_X[keyX]["row"]))
+            # flag_event_state = 1  # it is better not to use a popup to advertise the user of the Warning, or the FSA analysis cannot procede
+            print("Syntax warning:\t\t\t\tThe event '{}' of col {} is named as the state '{}' of row {}. Please ignore this warning if this is the correct behaviour." .format(keyX, dict_csv_col_label[str(dict_E[keyX]["col"])], keyX, dict_X[keyX]["row"]))
 
 
     flag_end_state_not_a_state = 0
-    list_X = list(dict_X.keys())
-    for keydelta in dict_delta:
-        if dict_delta[keydelta]["ends"] not in list_X:
-            flag_end_state_not_a_state = 1
-            if flag_more_than_one_same_event == 0:
-                print("Syntax error in row {}, col {}:\t\tThe end state {} is not a valid state (not defined in the column 'State')." .format(dict_X[dict_delta[keydelta]["start"]]["row"], dict_csv_col_label[str(dict_E[dict_delta[keydelta]["name"]]["col"])], dict_delta[keydelta]["ends"]))
+    if flag_more_than_one_same_state == 0:
+        list_X = list(dict_X.keys())
+        for keydelta in dict_delta:
+            if dict_delta[keydelta]["ends"] not in list_X:
+                flag_end_state_not_a_state = 1
+                if flag_more_than_one_same_event == 0:
+                    print("Syntax error in row {}, col {}:\t\tThe end-state '{}' specified in this cell is not defined in the column 'State'." .format(dict_X[dict_delta[keydelta]["start"]]["row"], dict_csv_col_label[str(dict_E[dict_delta[keydelta]["name"]]["col"])], dict_delta[keydelta]["ends"]))
 
     flag_error = flag_end_state_not_a_state == 1 or flag_more_than_one_initial_state == 1 \
                  or flag_zero_initial_states == 1 or flag_more_than_one_same_event == 1 or flag_more_than_one_same_state == 1

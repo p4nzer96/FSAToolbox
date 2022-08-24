@@ -3216,7 +3216,7 @@ class ColumnHeader(Canvas):
 
                 # print("get_event_from_columnlabel(previous_col_name)", get_event_from_columnlabel(previous_col_name))
                 if dict_ans_properties[ans] in columnlabels_without_properties and dict_ans_properties[ans] != get_event_from_columnlabel(previous_col_name)[previous_col_name]:
-                    print("ERROR:\t\t\t\t\t\tThe event {} is already present. Only one instance of it is allowed." .format(dict_ans_properties[ans]))
+                    print("Syntax error:\t\t\t\tThe event {} is already present. Only one instance of it is allowed." .format(dict_ans_properties[ans]))
                     win = Tk()
                     # Set the geometry of Tkinter frame
                     # win.geometry(win_geometry)

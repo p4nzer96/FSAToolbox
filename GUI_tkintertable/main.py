@@ -232,6 +232,7 @@ class TablesApp(Frame):
         self.prefswindow = self.currenttable.showtablePrefs()
         return
 
+    import GUI_Utils
     def new_project(self, data=None):
         """Create a new table, with model and add the frame"""
         #print("new_project")
@@ -254,6 +255,15 @@ class TablesApp(Frame):
             #do the table adding stuff for the initial sheet
             self.add_Sheet('sheet1')
         #self.notebook.setnaturalsize()
+
+        GUI_Utils.dictcolObservableEvents.clear()
+        GUI_Utils.dictcolControllableEvents.clear()
+        GUI_Utils.dictcolFaultyEvents.clear()
+        GUI_Utils.dictcolObservableEvents = {'event1': 1, 'event2': 1, 'event3': 1, 'event4': 1}
+        GUI_Utils.dictcolControllableEvents = {'event1': 1, 'event2': 1, 'event3': 1, 'event4': 1}
+        GUI_Utils.dictcolFaultyEvents = {'event1': 0, 'event2': 0, 'event3': 0, 'event4': 0}
+
+
         return
 
     def open_project(self, filename=None):
@@ -1279,7 +1289,7 @@ class TablesApp(Frame):
 
 
         if len(clean_lines) == 0:
-            print("Syntax error:\t\t\tThe file is empty. Please fill it.")
+            print("Syntax error:\t\t\t\tThe file is empty. Please fill it.")
             win = Tk()
             # Set the geometry of Tkinter frame
             # win.geometry(win_geometry)
@@ -1303,12 +1313,12 @@ class TablesApp(Frame):
             if clean_lines[0][0].isnumeric() is not True:
                 flag_missing_num_states = 1
                 print(
-                    "Syntax error in line 1:\t\t\t\tThe number of states specified at the beginning of the file ('{}') is not an 'integer', please modify it.".format(
+                    "Syntax error in line 1:\t\t\tThe number of states specified at the beginning of the file ('{}') is not an 'integer', please modify it.".format(
                         clean_lines[0][0]))
         else:
             flag_missing_num_states = 1
             print(
-                "Syntax error in line 1:\t\t\t\tThe number of states must be specified at the beginning of the file, please insert it.")
+                "Syntax error in line 1:\t\t\tThe number of states must be specified at the beginning of the file, please insert it.")
 
 
 
@@ -1318,10 +1328,10 @@ class TablesApp(Frame):
                 for iter_lnael in range(len(list_not_allowed_empty_lines)):
                     if(list_not_allowed_empty_lines[iter_lnael]<10):
                         print("Syntax error in line " + str(
-                        list_not_allowed_empty_lines[iter_lnael]) + ":\t\t\t\tEmpty line not allowed. Please correct the error to continue the parsing.")
+                        list_not_allowed_empty_lines[iter_lnael]) + ":\t\t\tEmpty line not allowed. Please correct the error to continue the parsing.")
                     else:
                         print("Syntax error in line " + str(
-                        list_not_allowed_empty_lines[iter_lnael]) + ":\t\t\tEmpty line not allowed. Please correct the error to continue the parsing.")
+                        list_not_allowed_empty_lines[iter_lnael]) + ":\t\tEmpty line not allowed. Please correct the error to continue the parsing.")
 
             win = Tk()
             # Set the geometry of Tkinter frame
@@ -1388,21 +1398,21 @@ class TablesApp(Frame):
                             str_bool_final = ""
                             str_bool_forbidden = ""
                             if bool_init == 0:
-                                str_bool_init = "\t\t\tcol 2('"+str(clean_lines[iter_lines][1])+"') must be '1' or '0'"
+                                str_bool_init = "\t\tcol 2('"+str(clean_lines[iter_lines][1])+"') must be '1' or '0'"
                             if bool_final == 0:
-                                str_bool_final = "\t\t\tcol 3('"+str(clean_lines[iter_lines][2])+"') must be '1' or '0'"
+                                str_bool_final = "\t\tcol 3('"+str(clean_lines[iter_lines][2])+"') must be '1' or '0'"
                             if bool_forbidden == 0:
-                                str_bool_forbidden = "\t\t\tcol 4('"+str(clean_lines[iter_lines][3])+"') must be '1' or '0'"
+                                str_bool_forbidden = "\t\tcol 4('"+str(clean_lines[iter_lines][3])+"') must be '1' or '0'"
                             flag_syntax_error = 1
                             print("Syntax error in state line " + str(iter_lines+1) + ':' + str(str_bool_init) + str(str_bool_final) + str(str_bool_forbidden)+'.')
                     except:
                         num_corrupted_states+=1
                         flag_syntax_error = 1
-                        print("Syntax error in state line " + str(iter_lines + 1) + ":\t\t\tThe state properties of '{}' are not completely defined (insert in order Initial(1/0), Final(1/0), Forbidden(1/0) after the state)." .format(current_start_state))
+                        print("Syntax error in state line " + str(iter_lines + 1) + ":\t\tThe state properties of '{}' are not completely defined (insert in order Initial(1/0), Final(1/0), Forbidden(1/0) after the state)." .format(current_start_state))
 
                 else:
                     flag_syntax_error = 1
-                    print("Syntax error in state line " + str(iter_lines+1) + ":\t\t\tMultiple occurrence of the state '{}', already specified in line {}." .format(current_start_state, dict_start_states[current_start_state]["line"]))
+                    print("Syntax error in state line " + str(iter_lines+1) + ":\t\tMultiple occurrence of the state '{}', already specified in line {}." .format(current_start_state, dict_start_states[current_start_state]["line"]))
                 flag_the_next_line_is_a_state = 0
                 iter_lines += 1
             elif clean_lines[iter_lines][0] != '' and flag_the_next_line_is_a_state == 0 and len(clean_lines[iter_lines]) >= 5:
@@ -1420,6 +1430,11 @@ class TablesApp(Frame):
                                          (clean_lines[iter_lines][2] != dict_events[current_event]["isControllable"] \
                                           or clean_lines[iter_lines][3] != dict_events[current_event]["isObservable"] \
                                           or clean_lines[iter_lines][4] != dict_events[current_event]["isFault"])
+
+                            if clean_lines[iter_lines][0] in dict_start_states:
+                                print(
+                                    "Syntax warning:\t\t\t\tThe event '{}' specified in line {} has the same name as the state '{}' defined in line {}. Please ignore this warning if this is the correct behaviour.".format(
+                                        clean_lines[iter_lines][0], iter_lines + 1, clean_lines[iter_lines][0], dict_start_states[clean_lines[iter_lines][0]]["line"]))
 
                             if clean_lines[iter_lines][0] not in dict_events:
                                 current_iter_line += str(iter_lines + 1) + '-'
@@ -1455,7 +1470,7 @@ class TablesApp(Frame):
                             flag_syntax_error = 1
                             bool_event = 0
                             print("Syntax error in event line " + str(
-                                iter_lines + 1) + ":\t\t\tFive column elements are required in this event line, or maybe it is needed a blank line above this line.")
+                                iter_lines + 1) + ":\t\tFive column elements are required in this event line, or maybe it is needed a blank line above this line.")
 
                         if (iter_lines + 1) < len(clean_lines) and clean_lines[iter_lines + 1][0] != '':
                             iter_lines += 1  # reiteration of while flag_end_current_start_state == 0:
@@ -1467,18 +1482,18 @@ class TablesApp(Frame):
 
                         if bool_event == 1:
                             flag_syntax_error = 1
-                            print("Syntax error in event line " + str(iter_lines) + ":\t\t\tThe event in this line ('{}') has different properties respect to its first declaration in line {}." .format(current_event, dict_events[current_event]["line"]))
+                            print("Syntax error in event line " + str(iter_lines) + ":\t\tThe event in this line ('{}') has different properties respect to its first declaration in line {}." .format(current_event, dict_events[current_event]["line"]))
 
                 else:
                     str_bool_c_uc = ""
                     str_bool_o_uo = ""
                     str_bool_f_uf = ""
                     if bool_c_uc == 0:
-                        str_bool_c_uc = "\t\t\tcol 3('"+str(clean_lines[iter_lines][2])+"') must be 'c' or 'uc'"
+                        str_bool_c_uc = "\t\tcol 3('"+str(clean_lines[iter_lines][2])+"') must be 'c' or 'uc'"
                     if bool_o_uo == 0:
-                        str_bool_o_uo = "\t\t\tcol 4('"+str(clean_lines[iter_lines][3])+"') must be 'o' or 'uo'"
+                        str_bool_o_uo = "\t\tcol 4('"+str(clean_lines[iter_lines][3])+"') must be 'o' or 'uo'"
                     if bool_f_uf == 0:
-                        str_bool_f_uf = "\t\t\tcol 5('"+str(clean_lines[iter_lines][4])+"') must be 'f' or 'uf'"
+                        str_bool_f_uf = "\t\tcol 5('"+str(clean_lines[iter_lines][4])+"') must be 'f' or 'uf'"
                     flag_syntax_error = 1
                     print("Syntax error in event line " + str(iter_lines+1) + ':' + str(str_bool_c_uc) + str(str_bool_o_uo) + str(str_bool_f_uf)+ '.')
                     iter_lines += 1
@@ -1488,7 +1503,7 @@ class TablesApp(Frame):
                 iter_lines += 1
         if len(dict_start_states)+num_corrupted_states != num_states:
             flag_syntax_error = 1
-            print("Syntax error in line 1:\t\t\t\tThe number of possible states found in the file ({}) does not correspond to the number of states specified at the beginning of the file ({})." .format(len(dict_start_states)+num_corrupted_states, num_states))
+            print("Syntax error in line 1:\t\t\tThe number of possible states found in the file ({}) does not correspond to the number of states specified at the beginning of the file ({})." .format(len(dict_start_states)+num_corrupted_states, num_states))
 
         for key_delta in dict_deltas:
             list_current_end_states = dict_deltas[key_delta]["ends"].split('-')
@@ -1507,7 +1522,7 @@ class TablesApp(Frame):
                 if list_current_end_states[i] not in dict_start_states:
                     flag_syntax_error = 1
                     print("Syntax error in event line " + str(
-                        list_current_lines[i]) + ":\t\t\tThe end_state '{}' is not a defined state (or well defined).".format(
+                        list_current_lines[i]) + ":\t\tThe end-state '{}' is not a defined state (or well defined).".format(
                         list_current_end_states[i]))
         for key_delta in dict_deltas:
             del dict_deltas[key_delta]["line"]
@@ -1884,9 +1899,9 @@ class TablesApp(Frame):
                         flag_events_named_as_states = 1
                         list_events_named_as_states.append(keyE)
             if flag_events_named_as_states == 1:
-                flag_syntax_warning = 1
+                # flag_syntax_warning = 1  # it is better not to use a popup to advertise the user of the Warning, or the FSA analysis cannot procede
                 for i in range(len(list_events_named_as_states)):
-                    print("Syntax warning:\t\t\tThe event '{}' has the same name as the state '{}'. Please ignore this warning if this is the correct set-up.".format(list_events_named_as_states[i], list_events_named_as_states[i]))
+                    print("Syntax warning:\t\t\tThe event '{}' has the same name as the state '{}'. Please ignore this warning if this is the correct behaviour.".format(list_events_named_as_states[i], list_events_named_as_states[i]))
 
         # check if there are start-states or end-states of a delta transition not specified as states
         if 'X' in data and 'delta' in data:
@@ -2713,22 +2728,23 @@ class TablesApp(Frame):
         list_E = list(dict_events.keys())
         for keyX in dict_X:
             if keyX in list_E:
-                flag_event_state = 1
+                # flag_event_state = 1  # it is better not to use a popup to advertise the user of the Warning, or the FSA analysis cannot procede
                 print(
-                    "Warning shared names:\t\t\t\tThe event '{}' of col {} is named as the state '{}' of row {}. Please ignore this warning if this is the correct behaviour.".format(
+                    "Syntax warning:\t\t\t\tThe event '{}' of col {} is named as the state '{}' of row {}. Please ignore this warning if this is the correct behaviour.".format(
                         keyX, dict_csv_col_label[str(dict_events[keyX]["col"])], keyX, dict_X[keyX]["row"]))
 
         flag_end_state_not_a_state = 0
-        list_X = list(dict_X.keys())
-        for keydelta in dict_delta:
-            if dict_delta[keydelta]["ends"] not in list_X:
-                flag_end_state_not_a_state = 1
-                if flag_more_than_one_same_event == 0:
-                    print(
-                        "Syntax error in row {}, col {}:\t\tThe end state {} is not a valid state (not defined in the column 'State').".format(
-                            dict_X[dict_delta[keydelta]["start"]]["row"],
-                            dict_csv_col_label[str(dict_events[dict_delta[keydelta]["name"]]["col"])],
-                            dict_delta[keydelta]["ends"]))
+        if flag_more_than_one_same_state == 0:
+            list_X = list(dict_X.keys())
+            for keydelta in dict_delta:
+                if dict_delta[keydelta]["ends"] not in list_X:
+                    flag_end_state_not_a_state = 1
+                    if flag_more_than_one_same_event == 0:
+                        print(
+                            "Syntax error in row {}, col {}:\t\tThe end-state '{}' specified in this cell is not defined in the column 'State'." .format(
+                                dict_X[dict_delta[keydelta]["start"]]["row"],
+                                dict_csv_col_label[str(dict_events[dict_delta[keydelta]["name"]]["col"])],
+                                dict_delta[keydelta]["ends"]))
 
         flag_error = flag_end_state_not_a_state == 1 or flag_more_than_one_initial_state == 1 \
                 or flag_zero_initial_states == 1 or flag_more_than_one_same_event == 1 or flag_more_than_one_same_state == 1
