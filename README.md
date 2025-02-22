@@ -24,7 +24,7 @@ pip install wheel
 ```
 3) After, locate the ".whl" file (usually in /dist) and install the lib with:
 ```bash
-pip install "fullPathTo_whl"
+pip install <full/path/to/whl>
 ```
 
 To use the simple CLI interface:
