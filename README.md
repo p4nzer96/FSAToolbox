@@ -9,8 +9,7 @@ A library to compute common operations on fsa automata.
 There are three ways to use this tool:
 - Using the library in a python script
 - Using a simple CLI interface
-- Using a GUI interface *(currently not working)*
-
+  
 To use the python library
 1) Build the lib from the root directory with:
 
