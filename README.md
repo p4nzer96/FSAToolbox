@@ -1,4 +1,3 @@
-![Static Badge](https://img.shields.io/badge/GUI%20status%3A-not_working-red?style=flat)
 ![Static Badge](https://img.shields.io/badge/CLI%20status%3A-working-darkgreen?style=flat)
 ![Static Badge](https://img.shields.io/badge/library%20status%3A-working-darkgreen?style=flat)
 
